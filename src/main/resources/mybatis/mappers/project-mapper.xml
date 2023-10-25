@@ -3,4 +3,10 @@
 
 <mapper namespace="com.example.peernow360.mappers.IProjectMapper">
 
+    <select id="projectDetail" parameterType="Integer" resultType="com.example.peernow360.dto.ProjectDto">
+        select *
+        from PROJECT
+        where no = #{no}
+    </select>
+    
 </mapper>
