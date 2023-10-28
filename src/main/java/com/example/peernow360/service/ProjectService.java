@@ -22,6 +22,19 @@ public class ProjectService implements IProjectService {
 //        return iProjectMapper.createProject(projectDto);
 //    }
 
+    public int createProject(ProjectDto projectDto) {
+
+        int result = iProjectMapper.createProject(projectDto);
+
+        if (result > 0) {
+            log.info("CREATE PROJECT SUCCESS");
+        } else {
+            log.info("CREATE PROJECT FAIL");
+        }
+
+        return result;
+    }
+
     public ProjectDto projectDetail(int no) {
         log.info("projectDetail()");
 

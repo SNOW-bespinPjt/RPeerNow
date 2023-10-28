@@ -3,6 +3,11 @@
 
 <mapper namespace="com.example.peernow360.mappers.IProjectMapper">
 
+    <insert id="createProject" parameterType="com.example.peernow360.dto.ProjectDto">
+        insert into PROJECT(user_id, title, detail, start_date, end_date, reg_date, mod_date)
+        values(#{user_id}, #{title}, #{detail}, #{start_date}, #{end_date}, now(), now())
+    </insert>
+
     <select id="projectDetail" parameterType="Integer" resultType="com.example.peernow360.dto.ProjectDto">
         select *
         from PROJECT

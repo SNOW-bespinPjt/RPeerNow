@@ -7,13 +7,16 @@ import java.util.List;
 @Service
 public class ResponseService {
 
-
     //단일 데이터 처리
     public<T> SingleResponse<T> getSingleResponse(T data) {
 
-        SingleResponse<T> singleResponse = new SingleResponse<T>();
+        SingleResponse<T> singleResponse = new SingleResponse<>();
         singleResponse.setData(data);
-        setSuccessResponse(singleResponse);
+        if (data == null) {
+            setFailResponse(singleResponse);;
+        } else {
+            setSuccessResponse(singleResponse);
+        }
 
         return singleResponse;
     }
@@ -28,6 +31,7 @@ public class ResponseService {
         return listResponse;
     }
 
+    //성공 결과만 처리
     public CommonResponse getSuccessResult() {
 
         CommonResponse commonResponse = new CommonResponse();
@@ -35,6 +39,7 @@ public class ResponseService {
         return commonResponse;
     }
 
+    //실패 결과만 처리
     public CommonResponse getFailResult() {
 
         CommonResponse commonResponse = new CommonResponse();
@@ -42,17 +47,29 @@ public class ResponseService {
         return commonResponse;
     }
 
+    //api 성공시 성공 데이터
     private void setSuccessResponse(CommonResponse response) {
 
-        response.success = true;
-        response.code = 200;
-        response.message = "SUCCESS";
+        response.setSuccess(true);
+        response.setCode(CommonResult.SUCCESS.getCode());
+        response.setMessage(CommonResult.SUCCESS.getMessage());
     }
 
+//    //api 성공했으나 데이터가 없음
+//    private void setDataResponse(CommonResponse response) {
+//
+//        response.setSuccess(true);
+//        response.setCode(CommonResult.NULL.getCode());
+//        response.setMessage(CommonResult.NULL.getMessage());
+//    }
+
+    //api 실패시 실패 데이터
     private void setFailResponse(CommonResponse response) {
 
-        response.success = false;
-        response.code = 400;
-        response.message = "FAIL";
+        response.setSuccess(false);
+        response.setCode(CommonResult.FAIL.getCode());
+        response.setMessage(CommonResult.FAIL.getMessage());
     }
+
+
 }

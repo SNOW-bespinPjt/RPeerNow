@@ -1,9 +1,11 @@
 package com.example.peernow360.response;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
-@Data
+@Getter
+@Setter
 public class ListResponse<T> extends CommonResponse {
 
     private List<T> datalist;

@@ -8,8 +8,11 @@ import java.util.List;
 
 @Mapper
 public interface IProjectMapper {
-    List<ProjectDto> createProject(ProjectDto projectDto);
 
+//    void createProject(ProjectDto projectDto);
 
     ProjectDto projectDetail(int no);
+
+
+    int createProject(ProjectDto projectDto);
 }
