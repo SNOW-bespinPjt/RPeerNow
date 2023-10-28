@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.btc.jwtlogin.mapper.IUserMemberMapper">
+
+    <select id="duplicateById"
+            parameterType="String"
+            resultType="Boolean">
+
+        SELECT
+            COUNT(*)
+        FROM
+            USER
+        WHERE
+            id = #{id}
+
+    </select>
+    
+    <select id="selectUserForLogin" parameterType="com.btc.jwtlogin.dto.UserMemberDto" resultType="com.btc.jwtlogin.dto.UserMemberDto">
+
+        select
+            *
+        from
+            USER
+        where
+            id=#{id}
+
+    </select>
+
+
+    <insert id="insertUserMember"
+            parameterType="com.btc.jwtlogin.dto.UserMemberDto">
+
+        INSERT INTO USER(id,
+                         pw,
+                         name,
+                         mail,
+                         phone,
+                         team,
+                         image,
+                         grade,
+                         reg_date,
+                         mod_date)
+        VALUES (#{id},
+                #{pw},
+                #{name},
+                #{mail},
+                #{phone},
+                #{team},
+                #{image},
+                #{grade},
+                NOW(), NOW())
+
+    </insert>
+
+    <update id="updateUserPW"
+            parameterType="com.btc.jwtlogin.dto.UserMemberDto">
+
+        UPDATE
+            USER
+        SET
+            pw = #{pw}
+        WHERE
+            id = #{id}
+
+    </update>
+
+    <insert id="insertRefreshToken" parameterType="map">
+
+        insert into
+            TOKENS(user_id, refreshToken)
+        values
+            (#{user_id}, #{refreshToken})
+
+    </insert>
+
+    <select id="findByToken" parameterType="String" resultType="String">
+
+        select
+            refreshToken
+        from
+            TOKENS
+        where user_id = #{user_id}
+
+    </select>
+
+    <update id="modifyRefreshToken" parameterType="map">
+
+        update
+            TOKENS
+        set
+            refreshToken = #{refreshToken}
+        where
+            user_id = #{user_id}
+
+    </update>
+
+    <select id="compareRefreshToken" parameterType="String" resultType="boolean">
+
+        select
+            count(*)
+        from
+            TOKENS
+        where
+            refreshToken = #{refreshToken}
+
+    </select>
+
+    <insert id="insertBlacklist" parameterType="String">
+
+        insert into
+            BLACKLIST_TOKENS(user_id, blacklist)
+        select t.user_id, t.refreshToken from tokens t where refreshToken = #{refreshToken}
+
+    </insert>
+
+    <delete id="removeRefreshToken" parameterType="String">
+
+        DELETE FROM
+                   TOKENS
+        WHERE refreshToken = #{refreshToken}
+
+    </delete>
+
+    <delete id="removeAccountInfo" parameterType="String">
+
+        DELETE FROM
+                USER
+        WHERE
+            id = #{id}
+
+    </delete>
+
+    <update id="modifyAccountInfo" parameterType="com.btc.jwtlogin.dto.UserMemberDto">
+
+        update
+            USER
+        set
+            name = #{name} ,
+            mail = #{mail} ,
+            phone = #{phone} ,
+            team = #{team} ,
+            image = #{image},
+            mod_date = NOW()
+
+        where
+            id = #{id}
+
+    </update>
+
+    <select id="selectBlackListToken" parameterType="String" resultType="boolean">
+
+        select count(*)
+        from
+            BLACKLIST_TOKENS
+        where
+            blacklist = #{refreshToken}
+
+    </select>
+
+
+</mapper>
