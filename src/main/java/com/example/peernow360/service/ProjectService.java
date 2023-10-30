@@ -25,20 +25,46 @@ public class ProjectService implements IProjectService {
 //        return iProjectMapper.createProject(projectDto);
 //    }
 
-    public int createProject(ProjectDto projectDto) {
+//    public int createProject(ProjectDto project, TeamDto team) {
+//
+//        int result = iProjectMapper.createProject(project);
+//
+//        iProjectMapper.createTeam(team);
+//
+//        if (result > 0) {
+//            log.info("CREATE PROJECT SUCCESS");
+//        } else {
+//            log.info("CREATE PROJECT FAIL");
+//        }
+//
+//        return result;
+//    }
 
-        int result = iProjectMapper.createProject(projectDto);
-        Map<String, Object> map = new HashMap<>();
-        map.put("no", projectDto.getNo());
+    public int createProject(Map<String, Object> map, ProjectDto project, List<TeamDto> teams) {
+        log.info("createProject()");
 
-        iProjectMapper.createTeam(map);
+        project.setTitle((String) map.get("title"));
+        project.setDetail((String) map.get("detail"));
+        project.setStart_date((String) map.get("start_date"));
+        project.setEnd_date((String) map.get("end_date"));
 
-        if (result > 0) {
-            log.info("CREATE PROJECT SUCCESS");
-        } else {
-            log.info("CREATE PROJECT FAIL");
+        Map<String, String> peerMap = (Map<String, String>) map.get("peer_id");
+        for (Map.Entry<String, String> entry : peerMap.entrySet()) {
+            TeamDto team = new TeamDto();
+            team.setPeer_id(entry.getKey());
+            team.setRole(entry.getValue());
+            teams.add(team);
         }
 
+
+
+        int result = iProjectMapper.createProject(project);
+        if (result > 0) {
+            for (TeamDto team : teams) {
+                team.setNo(project.getNo()); // 사용할 프로젝트 번호 설정
+                iProjectMapper.createTeam(team);
+            }
+        }
         return result;
     }
 
@@ -47,6 +73,8 @@ public class ProjectService implements IProjectService {
 
         return iProjectMapper.projectDetail(no);
     }
+
+
 
 
 //    public List<ProjectDto> createProject(ProjectDto projectDto) {

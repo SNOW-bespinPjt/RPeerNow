@@ -18,6 +18,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Security;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,15 +35,18 @@ public class ProjectController {
 
     @PostMapping("")
     @Operation(summary = "프로젝트 생성", description = "프로젝트 생성", tags = {"create"})
-    public String createProject(ProjectDto projectDto) {
+    public String createProject(@RequestBody Map<String, Object> map) {
         log.info("createProject()");
 
         User userInfo = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String user_id = userInfo.getUsername();
-        projectDto.setUser_id(user_id);
 
-        int result = projectService.createProject(projectDto);
+        ProjectDto project = new ProjectDto();
+        project.setUser_id(user_id);
 
+        List<TeamDto> teams = new ArrayList<>();
+
+        int result = projectService.createProject(map, project, teams);
 
         String message;
         if (result > 0) {
@@ -51,10 +56,7 @@ public class ProjectController {
         }
 
         return message;
-
-//        return responseService.getSingleResponse(projectService.createProject(projectDto));
-//        return projectService.createProject(projectDto);
-    }
+        }
 
     @GetMapping("")
     @Operation(summary = "프로젝트 내용", description = "프로젝트 내용", tags = {"detail"})
@@ -63,4 +65,13 @@ public class ProjectController {
 
         return responseService.getSingleResponse(projectService.projectDetail(no));
     }
+
+    @PutMapping("/change")
+    @Operation(summary = "프로젝트 수정", description = "프로젝트 수정", tags = {"modify"})
+    public String modifyProject(@RequestParam("projectNumber") int no) {
+        log.info("modifyProject()");
+
+        return null;
+    }
+
 }

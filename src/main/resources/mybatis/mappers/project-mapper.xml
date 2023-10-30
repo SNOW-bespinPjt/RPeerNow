@@ -3,15 +3,28 @@
 
 <mapper namespace="com.example.peernow360.mappers.IProjectMapper">
 
+<!--    <insert id="createProject" parameterType="com.example.peernow360.dto.ProjectDto" useGeneratedKeys="true" keyProperty="no">-->
+<!--        insert into PROJECT(user_id, title, detail, start_date, end_date, reg_date, mod_date)-->
+<!--        values(#{user_id}, #{title}, #{detail}, #{start_date}, #{end_date}, now(), now())-->
+<!--    </insert>-->
+
+<!--    <insert id="createTeam" parameterType="com.example.peernow360.dto.TeamDto">-->
+
+<!--        insert into TEAM(no, peer_id, role)-->
+<!--        values(#{no}, #{peer_id}, #{role})-->
+
+<!--    </insert>-->
+
     <insert id="createProject" parameterType="com.example.peernow360.dto.ProjectDto" useGeneratedKeys="true" keyProperty="no">
         insert into PROJECT(user_id, title, detail, start_date, end_date, reg_date, mod_date)
         values(#{user_id}, #{title}, #{detail}, #{start_date}, #{end_date}, now(), now())
     </insert>
 
-    <insert id="createTeam" parameterType="Map">
-        insert into TEAM(user_id, project_no, role)
-        values (#{peer_id}, #{no}, #{role})
+    <insert id="createTeam" parameterType="com.example.peernow360.dto.TeamDto">
+        insert into TEAM(peer_id, role, no)
+        values(#{peer_id}, #{role}, #{no})
     </insert>
+
 
     <select id="projectDetail" parameterType="Integer" resultType="com.example.peernow360.dto.ProjectDto">
         select *
