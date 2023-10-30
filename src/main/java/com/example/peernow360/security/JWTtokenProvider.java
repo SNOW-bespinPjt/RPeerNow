@@ -108,33 +108,6 @@ public class JWTtokenProvider {
 
     }
 
-    //토큰의 유효성 + 만료일자 확인
-    public boolean checkToken(String token){
-        log.info("[JWTtokenProvider] checkToken()");
-
-        try {
-            Jws<Claims> claims=Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-            log.info("what is claim: " + claims.getBody());
-            log.info("claims: " + claims.getBody().getExpiration().before(new Date()));
-
-            // 오늘 날짜보다 이전일 경우 true지만 이전이면 만료된 것이기 때문에 false로 줌
-            // 오늘 날짜보다 이후일 경우 false이지만 만료가 된 것이 아니기 때문에 true
-            return !claims.getBody().getExpiration().before(new Date());
-
-        } catch (ExpiredJwtException ex) {
-            log.error("JWT 토큰이 만료되었습니다.");
-
-            return false;
-
-        } catch (Exception e) {
-            log.info("JWT 유효성 검증에 문제가 발생하였습니다.");
-
-            return false;
-
-        }
-
-    }
-
     //토큰에서 회원 정보 추출
     public String checkUser(String token){
         log.info("[JWTtokenProvider] checkUser()");
@@ -165,11 +138,9 @@ public class JWTtokenProvider {
         log.info("[JWTtokenProvider] insertRefreshToken()");
 
         log.info("insertRefreshToken id : " + principal);
-//        log.info("saveOrUpdateRefreshToken id : " + principal.getUsername());
         log.info("insertRefreshToken token : " + refreshToken);
 
         Map<String, Object> msgData = new HashMap<>();
-//        msgData.put("id",user.getUsername());
         msgData.put("user_id",principal);
         msgData.put("refreshToken",refreshToken);
 
@@ -187,7 +158,6 @@ public class JWTtokenProvider {
         log.info("insertRefreshToken token : " + refreshToken);
 
         Map<String, Object> msgData = new HashMap<>();
-//        msgData.put("id",user.getUsername());
         msgData.put("user_id",name);
         msgData.put("refreshToken",refreshToken);
 
@@ -203,17 +173,14 @@ public class JWTtokenProvider {
         try {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             return true;
+
         } catch (MalformedJwtException e) {
-            log.info("Invalid JWT Token", e);
 
         } catch (ExpiredJwtException e) {
-            log.info("Expired JWT Token", e);
 
         } catch (UnsupportedJwtException e) {
-            log.info("Unsupported JWT Token", e);
 
-        } catch (IllegalArgumentException e) {
-            log.info("JWT claims string is empty.", e);
+        } catch (SignatureException e) {
 
         }
         return false;
@@ -222,23 +189,46 @@ public class JWTtokenProvider {
     /*
      * 토큰 예외처리를 반환하는 메서드
      */
-    public ResponseEntity<String> validateTokenAndReturnMessage(String token) {
+    public ResponseEntity<Map<String,Object>> validateTokenAndReturnMessage(String token) {
+        Map<String, Object> data = new HashMap<>();
 
         try {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-            return ResponseEntity.ok("Token is valid");
-        } catch (MalformedJwtException e) {
+            log.info("Token is valid");
+
+            data.put("code", 200);
+            data.put("message", "Token is valid");
+            return ResponseEntity.status(HttpStatus.OK).body(data);
+
+        } catch (MalformedJwtException e) { //잘못된 jwt 구조
             log.info("Invalid JWT Token", e);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid JWT Token: " + e.getMessage());
-        } catch (ExpiredJwtException e) {
+
+            data.put("code", 101);
+            data.put("message", "Invalid JWT Token");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(data);
+
+
+        } catch (ExpiredJwtException e) { //JWT의 유효기간이 초과
             log.info("Expired JWT Token", e);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Expired JWT Token: " + e.getMessage());
-        } catch (UnsupportedJwtException e) {
+
+            data.put("code", 102);
+            data.put("message", "Expired JWT Token");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(data);
+
+        } catch (UnsupportedJwtException e) { // jwt가 예상하는 형식과 다른 형식이거나 구성
             log.info("Unsupported JWT Token", e);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unsupported JWT Token: " + e.getMessage());
-        } catch (IllegalArgumentException e) {
-            log.info("JWT claims string is empty.", e);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("JWT claims string is empty: " + e.getMessage());
+
+            data.put("code", 103);
+            data.put("message", "Unsupported JWT Token");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(data);
+
+        } catch (SignatureException e) { //JWT의 서명실패(변조 데이터)
+            log.info("Invalid Signature JWT Token.", e);
+
+            data.put("code", 104);
+            data.put("message", "Invalid Signature JWT Token");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(data);
+
         }
 
     }
@@ -251,11 +241,38 @@ public class JWTtokenProvider {
 
     }
 
-
     public boolean selectForBlacklist(String refreshToken) {
         log.info("[JWTtokenProvider] selectForBlacklist()");
 
         return !(iUserMemberMapper.selectBlackListToken(refreshToken));
 
     }
+
+    //토큰의 유효성 + 만료일자 확인
+    public boolean checkToken(String token){
+        log.info("[JWTtokenProvider] checkToken()");
+
+        try {
+            Jws<Claims> claims=Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            log.info("what is claim: " + claims.getBody());
+            log.info("claims: " + claims.getBody().getExpiration().before(new Date()));
+
+            // 오늘 날짜보다 이전일 경우 true지만 이전이면 만료된 것이기 때문에 false로 줌
+            // 오늘 날짜보다 이후일 경우 false이지만 만료가 된 것이 아니기 때문에 true
+            return !claims.getBody().getExpiration().before(new Date());
+
+        } catch (ExpiredJwtException ex) {
+            log.error("JWT 토큰이 만료되었습니다.");
+
+            return false;
+
+        } catch (Exception e) {
+            log.info("JWT 유효성 검증에 문제가 발생하였습니다.");
+
+            return false;
+
+        }
+
+    }
+
 }

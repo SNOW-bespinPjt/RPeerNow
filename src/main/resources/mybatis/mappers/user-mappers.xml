@@ -2,7 +2,7 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.btc.jwtlogin.mapper.IUserMemberMapper">
+<mapper namespace="com.example.peernow360.mappers.IUserMemberMapper">
 
     <select id="duplicateById"
             parameterType="String"
@@ -17,7 +17,7 @@
 
     </select>
     
-    <select id="selectUserForLogin" parameterType="com.btc.jwtlogin.dto.UserMemberDto" resultType="com.btc.jwtlogin.dto.UserMemberDto">
+    <select id="selectUserForLogin" parameterType="com.example.peernow360.dto.UserMemberDto" resultType="com.example.peernow360.dto.UserMemberDto">
 
         select
             *
@@ -30,7 +30,7 @@
 
 
     <insert id="insertUserMember"
-            parameterType="com.btc.jwtlogin.dto.UserMemberDto">
+            parameterType="com.example.peernow360.dto.UserMemberDto">
 
         INSERT INTO USER(id,
                          pw,
@@ -55,7 +55,7 @@
     </insert>
 
     <update id="updateUserPW"
-            parameterType="com.btc.jwtlogin.dto.UserMemberDto">
+            parameterType="com.example.peernow360.dto.UserMemberDto">
 
         UPDATE
             USER
@@ -132,11 +132,11 @@
 
     </delete>
 
-    <update id="modifyAccountInfo" parameterType="com.btc.jwtlogin.dto.UserMemberDto">
+    <update id="modifyAccountInfo" parameterType="com.example.peernow360.dto.UserMemberDto">
 
-        update
+        UPDATE
             USER
-        set
+        SET
             name = #{name} ,
             mail = #{mail} ,
             phone = #{phone} ,
@@ -144,7 +144,7 @@
             image = #{image},
             mod_date = NOW()
 
-        where
+        WHERE
             id = #{id}
 
     </update>
