@@ -1,8 +1,11 @@
 package com.example.peernow360.dto;
 
+import lombok.Data;
+
+@Data
 public class TeamDto {
 
-    private String usr_id;
-    private  int project_no;
+    private String peer_id;
+    private  int no;
     private String role;
 }
