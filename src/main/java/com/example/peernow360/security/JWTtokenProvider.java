@@ -30,7 +30,7 @@ public class JWTtokenProvider {
 
     @Value("${jwt.secretKey}")
     private String secretKey;
-    private long accesstokenValidMillisecond=60* 60 * 1000L; // 30분
+    private long accesstokenValidMillisecond=60 * 60 * 24 * 7 * 1000L;; // 30분
     private long refreshtokenValidMillisecond=60 * 60 * 24 * 7 * 1000L; // 1주잂
 //    private long refreshtokenValidMillisecond=1000L; // 1주잂
     private final UserDetailsService userDetailsService;
