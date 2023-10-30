@@ -91,10 +91,6 @@ public class UserMemberService implements IUserMemberService {
 
         log.info("authenticationToken in loginMember : " + authenticationToken);
 
-        // authenticate 메소드가 실행이 될 때 CustomUserDetailsService class의 loadUserByUsername 메소드가 실행
-//        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-//        log.info("loginMember() authentication : " + authentication);
-
 
         // 해당 인증정보를 SecurityContextHolder에 저장하고 전역적으로 사용
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
@@ -102,7 +98,6 @@ public class UserMemberService implements IUserMemberService {
         // authentication 객체를 createToken 메소드를 통해서 JWT Token을 생성
         String accessToken = jwTtokenProvider.createAccessToken(authenticationToken, "member");
         String refreshToken = jwTtokenProvider.createRefreshToken(authenticationToken, "member");
-//        User user = (User) authenticationToken.getPrincipal(); //user 정보
         String user = (String) authenticationToken.getPrincipal(); //user 정보
 
         log.info("AccessToken : " + accessToken);
@@ -110,6 +105,14 @@ public class UserMemberService implements IUserMemberService {
         log.info("user : " + user);
         log.info("=====================================");
         log.info("");
+
+        // 로그인 시 DB에 남아있는 컬럼 삭제
+        int isDel = iUserMemberMapper.checkRefreshAndDel(userMemberDto.getId());
+
+        if(isDel > 0) {
+            log.info("남아있는 refresh Token을 제거하였습니다.");
+
+        }
 
         // 초기 생성한 refresh token 저장
         int result = jwTtokenProvider.insertRefreshToken(authenticationToken.getPrincipal(), refreshToken);
@@ -189,7 +192,6 @@ public class UserMemberService implements IUserMemberService {
      * Transactional
      * 트랜잭션이 시작되고, 메서드가 성공적으로 실행되면 트랜잭션이 커밋됩니다. 만약 예외가 발생하면 트랜잭션이 롤백됩니다.
      */
-
     @Transactional
     @Override
     public String logOutInfo(String refreshToken) {
