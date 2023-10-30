@@ -25,19 +25,9 @@ public interface IUserMemberMapper {
     public UserMemberDto selectUserForLogin(UserMemberDto userMemberDto);
 
     /*
-     * USER MODIFY CONFIRM
+     * Login 시 Refresh Token 있으면 삭제
      */
-    public int updateAccount(UserMemberDto userMemberDto);
-
-    /*
-     * GET USER Latest INFO
-     */
-    public UserMemberDto getLatestAccountInfo(UserMemberDto userMemberDto);
-
-    /*
-     * USER DELETE CONFIRM
-     */
-    public int deleteUser(int no);
+    public int checkRefreshAndDel(String id);
 
     /*
      * refreshToken DB에 삽입
@@ -79,6 +69,11 @@ public interface IUserMemberMapper {
      */
     public int modifyAccountInfo(UserMemberDto userMemberDto);
 
+    /*
+     * BlackList가 존재 여부 확인
+     */
     public boolean selectBlackListToken(String refreshToken);
+
+
 
 }
