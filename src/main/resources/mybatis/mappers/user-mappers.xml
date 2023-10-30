@@ -2,7 +2,7 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.example.peernow360.mappers.IUserMemberMapper">
+<mapper namespace="com.btc.jwtlogin.mapper.IUserMemberMapper">
 
     <select id="duplicateById"
             parameterType="String"
@@ -16,7 +16,7 @@
             id = #{id}
 
     </select>
-
+    
     <select id="selectUserForLogin" parameterType="com.example.peernow360.dto.UserMemberDto" resultType="com.example.peernow360.dto.UserMemberDto">
 
         select
@@ -118,7 +118,7 @@
     <delete id="removeRefreshToken" parameterType="String">
 
         DELETE FROM
-            TOKENS
+                   TOKENS
         WHERE refreshToken = #{refreshToken}
 
     </delete>
@@ -126,7 +126,7 @@
     <delete id="removeAccountInfo" parameterType="String">
 
         DELETE FROM
-            USER
+                USER
         WHERE
             id = #{id}
 
@@ -134,9 +134,9 @@
 
     <update id="modifyAccountInfo" parameterType="com.example.peernow360.dto.UserMemberDto">
 
-        update
+        UPDATE
             USER
-        set
+        SET
             name = #{name} ,
             mail = #{mail} ,
             phone = #{phone} ,
@@ -144,7 +144,7 @@
             image = #{image},
             mod_date = NOW()
 
-        where
+        WHERE
             id = #{id}
 
     </update>

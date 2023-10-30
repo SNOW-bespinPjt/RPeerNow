@@ -1,5 +1,6 @@
 package com.example.peernow360.security;
 
+import com.example.peernow360.dto.ResponseDto;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -7,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -15,6 +17,7 @@ import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Map;
 
 @Component
 @Log4j2
@@ -75,81 +78,12 @@ public class JWTtokenFilter extends OncePerRequestFilter {
 
         }
 
-        jwTtokenProvider.validateTokenAndReturnMessage(accessToken);
+        ResponseEntity<Map<String,Object>> validationResult = jwTtokenProvider.validateTokenAndReturnMessage(accessToken);
 
-//        if (StringUtils.hasText(accessToken) && jwTtokenProvider.checkToken(accessToken)) {
-//            log.info("access token 검증 ------- 토큰 정보 보유 ------ 정보 유효기간 확인 -----");
-//
-//            Authentication authentication = jwTtokenProvider.selectAuthority(accessToken);
-//            log.info("authentication: " + authentication);
-//
-//            //인증 정보를 Thread Local에 저장, 권한 부여
-//            SecurityContextHolder.getContext().setAuthentication(authentication);
-//
-//        }
-//        } else if(StringUtils.hasText(accessToken) && !jwTtokenProvider.checkToken(accessToken)) {
-//            // 엑세스 토큰 유효기간이 완료된 경우
-//            log.info("ACCESS TOKEN EXPIRED");
-//            log.info("getreFresh header: " + request.getHeader("authorization"));
-//
-//            String refreshToken = request.getHeader("authorization");
-//            if(StringUtils.hasText(refreshToken)) { // Auth에는 userId가 담겨있다.
-//                refreshToken = resolveToken(request, HttpHeaderValue);
-//
-//                Authentication authentication = jwTtokenProvider.selectAuthority(accessToken);
-//                log.info("getreFresh userId: " + authentication.getPrincipal());
-//                refreshToken = jwTtokenProvider.getRefreshToken((String) authentication.getPrincipal());
-//
-//            }
-//
-//            // refresh token 검증
-//            if (StringUtils.hasText(refreshToken)) {
-//                // access token 및 refreshToken 재발급
-//                Authentication authentication = jwTtokenProvider.selectAuthority(refreshToken);
-////                User user = (User) authentication.getPrincipal(); //user 정보
-//                String user = (String) authentication.getPrincipal(); //user 정보
-//                log.info("user refresh: " + user);
-//                log.info("[JWTtokenFilter] access token & refreshToken give~~()");
-//                String newAccessToken = jwTtokenProvider.createAccessToken(authentication, "member");
-//                String newRefreshToken = jwTtokenProvider.createRefreshToken(authentication, "member");
-//
-//                SecurityContextHolder.getContext().setAuthentication(authentication);
-//                response.setHeader(HttpHeaders.AUTHORIZATION, newAccessToken);
-//                log.info("Reissue access token");
-//
-//            }
-//
-//        }
+        request.setAttribute("tokenValidationResult", validationResult);
 
         chain.doFilter(request, response);
 
     }
-
-    /*
-     * 요청 헤더로부터 토큰이 null, 공백, 0이 아니면서 Bearer로 시작하는 토큰값을 반환하는 메서드.
-     */
-//    private String resolveToken(HttpServletRequest request, String header) {
-//        log.info("[JWTtokenFilter] resolveToken()");
-//
-//        String bearerToken = request.getHeader(header);
-//
-//        // Header의 Authorization 값이 비어있으면 => Jwt Token을 전송하지 않음 => 로그인 하지 않음
-//        if(!StringUtils.hasText(bearerToken)) {
-//            log.info("토큰이 존재하지 않습니다.");
-//            return null;
-//
-//        } // Header의 Authorization 값이 'Bearer '로 시작하지 않으면 => 잘못된 토큰
-//        else if(!bearerToken.startsWith("Bearer ")) {
-//            log.info("인증이 잘못된 토큰입니다.");
-//            return null;
-//
-//        }
-//
-//        return bearerToken.substring(7);
-//
-//    }
-
-
-
 
 }

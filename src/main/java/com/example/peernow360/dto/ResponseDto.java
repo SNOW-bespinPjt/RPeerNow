@@ -1,6 +1,5 @@
 package com.example.peernow360.dto;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,9 +7,9 @@ import lombok.Data;
 @Builder
 @Data
 @AllArgsConstructor
-public class TokenInfo {
+public class ResponseDto {
 
-    private  String grantType;
-    private  String accessToken;
+    private int status;
+    private String message;
 
 }
