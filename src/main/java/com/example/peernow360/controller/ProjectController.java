@@ -1,6 +1,7 @@
 package com.example.peernow360.controller;
 
 import com.example.peernow360.dto.ProjectDto;
+import com.example.peernow360.dto.TeamDto;
 import com.example.peernow360.response.CommonResponse;
 import com.example.peernow360.response.ListResponse;
 import com.example.peernow360.response.ResponseService;
@@ -11,15 +12,19 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Security;
+import java.util.List;
 import java.util.Map;
 
 @RestController
 @Log4j2
 @RequiredArgsConstructor
-@RequestMapping("/project")
+@RequestMapping("/api/project")
 @Tag(name = "project", description = "프로젝트")
 public class ProjectController {
 
@@ -31,7 +36,12 @@ public class ProjectController {
     public String createProject(ProjectDto projectDto) {
         log.info("createProject()");
 
+        User userInfo = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String user_id = userInfo.getUsername();
+        projectDto.setUser_id(user_id);
+
         int result = projectService.createProject(projectDto);
+
 
         String message;
         if (result > 0) {

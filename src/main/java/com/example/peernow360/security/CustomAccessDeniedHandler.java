@@ -26,7 +26,6 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         log.info("==============================================");
 
         response.sendRedirect("/");
-
     }
 
 }
