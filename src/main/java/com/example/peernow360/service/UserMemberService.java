@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -126,7 +127,6 @@ public class UserMemberService implements IUserMemberService {
         TokenInfo tokenInfo = TokenInfo.builder()
                 .accessToken(accessToken)
                 .grantType("Bearer ")
-                .userId(String.valueOf(user))
                 .build();
 
         msgData.put("tokenInfo", tokenInfo);
@@ -172,7 +172,6 @@ public class UserMemberService implements IUserMemberService {
             TokenInfo tokenInfo = TokenInfo.builder()
                     .accessToken(accessToken)
                     .grantType("Bearer ")
-                    .userId(String.valueOf(user_id))
                     .build();
 
             msgData.put("tokenInfo", tokenInfo);
@@ -191,6 +190,7 @@ public class UserMemberService implements IUserMemberService {
      * 트랜잭션이 시작되고, 메서드가 성공적으로 실행되면 트랜잭션이 커밋됩니다. 만약 예외가 발생하면 트랜잭션이 롤백됩니다.
      */
 
+    @Transactional
     @Override
     public String logOutInfo(String refreshToken) {
         log.info("[UserMemberService] logOut()");
@@ -275,24 +275,5 @@ public class UserMemberService implements IUserMemberService {
         }
 
     }
-
-
-    //        String jwt = String.valueOf(jwTtokenProvider.publishToken(userMemberDto.getId(),"member"));
-//
-//        HttpHeaders httpHeaders = new HttpHeaders();
-//        // response header에 jwt token에 넣어줌
-//        httpHeaders.add(HttpHeaderValue, "Bearer " + jwt);
-//
-//        log.info("httpHeaders : " + httpHeaders);
-//
-//        // tokenDto를 이용해 response body에도 넣어서 리턴
-//        return new ResponseEntity<>(new TokenInfo(jwTtokenProvider.publishToken(userMemberDto.getId(),"member")), httpHeaders, HttpStatus.OK).getBody();
-
-//        return jwTtokenProvider.publishToken(userMemberDto.getId(),"member");
-
-//    }
-
-
-
 
 }
