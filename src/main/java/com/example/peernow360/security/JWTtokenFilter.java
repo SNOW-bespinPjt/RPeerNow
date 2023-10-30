@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -19,7 +20,6 @@ import java.io.IOException;
 @Log4j2
 @RequiredArgsConstructor
 public class JWTtokenFilter extends OncePerRequestFilter {
-
     private final JWTtokenProvider jwTtokenProvider;
 
     @Value("${jwt.HttpHeaderValue}")

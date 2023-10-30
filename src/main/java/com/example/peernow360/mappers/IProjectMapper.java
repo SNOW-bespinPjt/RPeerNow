@@ -5,6 +5,7 @@ import com.example.peernow360.dto.ProjectDto;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface IProjectMapper {
@@ -13,6 +14,7 @@ public interface IProjectMapper {
 
     ProjectDto projectDetail(int no);
 
-
     int createProject(ProjectDto projectDto);
+
+    void createTeam(Map<String, Object> map);
 }
