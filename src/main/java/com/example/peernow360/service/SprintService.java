@@ -48,31 +48,20 @@ public class SprintService implements ISprintService {
     }
 
     @Override
-    public Map<String, Object> sprintDetailInfo(int project_no) {
+    public List<SprintDto> sprintDetailInfo(int project_no) {
         log.info("[SprintService] sprintDetailInfo()");
-
-        Map<String, Object> data = new HashMap<>();
 
         List<SprintDto> sprintDtos  = iSprintMapper.sprintDetailInfoByNo(project_no);
 
         if(sprintDtos.get(0).getNo() > 0) {
             log.info("스프린트 정보를 불러오는데 성공하였습니다.");
 
-            data.put("code",1);
-            data.put("success",true);
-            data.put("message","스프린트 정보를 불러오는데 성공하였습니다.");
-            data.put("sprintDtos",sprintDtos);
-
-            return data;
+            return sprintDtos;
 
         } else {
             log.info("스프린트 정보를 불러오는데 실패하였습니다.");
 
-            data.put("code",0);
-            data.put("success",false);
-            data.put("message","스프린트 정보를 불러오는데 실패하였습니다.");
-
-            return data;
+            return null;
 
         }
 

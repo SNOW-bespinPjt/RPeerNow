@@ -2,6 +2,7 @@ package com.example.peernow360.service.impl;
 
 import com.example.peernow360.dto.SprintDto;
 
+import java.util.List;
 import java.util.Map;
 
 public interface ISprintService {
@@ -14,7 +15,7 @@ public interface ISprintService {
     /*
      * 스프린트 번호를 이용한 (전체)스프린트 상세 정보 불러오기
      */
-    public Map<String, Object> sprintDetailInfo(int project_no);
+    public List<SprintDto> sprintDetailInfo(int project_no);
 
     /*
      * 스프린트 정보 수정

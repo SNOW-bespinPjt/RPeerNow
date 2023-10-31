@@ -1,6 +1,8 @@
 package com.example.peernow360.controller;
 
 import com.example.peernow360.dto.SprintDto;
+import com.example.peernow360.response.ListResponse;
+import com.example.peernow360.response.ResponseService;
 import com.example.peernow360.service.SprintService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -15,6 +17,7 @@ import java.util.Map;
 public class SprintController {
 
     private final SprintService sprintService;
+    private final ResponseService responseService;
 
     /*
      * 스프린트 생성
@@ -31,10 +34,10 @@ public class SprintController {
      * 스프린트 상세보기
      */
     @GetMapping("")
-    public Map<String, Object> sprintDetail(@RequestParam (value = "no") int project_no) {
+    public ListResponse<SprintDto> sprintDetail(@RequestParam (value = "no") int project_no) {
         log.info("[SprintController] SprintDetail()");
 
-        return sprintService.sprintDetailInfo(project_no);
+        return responseService.getListResponse(sprintService.sprintDetailInfo(project_no));
 
     }
 
