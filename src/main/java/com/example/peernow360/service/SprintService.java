@@ -18,7 +18,7 @@ public class SprintService implements ISprintService {
 
     private final ISprintMapper iSprintMapper;
     @Override
-    public Map<String, Object> createNewSprint(SprintDto sprintDto, int project_no) {
+    public String createNewSprint(SprintDto sprintDto, int project_no) {
         log.info("[SprintService] createNewSprint()");
 
         Map<String, Object> data = new HashMap<>();
@@ -29,19 +29,13 @@ public class SprintService implements ISprintService {
 
         if(result > 0) {
             log.info("스프린트 생성에 성공하였습니다.");
-            data.put("code",result);
-            data.put("success",true);
-            data.put("message","스프린트 생성에 성공하였습니다.");
 
-            return data;
+            return "success";
 
         } else {
             log.info("스프린트 생성에 성공하였습니다.");
-            data.put("code",result);
-            data.put("success",false);
-            data.put("message","스프린트 생성에 실패하였습니다.");
 
-            return data;
+            return "fail";
 
         }
 
@@ -68,7 +62,7 @@ public class SprintService implements ISprintService {
     }
 
     @Override
-    public Map<String, Object> updateSprint(SprintDto sprintDto, int no) {
+    public String updateSprint(SprintDto sprintDto, int no) {
         log.info("[SprintService] sprintDetailInfo()");
 
         Map<String, Object> data = new HashMap<>();
@@ -80,27 +74,20 @@ public class SprintService implements ISprintService {
         if(result > 0) {
             log.info("스프린트 정보를 수정하는데 성공하였습니다.");
 
-            data.put("code",result);
-            data.put("success",true);
-            data.put("message","스프린트 정보를 수정하는데 성공하였습니다.");
-
-            return data;
+            return "success";
 
         } else {
             log.info("스프린트 정보를 수정하는데 실패하였습니다.");
 
-            data.put("code",result);
-            data.put("success",false);
-            data.put("message","스프린트 정보를 수정하는데 실패하였습니다.");
+            return "fail";
 
-            return data;
         }
 
 
     }
 
     @Override
-    public Map<String, Object> removeSprint(int no) {
+    public String removeSprint(int no) {
         log.info("[SprintService] removeSprint()");
 
         Map<String, Object> data = new HashMap<>();
@@ -110,20 +97,13 @@ public class SprintService implements ISprintService {
         if(result > 0) {
             log.info("스프린트 정보를 삭제하는데 성공하였습니다.");
 
-            data.put("code",result);
-            data.put("success",true);
-            data.put("message","스프린트 정보를 삭제하는데 성공하였습니다.");
-
-            return data;
+            return "success";
 
         } else {
             log.info("스프린트 정보를 삭제하는데 실패하였습니다.");
 
-            data.put("code",result);
-            data.put("success",true);
-            data.put("message","스프린트 정보를 삭제하는데 실패하였습니다.");
+            return "fail";
 
-            return data;
         }
 
     }

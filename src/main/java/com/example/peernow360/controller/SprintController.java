@@ -8,8 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @RestController
 @Log4j2
 @RequiredArgsConstructor
@@ -23,7 +21,7 @@ public class SprintController {
      * 스프린트 생성
      */
     @PostMapping("")
-    public Map<String, Object> createSprint(@RequestParam (value="no") int project_no , @RequestPart SprintDto sprintDto) {
+    public String createSprint(@RequestParam (value="no") int project_no , @RequestPart SprintDto sprintDto) {
         log.info("[SprintController] createSprint()");
 
         return sprintService.createNewSprint(sprintDto, project_no);
@@ -45,7 +43,7 @@ public class SprintController {
      * 스프린트 수정
      */
     @PutMapping("")
-    public Map<String, Object> modifySprint(@RequestParam (value="no") int no , @RequestPart SprintDto sprintDto) {
+    public String modifySprint(@RequestParam (value="no") int no , @RequestPart SprintDto sprintDto) {
         log.info("[SprintController] modifySprint()");
 
         return sprintService.updateSprint(sprintDto, no);
@@ -56,7 +54,7 @@ public class SprintController {
      * 스프린트 삭제
      */
     @DeleteMapping("")
-    public Map<String, Object> deleteSprint(@RequestParam (value="no") int no) {
+    public String deleteSprint(@RequestParam (value="no") int no) {
         log.info("[SprintController] deleteSprint()");
 
         return sprintService.removeSprint(no);
