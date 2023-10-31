@@ -30,7 +30,7 @@ public class UserMemberController {
      */
     @PostMapping("/join")
     public Map<String ,Object> createAccountConfirm(@RequestBody UserMemberDto userMemberDto) {
-        log.info("[HomeController] createAccountConfirm()");
+        log.info("[UserMemberController] createAccountConfirm()");
 
         Map<String, Object> msgData = new HashMap<>();
 

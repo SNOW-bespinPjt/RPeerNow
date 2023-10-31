@@ -2,38 +2,62 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.example.peernow360.mappers.IUserMemberMapper">
+<mapper namespace="com.example.peernow360.mappers.ISprintMapper">
 
-    <select id="duplicateById"
-            parameterType="String"
-            resultType="Boolean">
+    <insert id="createSprintInfo"
+            parameterType="com.example.peernow360.dto.SprintDto">
 
-        SELECT
-            COUNT(*)
-        FROM
-            USER
-        WHERE
-            id = #{id}
+        INSERT INTO
+            SPRINT(project_no,
+                   title,
+                   detail,
+                   start_date,
+                   end_date,
+                   reg_date,
+                   mod_date)
+        VALUES
+            (#{project_no},
+             #{title},
+             #{detail},
+             #{start_date},
+             #{end_date},
+             NOW(),
+             NOW())
 
-    </select>
+    </insert>
     
-    <select id="selectUserForLogin" parameterType="com.example.peernow360.dto.UserMemberDto" resultType="com.example.peernow360.dto.UserMemberDto">
+    <select id="sprintDetailInfoByNo" parameterType="Integer" resultType="com.example.peernow360.dto.SprintDto">
 
         SELECT
             *
         FROM
-            USER
+            SPRINT
         WHERE
-            id=#{id}
+            project_no=#{project_no}
 
     </select>
 
-    <delete id="checkRefreshAndDel" parameterType="String">
+    <update id="updateSprintInfo" parameterType="com.example.peernow360.dto.SprintDto">
+
+        UPDATE
+            SPRINT
+        SET
+            title = #{title},
+            detail = #{detail},
+            start_date = #{start_date},
+            end_date = #{end_date},
+            mod_date = NOW()
+        WHERE
+            no = #{no}
+
+    </update>
+
+    <delete id="removeSprintInfo" parameterType="Integer">
 
         DELETE FROM
-                   tokens
+                   SPRINT
         WHERE
-            user_id = #{id}
+            no = #{no}
 
     </delete>
 
