@@ -12,7 +12,7 @@ env:
   AWS_S3_BUCKET: was-bk
   AWS_CODE_DEPLOY_APPLICATION: was-cd
   AWS_CODE_DEPLOY_GROUP: Peer-WAS
-  RESOURCE_PATH: ./RPeerNow/src/main/resources/application-dev.properties
+  RESOURCE_PATH: ./src/main/resources/application-dev.properties
 
 jobs:
   
