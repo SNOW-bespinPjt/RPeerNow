@@ -19,7 +19,7 @@ import java.util.Map;
 @RestController
 @Log4j2
 @RequiredArgsConstructor
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UserMemberController {
 
     private final UserMemberService userMemberService;
