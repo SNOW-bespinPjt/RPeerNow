@@ -1,0 +1,21 @@
+version: 0.0
+os: linux
+
+files:
+  - source:  /
+    destination: /home/ec2-user/spring
+    overwrite: yes
+
+permissions:
+  - object: /
+    owner: root
+    group: root
+
+hooks:
+  AfterInstall:
+    - location: stop.sh
+      timeout: 60
+     
+  ApplicationStart:
+    - location: start.sh
+      timeout: 60
