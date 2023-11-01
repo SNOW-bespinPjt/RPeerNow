@@ -1,7 +1,6 @@
 package com.example.peernow360.service;
 
 import com.example.peernow360.dto.BacklogDto;
-import com.example.peernow360.dto.FileDto;
 import com.example.peernow360.mappers.IBacklogMapper;
 import com.example.peernow360.service.impl.IBacklogService;
 import lombok.RequiredArgsConstructor;
@@ -30,9 +29,10 @@ public class BacklogService implements IBacklogService {
     private String uploadDir;
 
     @Override
-    public String createNewBacklog(BacklogDto backlogDto, int sprint_no, MultipartFile[] files) {
+    public String createNewBacklog(BacklogDto backlogDto, int sprint_no, String user_id, MultipartFile[] files) {
         log.info("[BacklogService] createNewBacklog()");
 
+        backlogDto.setUser_id(user_id);
         backlogDto.setSprint_no(sprint_no);
         List<String> listFile = new ArrayList<>();
 
@@ -94,36 +94,85 @@ public class BacklogService implements IBacklogService {
     }
 
     @Override
-    public List<String> storeFile(MultipartFile[] files) {
-        log.info("[BacklogService] storeFile()");
-        List<String> listFile = new ArrayList<>();
+    public List<BacklogDto> backlogListInfo(int sprintNo) {
+        log.info("[BacklogService] backlogListInfo()");
 
-        try {
-            for(MultipartFile file : files) {
-                String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        List<BacklogDto> backlogDtos = iBacklogMapper.searchBacklogList(sprintNo);
 
-                Path uploadPath = Paths.get(uploadDir);
-                if (!Files.exists(uploadPath)) {
-                    Files.createDirectories(uploadPath);
+        if(StringUtils.hasText(backlogDtos.get(0).getUser_id())) {
+            log.info("CALL BACKLOG INFO SUCCESS!!");
 
-                }
+            return backlogDtos;
 
-                Path filePath = uploadPath.resolve(fileName);
-                Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
-                listFile.add(fileName);
-
-            }
-
-
-
-            return listFile;
-
-        } catch (IOException e) {
-            // 파일 저장 실패 시 예외 처리
-            e.printStackTrace();
+        } else {
+            log.info("CALL BACKLOG INFO FAIL!!");
 
             return null;
+
+        }
+
+    }
+
+    @Override
+    public BacklogDto backlogDetailInfo(int no) {
+        log.info("[BacklogService] backlogDetailInfo()");
+
+        BacklogDto backlogDto = iBacklogMapper.searchBacklogDetail(no);
+
+        if(StringUtils.hasText(backlogDto.getUser_id())) {
+            log.info("백로그 상세정보를 불러오는데 성공하였습니다.");
+
+            return backlogDto;
+
+        } else {
+            log.info("백로그 상세정보를 불러오는데 실패하였습니다.");
+
+            return backlogDto;
+
+        }
+
+    }
+
+    @Override
+    public String backlogUpdateStatus(int no, String status) {
+        log.info("[BacklogService] backlogUpdateStatus()");
+
+        BacklogDto backlogDto = new BacklogDto();
+        backlogDto.setNo(no);
+        backlogDto.setStatus(status);
+
+        int result = iBacklogMapper.updateBacklogStatus(backlogDto);
+        if(result > 0) {
+            log.info("STATUS 변경에 성공하였습니다.");
+
+            return "SUCCESS";
+
+        } else {
+            log.info("STATUS 변경에 실패하였습니다.");
+
+            return "FAIL";
+
+        }
+
+    }
+
+    @Override
+    public String backlogUpdateInfo(BacklogDto backlogDto, int no) {
+        log.info("[BacklogService] backlogUpdateInfo()");
+
+        backlogDto.setNo(no);
+
+        int result = iBacklogMapper.updateBacklogInfo(backlogDto);
+
+        if(result > 0) {
+            log.info("백로그 수정에 성공하였습니다.");
+
+            return "SUCCESS";
+
+        } else {
+            log.info("백로그 수정에 실패하였습니다.");
+
+            return "FAIL";
 
         }
 

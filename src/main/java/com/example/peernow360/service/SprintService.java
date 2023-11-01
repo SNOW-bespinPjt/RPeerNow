@@ -45,7 +45,7 @@ public class SprintService implements ISprintService {
     public List<SprintDto> sprintDetailInfo(int project_no) {
         log.info("[SprintService] sprintDetailInfo()");
 
-        List<SprintDto> sprintDtos  = iSprintMapper.sprintDetailInfoByNo(project_no);
+        List<SprintDto> sprintDtos  = iSprintMapper.searchSprintDetail(project_no);
 
         if(sprintDtos.get(0).getNo() > 0) {
             log.info("스프린트 정보를 불러오는데 성공하였습니다.");

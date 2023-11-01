@@ -16,7 +16,7 @@ public interface ISprintMapper {
     /*
      * 스프린트 번호를 이용한 (전체)스프린트 상세 정보 불러오기
      */
-    public List<SprintDto> sprintDetailInfoByNo(int project_no);
+    public List<SprintDto> searchSprintDetail(int project_no);
 
     /*
      * 스프린트 정보 수정

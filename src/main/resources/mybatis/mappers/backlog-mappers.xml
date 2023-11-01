@@ -37,20 +37,59 @@
 
     </insert>
 
-    <update id="updateSprintInfo" parameterType="com.example.peernow360.dto.SprintDto">
+    <select id="searchBacklogList" parameterType="Integer"
+            resultType="com.example.peernow360.dto.BacklogDto">
+
+        select
+            *
+        from
+            BACKLOG
+        where
+            sprint_no = #{sprint_no}
+
+
+    </select>
+
+    <select id="searchBacklogDetail" parameterType="Integer"
+            resultType="com.example.peernow360.dto.BacklogDto">
+
+        select
+            *
+        from
+            BACKLOG
+        where
+            no = #{no}
+
+    </select>
+
+    <update id="updateBacklogStatus" parameterType="com.example.peernow360.dto.BacklogDto">
 
         UPDATE
-            SPRINT
+            BACKLOG
         SET
-            title = #{title},
-            detail = #{detail},
-            start_date = #{start_date},
-            end_date = #{end_date},
+            status = #{status},
             mod_date = NOW()
         WHERE
             no = #{no}
 
     </update>
+
+    <update id="updateBacklogInfo" parameterType="com.example.peernow360.dto.BacklogDto">
+
+        UPDATE
+            BACKLOG
+        SET
+            sprint_no = #{sprint_no},
+            title = #{title},
+            detail = #{detail},
+            status = #{status},
+            mod_date = NOW()
+
+        WHERE
+            no = #{no}
+
+    </update>
+
 
     <delete id="removeSprintInfo" parameterType="Integer">
 

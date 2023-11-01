@@ -8,9 +8,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +22,7 @@ import java.util.Map;
 @RestController
 @Log4j2
 @RequiredArgsConstructor
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UserMemberController {
 
     private final UserMemberService userMemberService;
@@ -208,6 +210,10 @@ public class UserMemberController {
     @GetMapping("/gettest")
     public  String TestController(){
         log.info("Test On!");
+
+        User user_info = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String user_id = user_info.getUsername();
+        log.info(user_id);
 
         return "gettest Success!!";
     }

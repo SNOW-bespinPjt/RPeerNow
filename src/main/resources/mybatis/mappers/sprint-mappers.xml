@@ -26,7 +26,7 @@
 
     </insert>
     
-    <select id="sprintDetailInfoByNo" parameterType="Integer" resultType="com.example.peernow360.dto.SprintDto">
+    <select id="searchSprintDetail" parameterType="Integer" resultType="com.example.peernow360.dto.SprintDto">
 
         SELECT
             *
