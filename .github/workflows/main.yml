@@ -13,7 +13,6 @@ env:
   AWS_CODE_DEPLOY_APPLICATION: was-cd
   AWS_CODE_DEPLOY_GROUP: Peer-WAS
   RESOURCE_PATH: ./src/main/resources/application-dev.properties
-
 jobs:
   
   build-with-gradle:
