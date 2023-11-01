@@ -10,6 +10,7 @@ group = 'com.btc'
 version = '0.0.1-SNAPSHOT'
 
 bootJar{
+    classifier = 'boot'
     archivesBaseName = 'PeerNow360'
     archiveFileName = 'PeerNow360-0.0.1-SNAPSHOT.jar'
     archiveVersion = "0.0.1"
