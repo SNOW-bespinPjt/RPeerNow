@@ -30,12 +30,12 @@ public class SprintService implements ISprintService {
         if(result > 0) {
             log.info("스프린트 생성에 성공하였습니다.");
 
-            return "success";
+            return "SUCCESS";
 
         } else {
             log.info("스프린트 생성에 성공하였습니다.");
 
-            return "fail";
+            return "FAIL";
 
         }
 
@@ -74,12 +74,12 @@ public class SprintService implements ISprintService {
         if(result > 0) {
             log.info("스프린트 정보를 수정하는데 성공하였습니다.");
 
-            return "success";
+            return "SUCCESS";
 
         } else {
             log.info("스프린트 정보를 수정하는데 실패하였습니다.");
 
-            return "fail";
+            return "FAIL";
 
         }
 
@@ -97,12 +97,12 @@ public class SprintService implements ISprintService {
         if(result > 0) {
             log.info("스프린트 정보를 삭제하는데 성공하였습니다.");
 
-            return "success";
+            return "SUCCESS";
 
         } else {
             log.info("스프린트 정보를 삭제하는데 실패하였습니다.");
 
-            return "fail";
+            return "FAIL";
 
         }
 

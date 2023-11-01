@@ -11,6 +11,7 @@ import org.apache.logging.log4j.core.config.plugins.validation.constraints.Requi
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -145,6 +146,7 @@ public class UserMemberController {
     }
 
     @PostMapping("/logout_info")
+    @Transactional
     public String logOutInfo(@RequestHeader(value = "cookie") String refreshToken, HttpServletResponse response) {
         log.info("[HomeController] logOut()");
 

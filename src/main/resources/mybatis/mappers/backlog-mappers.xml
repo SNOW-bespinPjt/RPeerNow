@@ -2,40 +2,40 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.example.peernow360.mappers.ISprintMapper">
+<mapper namespace="com.example.peernow360.mappers.IBacklogMapper">
 
-    <insert id="createSprintInfo"
-            parameterType="com.example.peernow360.dto.SprintDto">
+    <insert id="createBacklogInfo"
+            parameterType="com.example.peernow360.dto.BacklogDto" useGeneratedKeys="true" keyProperty="no">
 
         INSERT INTO
-            SPRINT(project_no,
+            BACKLOG(
+                   sprint_no,
+                   user_id,
                    title,
                    detail,
-                   start_date,
-                   end_date,
+                   status,
                    reg_date,
                    mod_date)
         VALUES
-            (#{project_no},
+            (#{sprint_no},
+             #{user_id},
              #{title},
              #{detail},
-             #{start_date},
-             #{end_date},
+             #{status},
              NOW(),
              NOW())
 
     </insert>
     
-    <select id="sprintDetailInfoByNo" parameterType="Integer" resultType="com.example.peernow360.dto.SprintDto">
+    <insert id="insertBacklogFile" parameterType="hashMap">
 
-        SELECT
-            *
-        FROM
-            SPRINT
-        WHERE
-            project_no=#{project_no}
+        INSERT INTO
+            FILE(backlog_no,name )
+        VALUES
+            ( #{backlog_no},#{fileName})
 
-    </select>
+
+    </insert>
 
     <update id="updateSprintInfo" parameterType="com.example.peernow360.dto.SprintDto">
 

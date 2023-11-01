@@ -1,6 +1,7 @@
 package com.example.peernow360.service.impl;
 
 import com.example.peernow360.dto.SprintDto;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -25,5 +26,6 @@ public interface ISprintService {
      * 스프린트 정보 수정
      */
     public String removeSprint(int no);
+
 
 }
