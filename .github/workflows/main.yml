@@ -12,6 +12,7 @@ env:
   AWS_S3_BUCKET: was-bk
   AWS_CODE_DEPLOY_APPLICATION: was-cd
   AWS_CODE_DEPLOY_GROUP: Peer-WAS
+  RESOURCE_PATH: ./src/main/resources/application-dev.properties
 
 jobs:
   
@@ -30,6 +31,15 @@ jobs:
       with:
         java-version: '17'
         distribution: 'corretto'
+
+    - name: Set yml file 
+      uses: microsoft/variable-substitution@v1
+      with:
+        files: ${{ env.RESOURCE_PATH }} 
+      env:
+        spring.datasource.url: ${{ secrets.AWS_RDS_DNS }} 
+        spring.datasource.username: ${{ secrets.AWS_RDS_USERNAME }} 
+        spring.datasource.password: ${{ secrets.AWS_RDS_PWD }}
         
     - name: gradlew에 실행 권한 부여
       run: chmod +x ./gradlew
