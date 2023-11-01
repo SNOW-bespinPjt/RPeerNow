@@ -6,7 +6,7 @@ name: Deploy to WAS
 on:
  
   push:
-    branches: [ main , dev]
+    branches: [ main ,dev]
 env:
   AWS_REGION: ap-northeast-2
   AWS_S3_BUCKET: was-bk
