@@ -56,12 +56,10 @@ public class ProjectService implements IProjectService {
             teams.add(team);
         }
 
-
-
         int result = iProjectMapper.createProject(project);
         if (result > 0) {
             for (TeamDto team : teams) {
-                team.setNo(project.getNo()); // 사용할 프로젝트 번호 설정
+                team.setNo(project.getNo()); // 프로젝트 번호 설정
                 iProjectMapper.createTeam(team);
             }
         }
@@ -74,7 +72,57 @@ public class ProjectService implements IProjectService {
         return iProjectMapper.projectDetail(no);
     }
 
+    public int modifyProject(ProjectDto projectDto) {
+        log.info("modifyProject()");
 
+        int result = iProjectMapper.modifyProject(projectDto);
+
+        if (result > 0) {
+          log.info("MODIFY PROJECT SUCCESS");
+        } else {
+            log.info("MODIFY PROJECT FAIL");
+        }
+
+        return result;
+
+    }
+
+
+    public int acceptProject(int no, String user_id) {
+        log.info("acceptProject()");
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("no", no);
+        map.put("user_id", user_id);
+
+        int result = iProjectMapper.acceptProject(map);
+
+        return result;
+    }
+
+    public int declineProject(int no, String user_id) {
+        log.info("declineProject()");
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("no", no);
+        map.put("user_id", user_id);
+
+        int result = iProjectMapper.declineProject(map);
+
+        return result;
+    }
+
+    public int deleteProject(int no, String user_id) {
+        log.info("deleteProject()");
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("no", no);
+        map.put("user_id", user_id);
+
+        int result = iProjectMapper.deleteProject(map);
+
+        return result;
+    }
 
 
 //    public List<ProjectDto> createProject(ProjectDto projectDto) {

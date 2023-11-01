@@ -14,6 +14,15 @@ public interface IProjectService {
 
     ProjectDto projectDetail(int no);
 
+    int modifyProject(ProjectDto projectDto);
+
+    int acceptProject(int no, String user_id);
+
+    int declineProject(int no, String user_id);
+
+    int deleteProject(int no, String user_id);
+
+
 
 //    List<ProjectDto> createProject(ProjectDto projectDto);
 }

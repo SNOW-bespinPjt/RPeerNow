@@ -33,6 +33,8 @@ public class ProjectController {
     private final ResponseService responseService;
     private final ProjectService projectService;
 
+    //dto 공통 구조
+
     @PostMapping("")
     @Operation(summary = "프로젝트 생성", description = "프로젝트 생성", tags = {"create"})
     public String createProject(@RequestBody Map<String, Object> map) {
@@ -56,7 +58,7 @@ public class ProjectController {
         }
 
         return message;
-        }
+    }
 
     @GetMapping("")
     @Operation(summary = "프로젝트 내용", description = "프로젝트 내용", tags = {"detail"})
@@ -68,10 +70,85 @@ public class ProjectController {
 
     @PutMapping("/change")
     @Operation(summary = "프로젝트 수정", description = "프로젝트 수정", tags = {"modify"})
-    public String modifyProject(@RequestParam("projectNumber") int no) {
+    public String modifyProject(@RequestParam("projectNumber") int no, @RequestPart ProjectDto projectDto) {
         log.info("modifyProject()");
 
-        return null;
+        User userInfo = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String user_id = userInfo.getUsername();
+
+        projectDto.setUser_id(user_id);
+        projectDto.setNo(no);
+
+        int result = projectService.modifyProject(projectDto);
+
+        String message;
+        if (result > 0) {
+            message = "success";
+        } else {
+            message = "fail";
+        }
+
+        return message;
+    }
+
+    @PutMapping("/accept")
+    @Operation(summary = "프로젝트 수락", description = "프로젝트 수락", tags = {"modify"})
+    public String acceptProject(@RequestParam("projectNumber") int no) {
+        log.info("acceptProject()");
+
+        User userInfo = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String user_id = userInfo.getUsername();
+
+        int result = projectService.acceptProject(no, user_id);
+
+        String message;
+        if (result > 0) {
+            message = "success";
+        } else {
+            message = "fail";
+        }
+
+        return message;
+    }
+
+    @PutMapping("/decline")
+    @Operation(summary = "프로젝트 거절", description = "프로젝트 거절", tags = {"modify"})
+    public String declineProject(@RequestParam("projectNumber") int no) {
+        log.info("declineProject()");
+
+        User userInfo = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String user_id = userInfo.getUsername();
+
+        int result = projectService.declineProject(no, user_id);
+
+        String message;
+        if (result > 0) {
+            message = "success";
+        } else {
+            message = "fail";
+        }
+
+        return message;
+    }
+
+    @DeleteMapping("/delete")
+    @Operation(summary = "프로젝트 삭제", description = "프로젝트 삭제", tags = {"delete"})
+    public String deleteProject(@RequestParam("projectNumber") int no){
+        log.info(("deleteProject()"));
+
+        User userInfo = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String user_id = userInfo.getUsername();
+
+        int result = projectService.deleteProject(no, user_id);
+
+        String message;
+        if (result > 0) {
+            message = "success";
+        } else {
+            message = "fail";
+        }
+
+        return message;
     }
 
 }
