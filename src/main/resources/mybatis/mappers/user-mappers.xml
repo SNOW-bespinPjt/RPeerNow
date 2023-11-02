@@ -138,6 +138,19 @@
 
     </delete>
 
+    <select id="searchUserDetail" parameterType="String"
+            resultType="com.example.peernow360.dto.UserMemberDto">
+
+        select
+            *
+        from
+            user
+        where
+            id = #{id}
+
+
+    </select>
+
     <delete id="removeAccountInfo" parameterType="String">
 
         DELETE FROM

@@ -12,11 +12,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -178,11 +180,33 @@ public class UserMemberService implements IUserMemberService {
                     .build();
 
             msgData.put("tokenInfo", tokenInfo);
-            msgData.put("refreshToken", refreshToken);
 
             return msgData;
 
         }
+
+        return null;
+
+    }
+
+    @Override
+    public UserMemberDto userDetailInfo() {
+        log.info("[UserMemberService] userDetailInfo()");
+
+        User user_info = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String id = user_info.getUsername();
+        log.info("id: " + id);
+
+        UserMemberDto userMemberDto = iUserMemberMapper.searchUserDetail(id);
+
+        if(StringUtils.hasText(userMemberDto.getId())) {
+            log.info("계정 상세 정보를 불러오는데 성공하였습니다.");
+
+            return userMemberDto;
+
+        }
+
+        log.info("계정 상세 정보를 불러오는데 실패하였습니다.");
 
         return null;
 
@@ -209,15 +233,17 @@ public class UserMemberService implements IUserMemberService {
                 result = iUserMemberMapper.removeRefreshToken(refreshToken);
 
 
-                return result > 0 ? "로그아웃이 완료하였으며 모든 정보는 초기화 되었습니다." :"DB에 refreshToken을 블랙리스트화에 실패하였습니다.";
+                return result > 0 ? "success" :"fail";
 
             }
 
-            return "DB에 refreshToken을 블랙리스트화 화였지만, DB 최신화는 실패하였습니다.";
+            log.info("DB에 refreshToken을 블랙리스트화 화였지만, DB 최신화는 실패하였습니다.");
+            return "fail";
 
         }
 
-        return "토큰이 유효하지 않습니다.";
+        log.info("토큰이 유효하지 않습니다.");
+        return "fail";
 
     }
 
@@ -236,21 +262,18 @@ public class UserMemberService implements IUserMemberService {
             iUserMemberMapper.removeRefreshToken(refreshToken);
             int result = iUserMemberMapper.removeAccountInfo(id);
 
-            return result > 0 ? "계정 삭제를 완료하였습니다. 모든 정보는 초기화 되었습니다." :"계정 삭제에 실패하였습니다.";
+            return result > 0 ? "success" :"fail";
 
         }
 
         log.info("refresh Token이 존재하지 않습니다 다시 로그인 하시거나, 없는 회원입니다.");
-        return "refresh Token이 존재하지 않습니다 다시 로그인 하시거나, 없는 회원입니다";
+        return "fail";
 
     }
 
     @Override
-    public Map<String, Object> updateAccountConfirm(String id, UserMemberDto userMemberDto) {
+    public String updateAccountConfirm(String id, UserMemberDto userMemberDto) {
         log.info("[UserMemberService] updateAccountConfirm()");
-
-        Map<String, Object> msgData = new HashMap<>();
-        String msg = null;
 
         userMemberDto.setId(id);
 
@@ -259,20 +282,12 @@ public class UserMemberService implements IUserMemberService {
         if(result > 0) {
             log.info("계정 수정이 완료되었습니다!");
 
-            msg = "계정 수정이 완료되었습니다!";
-            msgData.put("status", 1);
-            msgData.put("status", msg);
-
-            return msgData;
+            return "success";
 
         } else {
             log.info("계정 수정에 실패하였습니다!");
 
-            msg = "계정 수정에 실패하였습니다!";
-            msgData.put("status", 0);
-            msgData.put("status", msg);
-
-            return msgData;
+            return "fail";
 
         }
 
