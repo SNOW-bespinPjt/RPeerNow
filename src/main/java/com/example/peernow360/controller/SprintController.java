@@ -27,7 +27,7 @@ public class SprintController {
      */
     @PostMapping("")
     @Transactional
-    public String createSprint(@RequestParam (value="no") int project_no ,
+    public String createSprint(@RequestParam (value="project_no") int project_no ,
                                @RequestPart List<BacklogDto> backlogDto, // 이 파트는 슬비님이 작업하실때 어떤 방법으로 보낼지 알려드림 []배열이나, {}객체 둘중 하나. 현재는 객체로 해놨다.
                                @RequestPart SprintDto sprintDto) {
         log.info("[SprintController] createSprint()");

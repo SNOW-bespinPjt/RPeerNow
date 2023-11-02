@@ -65,6 +65,17 @@ public class BacklogController {
     }
 
     /*
+     * 스프린트에 맞는 오늘 날짜에 진행중인 백로그 값만 가져오기.
+     */
+    @GetMapping("/ing")
+    public ListResponse<BacklogDto> backlogDayAndIng(@RequestParam (value = "sprint_no") int sprint_no) {
+        log.info("[BacklogController] backlogDayAndIngInfo()");
+
+        return responseService.getListResponse(backlogService.backlogDayAndIngInfo(sprint_no));
+
+    }
+
+    /*
      * 백로그 status(상태 ex. todo -> 해야할 일 , ing -> 진행중, done -> 완료)
      */
     @PutMapping("/status")

@@ -75,4 +75,9 @@ public interface IBacklogMapper {
      */
     public void updateBacklogSprint(Map<String, Integer> msgData);
 
+    /*
+     * 백로그 당일 날짜에 마감되지 않으며 진행중인 스프린트에 존재하는 백로그 출력.
+     */
+    public List<BacklogDto> searchBacklogDayAndIng(int sprintNo);
+
 }

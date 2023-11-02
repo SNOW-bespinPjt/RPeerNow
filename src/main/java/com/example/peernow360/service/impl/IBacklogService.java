@@ -26,6 +26,11 @@ public interface IBacklogService {
     public Object backlogDetailInfo(int no);
 
     /*
+     * 스프린트에 맞는 오늘 날짜에 진행중인 백로그 값만 가져오기.
+     */
+    public List<BacklogDto> backlogDayAndIngInfo(int sprintNo);
+
+    /*
      * 백로그 status(상태 ex. todo -> 해야할 일 , ing -> 진행중, done -> 완료) 변경
      */
     public String backlogUpdateStatus(int no, String status);
@@ -39,5 +44,7 @@ public interface IBacklogService {
      * 백로그 삭제
      */
     public String backlogDeleteInfo(int no);
+
+
 
 }

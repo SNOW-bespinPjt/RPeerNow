@@ -121,6 +121,26 @@ public class BacklogService implements IBacklogService {
     }
 
     @Override
+    public List<BacklogDto> backlogDayAndIngInfo(int sprintNo) {
+        log.info("[BacklogService] backlogDayAndIngInfo()");
+
+        List<BacklogDto> backlogDtos = iBacklogMapper.searchBacklogDayAndIng(sprintNo);
+
+        if(StringUtils.hasText(backlogDtos.get(0).getUser_id())) {
+            log.info("오늘 날짜에 진행중인 백로그들을 불러오는데 성공하였습니다.");
+
+            return backlogDtos;
+
+        } else {
+            log.info("오늘 날짜에 진행중인 백로그들을 불러오는데 실패하였습니다.");
+
+            return null;
+
+        }
+
+    }
+
+    @Override
     public String backlogUpdateStatus(int no, String status) {
         log.info("[BacklogService] backlogUpdateStatus()");
 

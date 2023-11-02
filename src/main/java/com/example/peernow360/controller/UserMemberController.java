@@ -1,6 +1,9 @@
 package com.example.peernow360.controller;
 
 import com.example.peernow360.dto.UserMemberDto;
+import com.example.peernow360.response.ListResponse;
+import com.example.peernow360.response.MapResponse;
+import com.example.peernow360.response.ResponseService;
 import com.example.peernow360.response.SingleResponse;
 import com.example.peernow360.security.JWTtokenProvider;
 import com.example.peernow360.service.UserMemberService;
@@ -17,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -26,32 +30,27 @@ import java.util.Map;
 public class UserMemberController {
 
     private final UserMemberService userMemberService;
+    private final ResponseService responseService;
     private final JWTtokenProvider jwTtokenProvider;
 
     /*
      * 유저 계정 생성
      */
     @PostMapping("/join")
-    public Map<String ,Object> createAccountConfirm(@RequestBody UserMemberDto userMemberDto) {
+    public String createAccountConfirm(@RequestBody UserMemberDto userMemberDto) {
         log.info("[UserMemberController] createAccountConfirm()");
-
-        Map<String, Object> msgData = new HashMap<>();
 
         int result = userMemberService.createAccountConfirm(userMemberDto);
 
         if(result > 0) {
-            msgData.put("success", true);
-            msgData.put("code", result);
-            msgData.put("message", "회원가입에 성공하였습니다.");
+            log.info("회원가입에 성공하였습니다.");
 
-            return msgData;
+            return "success";
 
         } else {
-            msgData.put("success", false);
-            msgData.put("code", result);
-            msgData.put("message", "회원가입에 실패하였습니다.");
+            log.info("회원가입에 실패하였습니다.");
 
-            return msgData;
+            return "fail";
 
         }
 
@@ -69,7 +68,7 @@ public class UserMemberController {
 
         if(msgData.get("tokenInfo") == null) {
             msgData.put("code",0);
-            msgData.put("success",false);
+            msgData.put("status","fail");
             msgData.put("message","로그인에 실패하였습니다.");
 
             return ResponseEntity.ok(msgData);
@@ -88,7 +87,7 @@ public class UserMemberController {
         // msgData Map안에는 refreshToken 정보가 담겨있기 때문에 해당 키값을 삭제 해주고 response 해줘야 한다. refresh는 쿠키에 담아서 주기 때문
         msgData.remove("refreshToken");
         msgData.put("code",1);
-        msgData.put("success",true);
+        msgData.put("status","success");
         msgData.put("message","로그인에 성공하였습니다.");
 
         return ResponseEntity.ok(msgData);
@@ -126,7 +125,7 @@ public class UserMemberController {
             response.setHeader("Set-Cookie", cookie.toString());
 
             msgData.put("code", 1);
-            msgData.put("success", true);
+            msgData.put("status", true);
             msgData.put("message", "access Token 및 refresh Token을 재발급에 성공하였습니다.");
             log.info("msgData" + msgData);
 
@@ -140,12 +139,24 @@ public class UserMemberController {
         log.info("자동화 로그아웃 msg : " + msg);
 
         msgData.put("code", 0);
-        msgData.put("success", false);
+        msgData.put("status", "fail");
         msgData.put("message",msg);
 
         return ResponseEntity.ok(msgData);
 
     }
+
+    /*
+     * 회원 정보 불러오기
+     */
+    @GetMapping("/detail")
+    public SingleResponse<UserMemberDto> userDetail() {
+        log.info("[HomeController] userDetail()");
+
+        return responseService.getSingleResponse(userMemberService.userDetailInfo());
+
+    }
+
 
     @PostMapping("/logout_info")
     @Transactional
@@ -173,6 +184,7 @@ public class UserMemberController {
      * 유저 계정 삭제
      */
     @DeleteMapping("/leave")
+    @Transactional
     public String deleteAccountConfirm(@RequestParam ("id") String id, @RequestHeader(value = "cookie") String refreshToken, HttpServletResponse response) {
         log.info("[HomeController] deleteAccountConfirm()");
         log.info("id : " + id);
@@ -195,15 +207,10 @@ public class UserMemberController {
      * 유저 계정 수정
      */
     @PutMapping("/change")
-    public Map<String, Object> updateAccountConfirm(@RequestParam ("id") String id, @RequestPart UserMemberDto userMemberDto) {
+    public String updateAccountConfirm(@RequestParam ("id") String id, @RequestPart UserMemberDto userMemberDto) {
         log.info("[HomeController] deleteAccountConfirm()");
-        log.info("id : " + id);
-        log.info("name : " + userMemberDto.getName());
-        log.info("name : " + userMemberDto.getMail());
 
-        Map<String, Object> msgData = userMemberService.updateAccountConfirm(id, userMemberDto);
-
-        return msgData;
+        return userMemberService.updateAccountConfirm(id, userMemberDto);
 
     }
 

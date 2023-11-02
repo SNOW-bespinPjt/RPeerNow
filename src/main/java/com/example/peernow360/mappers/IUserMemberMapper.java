@@ -60,6 +60,11 @@ public interface IUserMemberMapper {
     public int removeRefreshToken(String refreshToken);
 
     /*
+     * 회원 상세 정보 불러오기
+     */
+    public UserMemberDto searchUserDetail(String id);
+
+    /*
      * 유저 계정 삭제
      */
     public int removeAccountInfo(String id);
