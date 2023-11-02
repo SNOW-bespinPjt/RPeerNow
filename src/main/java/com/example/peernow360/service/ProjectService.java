@@ -7,6 +7,7 @@ import com.example.peernow360.service.impl.IProjectService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,27 +19,6 @@ import java.util.Map;
 public class ProjectService implements IProjectService {
 
     private final IProjectMapper iProjectMapper;
-
-//    public ProjectDto createProject(ProjectDto projectDto) {
-//        log.info("createProject()");
-//
-//        return iProjectMapper.createProject(projectDto);
-//    }
-
-//    public int createProject(ProjectDto project, TeamDto team) {
-//
-//        int result = iProjectMapper.createProject(project);
-//
-//        iProjectMapper.createTeam(team);
-//
-//        if (result > 0) {
-//            log.info("CREATE PROJECT SUCCESS");
-//        } else {
-//            log.info("CREATE PROJECT FAIL");
-//        }
-//
-//        return result;
-//    }
 
     public int createProject(Map<String, Object> map, ProjectDto project, List<TeamDto> teams) {
         log.info("createProject()");
@@ -86,7 +66,6 @@ public class ProjectService implements IProjectService {
         return result;
 
     }
-
 
     public int acceptProject(int no, String user_id) {
         log.info("acceptProject()");
