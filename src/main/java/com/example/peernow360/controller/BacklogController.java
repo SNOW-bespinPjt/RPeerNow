@@ -1,17 +1,19 @@
 package com.example.peernow360.controller;
 
 import com.example.peernow360.dto.BacklogDto;
+import com.example.peernow360.dto.FileDto;
 import com.example.peernow360.response.ListResponse;
+import com.example.peernow360.response.MapResponse;
 import com.example.peernow360.response.ResponseService;
 import com.example.peernow360.response.SingleResponse;
 import com.example.peernow360.service.BacklogService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @Log4j2
@@ -27,15 +29,12 @@ public class BacklogController {
      */
     @PostMapping("")
     @Transactional
-    public String createBacklog(@RequestParam (value = "sprintNumber") int sprint_no,
+    public String createBacklog(@RequestParam (value = "sprintNumber", required = false) String sprint_no,
                                 @RequestPart BacklogDto backlogDto,
-                                @RequestPart MultipartFile[] files) {
+                                @RequestPart List<FileDto> fileDto) {
         log.info("[BacklogController] createBacklog()");
 
-        User user_info = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String user_id = user_info.getUsername();
-
-        return backlogService.createNewBacklog(backlogDto, sprint_no, user_id, files);
+        return backlogService.createNewBacklog(backlogDto, sprint_no, fileDto);
 
     }
 
@@ -43,10 +42,12 @@ public class BacklogController {
      * 백로그 전체 리스트 불러오기
      */
     @GetMapping("/list")
-    public ListResponse<BacklogDto> backlogList(@RequestParam (value = "sprintNumber") int sprint_no) {
+    @Transactional(readOnly = true)
+    public MapResponse<String,Object> backlogList(@RequestParam (value = "sprintNumber") int sprint_no) {
+
         log.info("[BacklogController] backlogDetail()");
 
-        return responseService.getListResponse(backlogService.backlogListInfo(sprint_no));
+        return responseService.getMapResponse( backlogService.backlogListInfo(sprint_no));
 
     }
 
@@ -54,10 +55,12 @@ public class BacklogController {
      * 백로그 상세 페이지 불러오기 ( title을 클릭시 이동하는)
      */
     @GetMapping("")
-    public SingleResponse<BacklogDto> backlogDetail(@RequestParam (value = "backlogNumber") int no) {
+    @Transactional(readOnly = true)
+    public MapResponse<String,Object> backlogDetail(@RequestParam (value = "backlogNumber") int no) {
+
         log.info("[BacklogController] backlogDetailByNo()");
 
-        return responseService.getSingleResponse(backlogService.backlogDetailInfo(no));
+        return responseService.getMapResponse(backlogService.backlogDetailInfo(no));
 
     }
 
@@ -77,11 +80,25 @@ public class BacklogController {
      * 백로그 수정
      */
     @PutMapping("")
+    @Transactional
     public String backlogModify(@RequestParam (value = "backlogNumber") int no,
-                                @RequestPart BacklogDto backlogDto) {
+                                @RequestPart BacklogDto backlogDto,
+                                @RequestPart List<FileDto> fileDto) {
         log.info("[BacklogController] backlogModify()");
 
-        return backlogService.backlogUpdateInfo(backlogDto, no);
+        return backlogService.backlogUpdateInfo(backlogDto, no, fileDto);
+
+    }
+
+    /*
+     * 백로그 삭제
+     */
+    @DeleteMapping("")
+    @Transactional
+    public String backlogDelete(@RequestParam (value = "backlogNumber") int no) {
+        log.info("[BacklogController] backlogDelete()");
+
+        return backlogService.backlogDeleteInfo(no);
 
     }
 

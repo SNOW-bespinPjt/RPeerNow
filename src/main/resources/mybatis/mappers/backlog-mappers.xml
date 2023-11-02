@@ -8,7 +8,7 @@
             parameterType="com.example.peernow360.dto.BacklogDto" useGeneratedKeys="true" keyProperty="no">
 
         INSERT INTO
-            BACKLOG(
+            backlog(
                    sprint_no,
                    user_id,
                    title,
@@ -30,42 +30,78 @@
     <insert id="insertBacklogFile" parameterType="hashMap">
 
         INSERT INTO
-            FILE(backlog_no,name )
+            backfile(backlog_no,name )
         VALUES
-            ( #{backlog_no},#{fileName})
+            ( #{backlog_no},#{name})
 
+    </insert>
+
+    <insert id="insertAndUptBacklogFile" parameterType="com.example.peernow360.dto.FileDto">
+
+        INSERT INTO
+            backfile(backlog_no,name )
+        VALUES
+            ( #{backlog_no},#{name})
 
     </insert>
 
     <select id="searchBacklogList" parameterType="Integer"
             resultType="com.example.peernow360.dto.BacklogDto">
 
-        select
+        SELECT
             *
-        from
-            BACKLOG
-        where
+        FROM
+            backlog
+        WHERE
             sprint_no = #{sprint_no}
 
+    </select>
+
+    <select id="searchBacklogFiles" parameterType="Integer"
+            resultType="com.example.peernow360.dto.FileDto">
+
+        SELECT
+            *
+        FROM
+            backfile
+        WHERE
+            backlog_no IN (SELECT
+                               no
+                           FROM
+                               backlog
+                           WHERE
+                               sprint_no = #{sprint_no});
 
     </select>
 
     <select id="searchBacklogDetail" parameterType="Integer"
             resultType="com.example.peernow360.dto.BacklogDto">
 
+        SELECT
+            *
+        FROM
+            backlog
+        WHERE
+            no = #{no}
+
+    </select>
+
+    <select id="searchBacklogFile" parameterType="Integer"
+            resultType="com.example.peernow360.dto.FileDto">
+
         select
             *
         from
-            BACKLOG
+            backfile
         where
-            no = #{no}
+            backlog_no = #{no}
 
     </select>
 
     <update id="updateBacklogStatus" parameterType="com.example.peernow360.dto.BacklogDto">
 
         UPDATE
-            BACKLOG
+            backlog
         SET
             status = #{status},
             mod_date = NOW()
@@ -77,9 +113,10 @@
     <update id="updateBacklogInfo" parameterType="com.example.peernow360.dto.BacklogDto">
 
         UPDATE
-            BACKLOG
+            backlog
         SET
             sprint_no = #{sprint_no},
+            user_id = #{user_id},
             title = #{title},
             detail = #{detail},
             status = #{status},
@@ -91,13 +128,33 @@
     </update>
 
 
-    <delete id="removeSprintInfo" parameterType="Integer">
+    <delete id="removeBacklogInfo" parameterType="Integer">
 
         DELETE FROM
-                   SPRINT
+            backlog
         WHERE
             no = #{no}
 
     </delete>
+
+    <delete id="removeBacklogFile" parameterType="Integer">
+
+        DELETE FROM
+            backfile
+        WHERE
+            backlog_no = #{no}
+
+    </delete>
+
+    <update id="updateBacklogSprint" parameterType="Integer">
+
+        UPDATE
+            backlog
+        set
+            sprint_no = #{sprint_no}
+        where
+            no = #{backlog_no}
+
+    </update>
 
 </mapper>

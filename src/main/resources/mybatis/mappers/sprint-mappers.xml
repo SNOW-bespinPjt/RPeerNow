@@ -5,10 +5,11 @@
 <mapper namespace="com.example.peernow360.mappers.ISprintMapper">
 
     <insert id="createSprintInfo"
-            parameterType="com.example.peernow360.dto.SprintDto">
+            parameterType="com.example.peernow360.dto.SprintDto" useGeneratedKeys="true" keyProperty="no">
 
         INSERT INTO
-            SPRINT(project_no,
+            sprint(project_no,
+                   user_id,
                    title,
                    detail,
                    start_date,
@@ -17,6 +18,7 @@
                    mod_date)
         VALUES
             (#{project_no},
+             #{user_id},
              #{title},
              #{detail},
              #{start_date},
@@ -31,7 +33,7 @@
         SELECT
             *
         FROM
-            SPRINT
+            sprint
         WHERE
             project_no=#{project_no}
 
@@ -40,7 +42,7 @@
     <update id="updateSprintInfo" parameterType="com.example.peernow360.dto.SprintDto">
 
         UPDATE
-            SPRINT
+            sprint
         SET
             title = #{title},
             detail = #{detail},
@@ -55,7 +57,7 @@
     <delete id="removeSprintInfo" parameterType="Integer">
 
         DELETE FROM
-                   SPRINT
+                sprint
         WHERE
             no = #{no}
 

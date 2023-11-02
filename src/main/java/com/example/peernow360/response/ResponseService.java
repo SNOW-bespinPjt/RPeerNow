@@ -1,8 +1,10 @@
 package com.example.peernow360.response;
 
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ResponseService {
@@ -29,6 +31,23 @@ public class ResponseService {
         setSuccessResponse(listResponse);
 
         return listResponse;
+    }
+
+    // 맵 데이터 처리
+    public<K, V> MapResponse<K, V> getMapResponse(Map<K, V> dataMap) {
+
+        MapResponse<K, V> mapResponse = new MapResponse<>();
+        mapResponse.setDataMap(dataMap);
+        setSuccessResponse(mapResponse);
+
+        if (dataMap.isEmpty()) {
+            setFailResponse(mapResponse);;
+        } else {
+            setSuccessResponse(mapResponse);
+        }
+
+        return mapResponse;
+
     }
 
     //성공 결과만 처리

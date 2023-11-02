@@ -7,6 +7,7 @@ public class SprintDto {
 
     private int no;
     private int project_no;
+    private String user_id;
     private String title;
     private String detail;
     private String start_date;

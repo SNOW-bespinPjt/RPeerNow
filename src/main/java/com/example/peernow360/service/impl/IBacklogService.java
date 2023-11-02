@@ -1,9 +1,11 @@
 package com.example.peernow360.service.impl;
 
 import com.example.peernow360.dto.BacklogDto;
+import com.example.peernow360.dto.FileDto;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 
 public interface IBacklogService {
@@ -11,12 +13,12 @@ public interface IBacklogService {
     /*
      * 백로그 생성
      */
-    public String createNewBacklog(BacklogDto backlogDto, int sprint_no, String user_id, MultipartFile[] files);
+    public String createNewBacklog(BacklogDto backlogDto, String sprint_no, List<FileDto> fileDto);
 
     /*
      * 백로그 리스트 불러오기
      */
-    public List<BacklogDto> backlogListInfo(int sprintNo);
+    public Map<String, Object> backlogListInfo(int sprint_no);
 
     /*
      * 백로그 상세페이지 불러오기
@@ -31,5 +33,11 @@ public interface IBacklogService {
     /*
      * 백로그 상세정보 수정
      */
-    public String backlogUpdateInfo(BacklogDto backlogDto, int no);
+    public String backlogUpdateInfo(BacklogDto backlogDto, int no, List<FileDto> fileDto);
+
+    /*
+     * 백로그 삭제
+     */
+    public String backlogDeleteInfo(int no);
+
 }
