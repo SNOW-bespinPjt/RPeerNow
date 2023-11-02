@@ -22,6 +22,11 @@ public interface IUserMemberService {
      */
      public Map<String, Object> reCreateAccessToken(String name);
 
+    /*
+     * 회원 상세 정보
+     */
+    public UserMemberDto userDetailInfo();
+
      /*
       * 로그아웃
       */
@@ -35,6 +40,8 @@ public interface IUserMemberService {
     /*
      * 유저 계정 수정
      */
-    public Map<String, Object> updateAccountConfirm(String id, UserMemberDto userMemberDto);
+    public String updateAccountConfirm(String id, UserMemberDto userMemberDto);
+
+
 
 }

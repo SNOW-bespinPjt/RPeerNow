@@ -98,6 +98,20 @@
 
     </select>
 
+    <select id="searchBacklogDayAndIng" parameterType="Integer"
+            resultType="com.example.peernow360.dto.BacklogDto">
+
+        select
+            *
+        from
+            backlog
+        where
+            sprint_no = #{sprintNo}
+        AND
+            status = "ing"
+
+    </select>
+
     <update id="updateBacklogStatus" parameterType="com.example.peernow360.dto.BacklogDto">
 
         UPDATE
