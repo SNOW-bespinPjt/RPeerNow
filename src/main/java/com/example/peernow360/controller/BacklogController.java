@@ -44,7 +44,6 @@ public class BacklogController {
     @GetMapping("/list")
     @Transactional(readOnly = true)
     public MapResponse<String,Object> backlogList(@RequestParam (value = "sprint_no") int sprint_no) {
-
         log.info("[BacklogController] backlogDetail()");
 
         return responseService.getMapResponse( backlogService.backlogListInfo(sprint_no));
@@ -57,7 +56,6 @@ public class BacklogController {
     @GetMapping("")
     @Transactional(readOnly = true)
     public MapResponse<String,Object> backlogDetail(@RequestParam (value = "no") int no) {
-
         log.info("[BacklogController] backlogDetailByNo()");
 
         return responseService.getMapResponse(backlogService.backlogDetailInfo(no));
@@ -112,7 +110,5 @@ public class BacklogController {
         return backlogService.backlogDeleteInfo(no);
 
     }
-
-
 
 }
