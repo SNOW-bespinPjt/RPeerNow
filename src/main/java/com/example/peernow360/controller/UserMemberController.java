@@ -218,7 +218,6 @@ public class UserMemberController {
     public  String TestController(){
         log.info("Test On!");
 
-
         return "gettest Success!!";
     }
 

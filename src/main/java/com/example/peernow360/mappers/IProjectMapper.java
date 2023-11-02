@@ -3,8 +3,10 @@ package com.example.peernow360.mappers;
 
 import com.example.peernow360.dto.ProjectDto;
 import com.example.peernow360.dto.TeamDto;
+import com.example.peernow360.dto.UserMemberDto;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
 import java.util.Map;
 
 @Mapper
@@ -27,4 +29,6 @@ public interface IProjectMapper {
     int declineProject(Map<String, Object> map);
 
     int deleteProject(Map<String, Object> map);
+
+    List<UserMemberDto> getPeer(String peerName);
 }

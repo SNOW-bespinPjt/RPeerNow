@@ -2,6 +2,7 @@ package com.example.peernow360.service;
 
 import com.example.peernow360.dto.ProjectDto;
 import com.example.peernow360.dto.TeamDto;
+import com.example.peernow360.dto.UserMemberDto;
 import com.example.peernow360.mappers.IProjectMapper;
 import com.example.peernow360.service.impl.IProjectService;
 import lombok.RequiredArgsConstructor;
@@ -101,6 +102,12 @@ public class ProjectService implements IProjectService {
         int result = iProjectMapper.deleteProject(map);
 
         return result;
+    }
+
+    public List<UserMemberDto> getPeer(String peerName) {
+        log.info("getPeer()");
+
+        return iProjectMapper.getPeer(peerName);
     }
 
 

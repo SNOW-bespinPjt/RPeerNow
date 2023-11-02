@@ -62,5 +62,11 @@
         join team t on p.no = t.no
         where t.role = 'PM' and t.peer_id = #{user_id} and p.no = #{no}
     </delete>
+
+    <select id="getPeer" parameterType="String" resultType="com.example.peernow360.dto.UserMemberDto">
+        select name, id, mail
+        from user
+        where name like concat('%', #{peerName}, '%')
+    </select>
     
 </mapper>
