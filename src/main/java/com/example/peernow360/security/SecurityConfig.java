@@ -43,8 +43,7 @@ public class SecurityConfig {
                 .httpBasic().disable()  // HTTP 기본 인증 방식을 비활성화
                 .authorizeHttpRequests(request -> request
                         .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()  // HTTP 요청 인증 설정
-                        .requestMatchers("/user/join","/user/login", "/user/request_refreshToken", "/v3/**", "/swagger-ui/**"
-
+                        .requestMatchers("/","/api/user/join","/api/user/login","/api/user/request_refreshToken","/api/user/gettest", "/v3/**", "/swagger-ui/**"
                                 ).permitAll()
                         .anyRequest().authenticated()  // 해당 경로 외의 요청은 모두 인증 필요
                 ).formLogin().disable()

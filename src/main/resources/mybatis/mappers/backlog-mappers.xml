@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.peernow360.mappers.IBacklogMapper">
+
+    <insert id="createBacklogInfo"
+            parameterType="com.example.peernow360.dto.BacklogDto" useGeneratedKeys="true" keyProperty="no">
+
+        INSERT INTO
+            backlog(
+                   sprint_no,
+                   user_id,
+                   title,
+                   detail,
+                   status,
+                   reg_date,
+                   mod_date)
+        VALUES
+            (#{sprint_no},
+             #{user_id},
+             #{title},
+             #{detail},
+             #{status},
+             NOW(),
+             NOW())
+
+    </insert>
+    
+    <insert id="insertBacklogFile" parameterType="hashMap">
+
+        INSERT INTO
+            backfile(backlog_no,name )
+        VALUES
+            ( #{backlog_no},#{name})
+
+    </insert>
+
+    <insert id="insertAndUptBacklogFile" parameterType="com.example.peernow360.dto.FileDto">
+
+        INSERT INTO
+            backfile(backlog_no,name )
+        VALUES
+            ( #{backlog_no},#{name})
+
+    </insert>
+
+    <select id="searchBacklogList" parameterType="Integer"
+            resultType="com.example.peernow360.dto.BacklogDto">
+
+        SELECT
+            *
+        FROM
+            backlog
+        WHERE
+            sprint_no = #{sprint_no}
+
+    </select>
+
+    <select id="searchBacklogFiles" parameterType="Integer"
+            resultType="com.example.peernow360.dto.FileDto">
+
+        SELECT
+            *
+        FROM
+            backfile
+        WHERE
+            backlog_no IN (SELECT
+                               no
+                           FROM
+                               backlog
+                           WHERE
+                               sprint_no = #{sprint_no});
+
+    </select>
+
+    <select id="searchBacklogDetail" parameterType="Integer"
+            resultType="com.example.peernow360.dto.BacklogDto">
+
+        SELECT
+            *
+        FROM
+            backlog
+        WHERE
+            no = #{no}
+
+    </select>
+
+    <select id="searchBacklogFile" parameterType="Integer"
+            resultType="com.example.peernow360.dto.FileDto">
+
+        select
+            *
+        from
+            backfile
+        where
+            backlog_no = #{no}
+
+    </select>
+
+    <update id="updateBacklogStatus" parameterType="com.example.peernow360.dto.BacklogDto">
+
+        UPDATE
+            backlog
+        SET
+            status = #{status},
+            mod_date = NOW()
+        WHERE
+            no = #{no}
+
+    </update>
+
+    <update id="updateBacklogInfo" parameterType="com.example.peernow360.dto.BacklogDto">
+
+        UPDATE
+            backlog
+        SET
+            sprint_no = #{sprint_no},
+            user_id = #{user_id},
+            title = #{title},
+            detail = #{detail},
+            status = #{status},
+            mod_date = NOW()
+
+        WHERE
+            no = #{no}
+
+    </update>
+
+
+    <delete id="removeBacklogInfo" parameterType="Integer">
+
+        DELETE FROM
+            backlog
+        WHERE
+            no = #{no}
+
+    </delete>
+
+    <delete id="removeBacklogFile" parameterType="Integer">
+
+        DELETE FROM
+            backfile
+        WHERE
+            backlog_no = #{no}
+
+    </delete>
+
+    <update id="updateBacklogSprint" parameterType="Integer">
+
+        UPDATE
+            backlog
+        set
+            sprint_no = #{sprint_no}
+        where
+            no = #{backlog_no}
+
+    </update>
+
+</mapper>

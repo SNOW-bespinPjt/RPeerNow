@@ -11,7 +11,7 @@
         SELECT
             COUNT(*)
         FROM
-            USER
+            user
         WHERE
             id = #{id}
 
@@ -22,7 +22,7 @@
         SELECT
             *
         FROM
-            USER
+            user
         WHERE
             id=#{id}
 
@@ -41,7 +41,7 @@
     <insert id="insertUserMember"
             parameterType="com.example.peernow360.dto.UserMemberDto">
 
-        INSERT INTO USER(id,
+        INSERT INTO user(id,
                          pw,
                          name,
                          mail,
@@ -67,7 +67,7 @@
             parameterType="com.example.peernow360.dto.UserMemberDto">
 
         UPDATE
-            USER
+            user
         SET
             pw = #{pw}
         WHERE
@@ -78,7 +78,7 @@
     <insert id="insertRefreshToken" parameterType="map">
 
         INSERT INTO
-            TOKENS(user_id, refreshToken)
+            tokens(user_id, refreshToken)
         VALUES
             (#{user_id}, #{refreshToken})
 
@@ -89,7 +89,7 @@
         SELECT
             refreshToken
         FROM
-            TOKENS
+            tokens
         WHERE
             user_id = #{user_id}
 
@@ -98,7 +98,7 @@
     <update id="modifyRefreshToken" parameterType="map">
 
         UPDATE
-            TOKENS
+            tokens
         SET
             refreshToken = #{refreshToken}
         WHERE
@@ -111,7 +111,7 @@
         SELECT
             count(*)
         FROM
-            TOKENS
+            tokens
         WHERE
             refreshToken = #{refreshToken}
 
@@ -120,7 +120,7 @@
     <insert id="insertBlacklist" parameterType="String">
 
         INSERT INTO
-            BLACKLIST_TOKENS(user_id, blacklist)
+            blacklist_tokens(user_id, blacklist)
         SELECT
             t.user_id, t.refreshToken
         FROM
@@ -133,7 +133,7 @@
     <delete id="removeRefreshToken" parameterType="String">
 
         DELETE FROM
-                   TOKENS
+            tokens
         WHERE refreshToken = #{refreshToken}
 
     </delete>
@@ -141,7 +141,7 @@
     <delete id="removeAccountInfo" parameterType="String">
 
         DELETE FROM
-                USER
+                user
         WHERE
             id = #{id}
 
@@ -150,7 +150,7 @@
     <update id="modifyAccountInfo" parameterType="com.example.peernow360.dto.UserMemberDto">
 
         UPDATE
-            USER
+            user
         SET
             name = #{name} ,
             mail = #{mail} ,
@@ -169,7 +169,7 @@
         SELECT
             count(*)
         FROM
-            BLACKLIST_TOKENS
+            blacklist_tokens
         WHERE
             blacklist = #{refreshToken}
 

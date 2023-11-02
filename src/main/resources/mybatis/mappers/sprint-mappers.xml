@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.peernow360.mappers.ISprintMapper">
+
+    <insert id="createSprintInfo"
+            parameterType="com.example.peernow360.dto.SprintDto" useGeneratedKeys="true" keyProperty="no">
+
+        INSERT INTO
+            sprint(project_no,
+                   user_id,
+                   title,
+                   detail,
+                   start_date,
+                   end_date,
+                   reg_date,
+                   mod_date)
+        VALUES
+            (#{project_no},
+             #{user_id},
+             #{title},
+             #{detail},
+             #{start_date},
+             #{end_date},
+             NOW(),
+             NOW())
+
+    </insert>
+    
+    <select id="searchSprintDetail" parameterType="Integer" resultType="com.example.peernow360.dto.SprintDto">
+
+        SELECT
+            *
+        FROM
+            sprint
+        WHERE
+            project_no=#{project_no}
+
+    </select>
+
+    <update id="updateSprintInfo" parameterType="com.example.peernow360.dto.SprintDto">
+
+        UPDATE
+            sprint
+        SET
+            title = #{title},
+            detail = #{detail},
+            start_date = #{start_date},
+            end_date = #{end_date},
+            mod_date = NOW()
+        WHERE
+            no = #{no}
+
+    </update>
+
+    <delete id="removeSprintInfo" parameterType="Integer">
+
+        DELETE FROM
+                sprint
+        WHERE
+            no = #{no}
+
+    </delete>
+
+</mapper>
