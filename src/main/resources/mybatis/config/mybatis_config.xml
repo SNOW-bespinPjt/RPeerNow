@@ -10,7 +10,5 @@
         <setting name="useColumnLabel" value="true"/>
         <setting name="useActualParamName" value="false"/>
     </settings>
-
-
-
+  
 </configuration>
