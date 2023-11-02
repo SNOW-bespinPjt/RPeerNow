@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.peernow360.mappers.IReviewMapper">
+
+    <insert id="createScore" parameterType="com.example.peernow360.dto.ReviewDto">
+        insert into review(user_id, peer_id, project_no, comment1, comment2, score1, score2, score3, score4, score5, reg_date)
+        values(#{user_id}, #{peer_id}, #{no}, #{comment1}, #{comment2}, #{score1}, #{score2}, #{score3}, #{score4}, #{score5}, now())
+    </insert>
+    
+</mapper>
