@@ -142,7 +142,15 @@
             resultType="com.example.peernow360.dto.UserMemberDto">
 
         select
-            *
+            id,
+            name,
+            mail,
+            phone,
+            team,
+            image,
+            grade,
+            reg_date,
+            mod_date
         from
             user
         where

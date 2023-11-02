@@ -3,7 +3,9 @@ package com.example.peernow360.controller;
 import com.example.peernow360.dto.BacklogDto;
 import com.example.peernow360.dto.SprintDto;
 import com.example.peernow360.response.ListResponse;
+import com.example.peernow360.response.MapResponse;
 import com.example.peernow360.response.ResponseService;
+import com.example.peernow360.response.SingleResponse;
 import com.example.peernow360.service.SprintService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -37,13 +39,25 @@ public class SprintController {
     }
 
     /*
-     * 스프린트 상세보기
+     * 스프린트 전체 보기
+     */
+    @GetMapping("/list")
+    public ListResponse<SprintDto> sprintListDetail(@RequestParam (value = "project_no") int project_no) {
+        log.info("[SprintController] sprintListDetail()");
+
+        return responseService.getListResponse(sprintService.sprintListDetailInfo(project_no));
+
+    }
+
+    /*
+     * 스프린트 상세 보기
      */
     @GetMapping("")
-    public ListResponse<SprintDto> sprintDetail(@RequestParam (value = "no") int project_no) {
+    @Transactional(readOnly = true)
+    public SingleResponse<SprintDto> sprintDetail(@RequestParam (value = "sprint_no") int no) {
         log.info("[SprintController] SprintDetail()");
 
-        return responseService.getListResponse(sprintService.sprintDetailInfo(project_no));
+        return responseService.getSingleResponse(sprintService.sprintDetailInfo(no));
 
     }
 

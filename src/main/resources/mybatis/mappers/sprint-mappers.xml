@@ -28,14 +28,27 @@
 
     </insert>
     
-    <select id="searchSprintDetail" parameterType="Integer" resultType="com.example.peernow360.dto.SprintDto">
+    <select id="searchSprintListDetail" parameterType="Integer"
+            resultType="com.example.peernow360.dto.SprintDto">
 
         SELECT
             *
         FROM
             sprint
         WHERE
-            project_no=#{project_no}
+            project_no = #{project_no}
+
+    </select>
+
+    <select id="searchSprintDetail" parameterType="Integer"
+            resultType="com.example.peernow360.dto.SprintDto">
+
+        select
+            *
+        from
+            sprint
+        where
+            no = #{no}
 
     </select>
 

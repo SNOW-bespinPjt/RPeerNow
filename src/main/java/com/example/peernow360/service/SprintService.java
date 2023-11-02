@@ -10,6 +10,8 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,22 +54,22 @@ public class SprintService implements ISprintService {
 
             }
 
-            return "SUCCESS";
+            return "success";
 
         } else {
             log.info("스프린트 생성에 성공하였습니다.");
 
-            return "FAIL";
+            return "fail";
 
         }
 
     }
 
     @Override
-    public List<SprintDto> sprintDetailInfo(int project_no) {
+    public List<SprintDto> sprintListDetailInfo(int project_no) {
         log.info("[SprintService] sprintDetailInfo()");
 
-        List<SprintDto> sprintDtos  = iSprintMapper.searchSprintDetail(project_no);
+        List<SprintDto> sprintDtos  = iSprintMapper.searchSprintListDetail(project_no);
 
         if(sprintDtos.get(0).getNo() > 0) {
             log.info("스프린트 정보를 불러오는데 성공하였습니다.");
@@ -79,6 +81,25 @@ public class SprintService implements ISprintService {
 
             return null;
 
+        }
+
+    }
+
+    @Override
+    public SprintDto sprintDetailInfo(int no) {
+        log.info("[SprintService] sprintDetailInfo()");
+
+        SprintDto sprintDto = iSprintMapper.searchSprintDetail(no);
+
+        if(StringUtils.hasText(sprintDto.getUser_id())) {
+            log.info("스프린트 상세 정보를 불러오는데 성공하였습니다.");
+
+            return sprintDto;
+
+        } else {
+            log.info("스프린트 상세 정보를 불러오는데 실패하였습니다.");
+
+            return null;
         }
 
     }
@@ -96,12 +117,12 @@ public class SprintService implements ISprintService {
         if(result > 0) {
             log.info("스프린트 정보를 수정하는데 성공하였습니다.");
 
-            return "SUCCESS";
+            return "success";
 
         } else {
             log.info("스프린트 정보를 수정하는데 실패하였습니다.");
 
-            return "FAIL";
+            return "fail";
 
         }
 
@@ -119,15 +140,16 @@ public class SprintService implements ISprintService {
         if(result > 0) {
             log.info("스프린트 정보를 삭제하는데 성공하였습니다.");
 
-            return "SUCCESS";
+            return "success";
 
         } else {
             log.info("스프린트 정보를 삭제하는데 실패하였습니다.");
 
-            return "FAIL";
+            return "fail";
 
         }
 
     }
+
 
 }
