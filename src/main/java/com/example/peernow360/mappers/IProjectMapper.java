@@ -33,4 +33,6 @@ public interface IProjectMapper {
     List<UserMemberDto> getPeer(String peerName);
 
     List<ProjectDto> projectList(String user_id);
+
+    List<UserMemberDto> peerlist(Map<String, Object> map);
 }

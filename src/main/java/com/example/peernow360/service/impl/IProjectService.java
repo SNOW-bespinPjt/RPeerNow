@@ -27,6 +27,8 @@ public interface IProjectService {
 
     List<ProjectDto> projectList(String user_id);
 
+    List<UserMemberDto> peerlist(int no, String owner);
+
 
 
 //    List<ProjectDto> createProject(ProjectDto projectDto);

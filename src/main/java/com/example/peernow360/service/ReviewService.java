@@ -37,6 +37,6 @@ public class ReviewService implements IReviewService {
     public List<ReviewDto> evaluatinoInfo(ReviewDto reviewDto) {
         log.info("evaluatinoInfo()");
 
-        return iReviewMapper.evaluationInfo(reviewDto);
+        return iReviewMapper.avgScore(reviewDto);
     }
 }

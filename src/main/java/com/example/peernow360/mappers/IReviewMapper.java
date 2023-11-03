@@ -15,4 +15,6 @@ public interface IReviewMapper {
     List<ReviewDto> evaluationInfo(ReviewDto reviewDto);
 
     void totalScore(ReviewDto total);
+
+    List<ReviewDto> avgScore(ReviewDto reviewDto);
 }
