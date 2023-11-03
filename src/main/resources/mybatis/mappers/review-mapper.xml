@@ -3,9 +3,25 @@
 
 <mapper namespace="com.example.peernow360.mappers.IReviewMapper">
 
-    <insert id="createScore" parameterType="com.example.peernow360.dto.ReviewDto">
+    <insert id="createScore" parameterType="com.example.peernow360.dto.ReviewDto" useGeneratedKeys="true" keyProperty="no">
         insert into review(user_id, peer_id, project_no, comment1, comment2, score1, score2, score3, score4, score5, reg_date)
-        values(#{user_id}, #{peer_id}, #{no}, #{comment1}, #{comment2}, #{score1}, #{score2}, #{score3}, #{score4}, #{score5}, now())
+        values(#{user_id}, #{peer_id}, #{project_no}, #{comment1}, #{comment2}, #{score1}, #{score2}, #{score3}, #{score4}, #{score5}, now())
     </insert>
-    
+
+    <update id="totalScore" parameterType="com.example.peernow360.dto.ReviewDto">
+        update review
+        SET total = #{total}
+        WHERE no = #{no}
+    </update>
+
+    <select id="feedback" parameterType="Integer" resultType="com.example.peernow360.dto.ReviewDto">
+        select *
+        from review
+        where project_no = #{no}
+    </select>
+
+    <select id="evaluationInfo" >
+
+    </select>
+
 </mapper>

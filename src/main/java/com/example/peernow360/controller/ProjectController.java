@@ -70,6 +70,17 @@ public class ProjectController {
         return responseService.getSingleResponse(projectService.projectDetail(no));
     }
 
+    @GetMapping("/list")
+    @Operation(summary = "프로젝트 리스트", description = "프로젝트 리스트", tags = {"detail"})
+    public ListResponse<ProjectDto> projectList() {
+        log.info("projectList()");
+
+        User userInfo = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String user_id = userInfo.getUsername();
+
+        return responseService.getListResponse(projectService.projectList(user_id));
+    }
+
     @PutMapping("/change")
     @Operation(summary = "프로젝트 수정", description = "프로젝트 수정", tags = {"modify"})
     public String modifyProject(@RequestParam("projectNumber") int no, @RequestPart ProjectDto projectDto) {

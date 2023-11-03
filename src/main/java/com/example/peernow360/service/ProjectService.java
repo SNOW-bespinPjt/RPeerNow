@@ -47,10 +47,22 @@ public class ProjectService implements IProjectService {
         return result;
     }
 
+    public List<UserMemberDto> getPeer(String peerName) {
+        log.info("getPeer()");
+
+        return iProjectMapper.getPeer(peerName);
+    }
+
     public ProjectDto projectDetail(int no) {
         log.info("projectDetail()");
 
         return iProjectMapper.projectDetail(no);
+    }
+
+    public List<ProjectDto> projectList(String user_id) {
+        log.info("projectList()");
+
+        return iProjectMapper.projectList(user_id);
     }
 
     public int modifyProject(ProjectDto projectDto) {
@@ -103,17 +115,4 @@ public class ProjectService implements IProjectService {
 
         return result;
     }
-
-    public List<UserMemberDto> getPeer(String peerName) {
-        log.info("getPeer()");
-
-        return iProjectMapper.getPeer(peerName);
-    }
-
-
-//    public List<ProjectDto> createProject(ProjectDto projectDto) {
-//        log.info("createProject()");
-//
-//        return iProjectMapper.createProject(projectDto);
-//    }
 }

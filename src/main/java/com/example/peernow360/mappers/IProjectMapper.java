@@ -31,4 +31,6 @@ public interface IProjectMapper {
     int deleteProject(Map<String, Object> map);
 
     List<UserMemberDto> getPeer(String peerName);
+
+    List<ProjectDto> projectList(String user_id);
 }

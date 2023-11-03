@@ -25,6 +25,8 @@ public interface IProjectService {
 
     List<UserMemberDto> getPeer(String peerName);
 
+    List<ProjectDto> projectList(String user_id);
+
 
 
 //    List<ProjectDto> createProject(ProjectDto projectDto);
