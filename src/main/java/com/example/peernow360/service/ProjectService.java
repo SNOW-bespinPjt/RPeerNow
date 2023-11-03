@@ -7,6 +7,7 @@ import com.example.peernow360.mappers.IProjectMapper;
 import com.example.peernow360.service.impl.IProjectService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,6 +66,16 @@ public class ProjectService implements IProjectService {
         return iProjectMapper.projectList(user_id);
     }
 
+    public List<UserMemberDto> peerlist(int no, String owner) {
+        log.info("peerlist()");
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("no", no);
+        map.put("owner", owner);
+
+        return iProjectMapper.peerlist(map);
+    }
+
     public int modifyProject(ProjectDto projectDto) {
         log.info("modifyProject()");
 
@@ -115,4 +126,6 @@ public class ProjectService implements IProjectService {
 
         return result;
     }
+
+
 }

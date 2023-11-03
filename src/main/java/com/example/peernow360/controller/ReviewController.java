@@ -4,6 +4,7 @@ import com.example.peernow360.dto.ReviewDto;
 import com.example.peernow360.dto.TeamDto;
 import com.example.peernow360.dto.UserMemberDto;
 import com.example.peernow360.response.ListResponse;
+import com.example.peernow360.response.ResponseResult;
 import com.example.peernow360.response.ResponseService;
 import com.example.peernow360.service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,14 +40,7 @@ public class ReviewController {
 
         int result = reviewService.createScore(reviewDto);
 
-        String message;
-        if (result > 0) {
-            message = "success";
-        } else {
-            message = "fail";
-        }
-
-        return message;
+        return ResponseResult.result(result);
     }
 
     @GetMapping("/feedback")

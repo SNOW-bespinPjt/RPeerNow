@@ -4,6 +4,7 @@ import com.example.peernow360.dto.ProjectDto;
 import com.example.peernow360.dto.TeamDto;
 import com.example.peernow360.dto.UserMemberDto;
 import com.example.peernow360.response.ListResponse;
+import com.example.peernow360.response.ResponseResult;
 import com.example.peernow360.response.ResponseService;
 import com.example.peernow360.response.SingleResponse;
 import com.example.peernow360.service.ProjectService;
@@ -44,14 +45,7 @@ public class ProjectController {
 
         int result = projectService.createProject(map, project, teams);
 
-        String message;
-        if (result > 0) {
-            message = "success";
-        } else {
-            message = "fail";
-        }
-
-        return message;
+        return ResponseResult.result(result);
     }
 
     @GetMapping("/peer")
@@ -81,6 +75,14 @@ public class ProjectController {
         return responseService.getListResponse(projectService.projectList(user_id));
     }
 
+    @GetMapping("peerlist")
+    @Operation(summary = "프로젝트 팀원", description = "프로젝트 팀원", tags = {"detail"})
+    public ListResponse<UserMemberDto> peerlist(@RequestParam("projectNumber") int no, @RequestParam("owner") String owner) {
+        log.info(("peerlist()"));
+
+        return responseService.getListResponse(projectService.peerlist(no, owner));
+    }
+
     @PutMapping("/change")
     @Operation(summary = "프로젝트 수정", description = "프로젝트 수정", tags = {"modify"})
     public String modifyProject(@RequestParam("projectNumber") int no, @RequestPart ProjectDto projectDto) {
@@ -94,14 +96,7 @@ public class ProjectController {
 
         int result = projectService.modifyProject(projectDto);
 
-        String message;
-        if (result > 0) {
-            message = "success";
-        } else {
-            message = "fail";
-        }
-
-        return message;
+        return ResponseResult.result(result);
     }
 
     @PutMapping("/accept")
@@ -114,14 +109,7 @@ public class ProjectController {
 
         int result = projectService.acceptProject(no, user_id);
 
-        String message;
-        if (result > 0) {
-            message = "success";
-        } else {
-            message = "fail";
-        }
-
-        return message;
+        return ResponseResult.result(result);
     }
 
     @PutMapping("/decline")
@@ -134,14 +122,7 @@ public class ProjectController {
 
         int result = projectService.declineProject(no, user_id);
 
-        String message;
-        if (result > 0) {
-            message = "success";
-        } else {
-            message = "fail";
-        }
-
-        return message;
+        return ResponseResult.result(result);
     }
 
     @DeleteMapping("/delete")
@@ -154,14 +135,8 @@ public class ProjectController {
 
         int result = projectService.deleteProject(no, user_id);
 
-        String message;
-        if (result > 0) {
-            message = "success";
-        } else {
-            message = "fail";
-        }
-
-        return message;
+        return ResponseResult.result(result);
     }
+
 
 }
