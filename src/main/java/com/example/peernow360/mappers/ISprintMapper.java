@@ -32,8 +32,6 @@ public interface ISprintMapper {
     /*
      * 스프린트 정보 삭제
      */
-    public int removeSprintInfo(int no);
-
-
+    public int removeSprintInfo(SprintDto sprintDto);
 
 }

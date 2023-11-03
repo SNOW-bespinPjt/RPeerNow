@@ -16,15 +16,23 @@
                    end_date,
                    reg_date,
                    mod_date)
-        VALUES
-            (#{project_no},
+        select
+            #{project_no},
              #{user_id},
              #{title},
              #{detail},
              #{start_date},
              #{end_date},
              NOW(),
-             NOW())
+             NOW()
+        FROM
+            team
+        WHERE
+            role = "SM"
+        AND
+            peer_id = #{user_id}
+        AND
+            no = #{project_no}
 
     </insert>
     
@@ -43,11 +51,11 @@
     <select id="searchSprintDetail" parameterType="Integer"
             resultType="com.example.peernow360.dto.SprintDto">
 
-        select
+        SELECT
             *
-        from
+        FROM
             sprint
-        where
+        WHERE
             no = #{no}
 
     </select>
@@ -64,15 +72,41 @@
             mod_date = NOW()
         WHERE
             no = #{no}
+        AND
+            EXISTS(
+                SELECT
+                    *
+                FROM
+                    team
+                WHERE
+                    role IN ("PM", "SM")
+                AND
+                    peer_id = #{user_id}
+                AND
+                    no = #{project_no}
+            )
 
     </update>
 
-    <delete id="removeSprintInfo" parameterType="Integer">
+    <delete id="removeSprintInfo" parameterType="com.example.peernow360.dto.SprintDto">
 
         DELETE FROM
                 sprint
         WHERE
             no = #{no}
+        AND
+            EXISTS(
+                SELECT
+                    *
+                FROM
+                    team
+                WHERE
+                    role IN ("TM")
+                  AND
+                    peer_id = #{user_id}
+                  AND
+                    no = #{project_no}
+            )
 
     </delete>
 

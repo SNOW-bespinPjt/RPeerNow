@@ -108,9 +108,11 @@ public class SprintService implements ISprintService {
     public String updateSprint(SprintDto sprintDto, int no) {
         log.info("[SprintService] sprintDetailInfo()");
 
-        Map<String, Object> data = new HashMap<>();
+        User user_info = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String user_id = user_info.getUsername();
 
         sprintDto.setNo(no);
+        sprintDto.setUser_id(user_id);
 
         int result = iSprintMapper.updateSprintInfo(sprintDto);
 
@@ -130,12 +132,15 @@ public class SprintService implements ISprintService {
     }
 
     @Override
-    public String removeSprint(int no) {
+    public String removeSprint(SprintDto sprintDto) {
         log.info("[SprintService] removeSprint()");
 
-        Map<String, Object> data = new HashMap<>();
+        User user_info = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String user_id = user_info.getUsername();
 
-        int result = iSprintMapper.removeSprintInfo(no);
+        sprintDto.setUser_id(user_id);
+
+        int result = iSprintMapper.removeSprintInfo(sprintDto);
 
         if(result > 0) {
             log.info("스프린트 정보를 삭제하는데 성공하였습니다.");

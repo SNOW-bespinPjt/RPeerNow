@@ -76,10 +76,10 @@ public class SprintController {
      * 스프린트 삭제
      */
     @DeleteMapping("")
-    public String deleteSprint(@RequestParam (value="no") int no) {
+    public String deleteSprint(@RequestPart SprintDto sprintDto) {
         log.info("[SprintController] deleteSprint()");
 
-        return sprintService.removeSprint(no);
+        return sprintService.removeSprint(sprintDto);
 
     }
 

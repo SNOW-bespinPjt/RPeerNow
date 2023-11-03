@@ -31,7 +31,7 @@ public interface ISprintService {
     /*
      * 스프린트 정보 수정
      */
-    public String removeSprint(int no);
+    public String removeSprint(SprintDto sprintDto);
 
 
 
