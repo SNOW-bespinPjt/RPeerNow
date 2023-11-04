@@ -22,7 +22,7 @@
              #{title},
              #{detail},
              #{start_date},
-             #{end_date},
+            date_sub(date_add(#{end_date}, INTERVAL 1 DAY), INTERVAL 1 second),
              NOW(),
              NOW()
         FROM

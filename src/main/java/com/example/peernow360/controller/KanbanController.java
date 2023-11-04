@@ -6,7 +6,11 @@ import com.example.peernow360.response.ResponseService;
 import com.example.peernow360.service.KanbanService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @RestController
 @Log4j2
@@ -63,8 +67,18 @@ public class KanbanController {
     }
 
     /*
-     * 번다운 차트
+     * 번다운 차트 (매일 09:00에 실행)
      */
+//    @Scheduled(cron = "0 0 9 * * *", zone = "Asia/Seoul")
+    @PutMapping("/burndown")
+    public void modifyBurnDown() {
+        log.info("[KanbanController] updateBurnDown()");
+
+        kanbanService.updateBurnDown();
+
+        //이곳에서 DB에서 시작일과 종료일을 가져오는 로직을 작성.
+
+    }
 
 
 

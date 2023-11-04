@@ -26,4 +26,9 @@ public interface IKanbanService {
      */
     public String modifyNone(BacklogDto backlogDto);
 
+    /*
+     * 번다운 차트 (매일 09:00에 실행)
+     */
+    public void updateBurnDown();
+
 }

@@ -54,4 +54,27 @@
 
     </update>
 
+    <select id="compareEndTime" parameterType="String"
+            resultType="com.example.peernow360.dto.SprintDto">
+
+        select
+            *
+        from
+            burndown
+        where
+            #{nowTime} <![CDATA[<=]]> end_date
+
+    </select>
+
+    <insert id="createBurndown" parameterType="com.example.peernow360.dto.SprintDto">
+
+        INSERT INTO
+            burndown(sprint_no, lapse, start_date, end_date, reg_date, mod_date, task)
+        SELECT #{no}, 1, #{start_date}, #{end_date}, NOW(), NOW(),
+        (SELECT count(*) FROM backlog WHERE sprint_no = #{no} AND status NOT IN ("done"))
+
+    </insert>
+
+
+
 </mapper>

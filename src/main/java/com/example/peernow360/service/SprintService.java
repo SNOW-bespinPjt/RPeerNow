@@ -3,6 +3,7 @@ package com.example.peernow360.service;
 import com.example.peernow360.dto.BacklogDto;
 import com.example.peernow360.dto.SprintDto;
 import com.example.peernow360.mappers.IBacklogMapper;
+import com.example.peernow360.mappers.IKanbanMapper;
 import com.example.peernow360.mappers.ISprintMapper;
 import com.example.peernow360.service.impl.ISprintService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class SprintService implements ISprintService {
 
     private final ISprintMapper iSprintMapper;
     private final IBacklogMapper iBacklogMapper;
+    private final IKanbanMapper iKanbanMapper;
 
     @Override
     public String createNewSprint(SprintDto sprintDto, int project_no, List<BacklogDto> backlogDto) {
@@ -54,10 +56,17 @@ public class SprintService implements ISprintService {
 
             }
 
+            SprintDto sprintInfo = iSprintMapper.searchSprintDetail(sprintDto.getNo());
+            log.info("sprintINfo : " + sprintInfo.getNo());
+
+            int isCreate = iKanbanMapper.createBurndown(sprintInfo);
+
+            log.info("isCreate : " + isCreate);
+
             return "success";
 
         } else {
-            log.info("스프린트 생성에 성공하였습니다.");
+            log.info("스프린트 생성에 실패하였습니다.");
 
             return "fail";
 
