@@ -2,6 +2,9 @@ package com.example.peernow360.controller;
 
 import com.example.peernow360.dto.ProjectDto;
 import com.example.peernow360.dto.TeamDto;
+import com.example.peernow360.dto.UserMemberDto;
+import com.example.peernow360.response.ListResponse;
+import com.example.peernow360.response.ResponseResult;
 import com.example.peernow360.response.ResponseService;
 import com.example.peernow360.response.SingleResponse;
 import com.example.peernow360.service.ProjectService;
@@ -27,8 +30,6 @@ public class ProjectController {
     private final ResponseService responseService;
     private final ProjectService projectService;
 
-    //dto 공통 구조
-
     @PostMapping("")
     @Operation(summary = "프로젝트 생성", description = "프로젝트 생성", tags = {"create"})
     public String createProject(@RequestBody Map<String, Object> map) {
@@ -44,14 +45,15 @@ public class ProjectController {
 
         int result = projectService.createProject(map, project, teams);
 
-        String message;
-        if (result > 0) {
-            message = "success";
-        } else {
-            message = "fail";
-        }
+        return ResponseResult.result(result);
+    }
 
-        return message;
+    @GetMapping("/peer")
+    @Operation(summary = "팀원 조회", description = "팀원 조회", tags = {"detail"})
+    public ListResponse<UserMemberDto> getPeer(@RequestParam("peerName") String peerName) {
+        log.info("getPeer()");
+
+        return responseService.getListResponse(projectService.getPeer(peerName));
     }
 
     @GetMapping("")
@@ -60,6 +62,25 @@ public class ProjectController {
         log.info("projectDetail()");
 
         return responseService.getSingleResponse(projectService.projectDetail(no));
+    }
+
+    @GetMapping("/list")
+    @Operation(summary = "프로젝트 리스트", description = "프로젝트 리스트", tags = {"detail"})
+    public ListResponse<ProjectDto> projectList() {
+        log.info("projectList()");
+
+        User userInfo = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String user_id = userInfo.getUsername();
+
+        return responseService.getListResponse(projectService.projectList(user_id));
+    }
+
+    @GetMapping("peerlist")
+    @Operation(summary = "프로젝트 팀원", description = "프로젝트 팀원", tags = {"detail"})
+    public ListResponse<UserMemberDto> peerlist(@RequestParam("projectNumber") int no, @RequestParam("owner") String owner) {
+        log.info(("peerlist()"));
+
+        return responseService.getListResponse(projectService.peerlist(no, owner));
     }
 
     @PutMapping("/change")
@@ -75,14 +96,7 @@ public class ProjectController {
 
         int result = projectService.modifyProject(projectDto);
 
-        String message;
-        if (result > 0) {
-            message = "success";
-        } else {
-            message = "fail";
-        }
-
-        return message;
+        return ResponseResult.result(result);
     }
 
     @PutMapping("/accept")
@@ -95,14 +109,7 @@ public class ProjectController {
 
         int result = projectService.acceptProject(no, user_id);
 
-        String message;
-        if (result > 0) {
-            message = "success";
-        } else {
-            message = "fail";
-        }
-
-        return message;
+        return ResponseResult.result(result);
     }
 
     @PutMapping("/decline")
@@ -115,14 +122,7 @@ public class ProjectController {
 
         int result = projectService.declineProject(no, user_id);
 
-        String message;
-        if (result > 0) {
-            message = "success";
-        } else {
-            message = "fail";
-        }
-
-        return message;
+        return ResponseResult.result(result);
     }
 
     @DeleteMapping("/delete")
@@ -135,14 +135,8 @@ public class ProjectController {
 
         int result = projectService.deleteProject(no, user_id);
 
-        String message;
-        if (result > 0) {
-            message = "success";
-        } else {
-            message = "fail";
-        }
-
-        return message;
+        return ResponseResult.result(result);
     }
+
 
 }

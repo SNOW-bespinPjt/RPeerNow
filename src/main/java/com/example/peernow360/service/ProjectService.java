@@ -2,10 +2,12 @@ package com.example.peernow360.service;
 
 import com.example.peernow360.dto.ProjectDto;
 import com.example.peernow360.dto.TeamDto;
+import com.example.peernow360.dto.UserMemberDto;
 import com.example.peernow360.mappers.IProjectMapper;
 import com.example.peernow360.service.impl.IProjectService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,10 +48,32 @@ public class ProjectService implements IProjectService {
         return result;
     }
 
+    public List<UserMemberDto> getPeer(String peerName) {
+        log.info("getPeer()");
+
+        return iProjectMapper.getPeer(peerName);
+    }
+
     public ProjectDto projectDetail(int no) {
         log.info("projectDetail()");
 
         return iProjectMapper.projectDetail(no);
+    }
+
+    public List<ProjectDto> projectList(String user_id) {
+        log.info("projectList()");
+
+        return iProjectMapper.projectList(user_id);
+    }
+
+    public List<UserMemberDto> peerlist(int no, String owner) {
+        log.info("peerlist()");
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("no", no);
+        map.put("owner", owner);
+
+        return iProjectMapper.peerlist(map);
     }
 
     public int modifyProject(ProjectDto projectDto) {
@@ -104,9 +128,4 @@ public class ProjectService implements IProjectService {
     }
 
 
-//    public List<ProjectDto> createProject(ProjectDto projectDto) {
-//        log.info("createProject()");
-//
-//        return iProjectMapper.createProject(projectDto);
-//    }
 }
