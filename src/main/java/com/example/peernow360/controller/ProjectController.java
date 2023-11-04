@@ -85,7 +85,7 @@ public class ProjectController {
 
     @PutMapping("/change")
     @Operation(summary = "프로젝트 수정", description = "프로젝트 수정", tags = {"modify"})
-    public String modifyProject(@RequestParam("projectNumber") int no, @RequestPart ProjectDto projectDto) {
+    public String modifyProject(@RequestParam("projectNumber") int no, @RequestBody ProjectDto projectDto) {
         log.info("modifyProject()");
 
         User userInfo = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
