@@ -29,7 +29,7 @@ public class BacklogController {
      */
     @PostMapping("")
     @Transactional
-    public String createBacklog(@RequestParam (value = "sprintNumber", required = false) String sprint_no,
+    public String createBacklog(@RequestParam (value = "sprint_no", required = false) String sprint_no, //백로그만 생성할 시 -> sprintnumber을 받지 않는다.
                                 @RequestPart BacklogDto backlogDto,
                                 @RequestPart List<FileDto> fileDto) {
         log.info("[BacklogController] createBacklog()");
@@ -43,8 +43,7 @@ public class BacklogController {
      */
     @GetMapping("/list")
     @Transactional(readOnly = true)
-    public MapResponse<String,Object> backlogList(@RequestParam (value = "sprintNumber") int sprint_no) {
-
+    public MapResponse<String,Object> backlogList(@RequestParam (value = "sprint_no") int sprint_no) {
         log.info("[BacklogController] backlogDetail()");
 
         return responseService.getMapResponse( backlogService.backlogListInfo(sprint_no));
@@ -56,8 +55,7 @@ public class BacklogController {
      */
     @GetMapping("")
     @Transactional(readOnly = true)
-    public MapResponse<String,Object> backlogDetail(@RequestParam (value = "backlogNumber") int no) {
-
+    public MapResponse<String,Object> backlogDetail(@RequestParam (value = "no") int no) {
         log.info("[BacklogController] backlogDetailByNo()");
 
         return responseService.getMapResponse(backlogService.backlogDetailInfo(no));
@@ -79,7 +77,7 @@ public class BacklogController {
      * 백로그 status(상태 ex. todo -> 해야할 일 , ing -> 진행중, done -> 완료)
      */
     @PutMapping("/status")
-    public String backlogModifyStatus(@RequestParam (value = "backlogNumber") int no ,
+    public String backlogModifyStatus(@RequestParam (value = "no") int no ,
                                       @RequestParam (value = "status") String status) {
         log.info("[BacklogController] backlogModifyStatus()");
 
@@ -92,7 +90,7 @@ public class BacklogController {
      */
     @PutMapping("")
     @Transactional
-    public String backlogModify(@RequestParam (value = "backlogNumber") int no,
+    public String backlogModify(@RequestParam (value = "no") int no,
                                 @RequestPart BacklogDto backlogDto,
                                 @RequestPart List<FileDto> fileDto) {
         log.info("[BacklogController] backlogModify()");
@@ -106,13 +104,11 @@ public class BacklogController {
      */
     @DeleteMapping("")
     @Transactional
-    public String backlogDelete(@RequestParam (value = "backlogNumber") int no) {
+    public String backlogDelete(@RequestParam (value = "no") int no) {
         log.info("[BacklogController] backlogDelete()");
 
         return backlogService.backlogDeleteInfo(no);
 
     }
-
-
 
 }
