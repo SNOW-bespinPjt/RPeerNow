@@ -15,5 +15,7 @@ public class UserMemberDto {
     private String grade;
     private String reg_date;
     private String mod_date;
+    private String role;
+    private String status;
 
 }

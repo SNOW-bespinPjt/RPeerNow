@@ -20,7 +20,25 @@
         where project_no = #{no}
     </select>
 
-    <select id="avgScore" parameterType="com.example.peernow360.dto.ReviewDto" resultType="com.example.peernow360.dto.ReviewDto">
-        select avg
+    <select id="avgScore" parameterType="com.example.peernow360.dto.PeerDto" resultType="Integer">
+        select round(avg(total)) as avg
+        from (select * from review where peer_id = #{user_id} and project_no = #{no}) a
+        group by project_no
     </select>
+
+    <select id="best" parameterType="com.example.peernow360.dto.PeerDto" resultType="String">
+        select peer_id
+        from review
+        where project_no = #{no}
+        and user_id = #{user_id}
+        and total = (select MAX(total) from review where project_no = #{no} and user_id = #{user_id})
+    </select>
+
+    <select id="getPeer" parameterType="com.example.peernow360.dto.PeerDto" resultType="String">
+        select peer_id
+        from team
+        where no = #{no}
+    </select>
+
+
 </mapper>

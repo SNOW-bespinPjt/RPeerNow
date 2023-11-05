@@ -1,5 +1,6 @@
 package com.example.peernow360.service;
 
+import com.example.peernow360.dto.PeerDto;
 import com.example.peernow360.dto.ReviewDto;
 import com.example.peernow360.mappers.IReviewMapper;
 import com.example.peernow360.service.impl.IReviewService;
@@ -34,9 +35,15 @@ public class ReviewService implements IReviewService {
         return iReviewMapper.feedback(no);
     }
 
-    public List<ReviewDto> evaluatinoInfo(ReviewDto reviewDto) {
+    public PeerDto evaluationInfo(PeerDto peerDto) {
         log.info("evaluatinoInfo()");
 
-        return iReviewMapper.avgScore(reviewDto);
+        peerDto.setAvg(iReviewMapper.avgScore(peerDto));
+        peerDto.setBest(iReviewMapper.best(peerDto));
+
+        List<String> peerIds = iReviewMapper.getPeer(peerDto);
+        peerDto.setPeer_id(peerIds);
+
+        return peerDto;
     }
 }

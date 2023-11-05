@@ -1,5 +1,6 @@
 package com.example.peernow360.controller;
 
+import com.example.peernow360.dto.InvitationDto;
 import com.example.peernow360.dto.ProjectDto;
 import com.example.peernow360.dto.TeamDto;
 import com.example.peernow360.dto.UserMemberDto;
@@ -71,11 +72,11 @@ public class ProjectController {
 
         User userInfo = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String user_id = userInfo.getUsername();
-
+        log.info("userInfo in List: {}", userInfo);
         return responseService.getListResponse(projectService.projectList(user_id));
     }
 
-    @GetMapping("peerlist")
+    @GetMapping("/peerlist")
     @Operation(summary = "프로젝트 팀원", description = "프로젝트 팀원", tags = {"detail"})
     public ListResponse<UserMemberDto> peerlist(@RequestParam("projectNumber") int no, @RequestParam("owner") String owner) {
         log.info(("peerlist()"));
@@ -136,6 +137,20 @@ public class ProjectController {
         int result = projectService.deleteProject(no, user_id);
 
         return ResponseResult.result(result);
+    }
+
+    @GetMapping("/invitation")
+    @Operation(summary = "프로젝트 초대", description = "프로젝트 초대", tags = {"detail"})
+    public ListResponse<InvitationDto> projectInvitation() {
+        log.info(("projectInvitation()"));
+
+        User userInfo = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String user_id = userInfo.getUsername();
+
+        InvitationDto invitationDto = new InvitationDto();
+        invitationDto.setUser_id(user_id);
+
+        return responseService.getListResponse(projectService.projectInvitation(invitationDto));
     }
 
 
