@@ -218,10 +218,6 @@ public class UserMemberController {
     public  String TestController(){
         log.info("Test On!");
 
-        User user_info = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String user_id = user_info.getUsername();
-        log.info(user_id);
-
         return "gettest Success!!";
     }
 

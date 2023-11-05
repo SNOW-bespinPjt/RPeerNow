@@ -1,8 +1,10 @@
 package com.example.peernow360.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ReviewDto {
 
     private int no;
@@ -17,4 +19,5 @@ public class ReviewDto {
     private int score4;
     private int score5;
     private String reg_date;
+    private int total;
 }
