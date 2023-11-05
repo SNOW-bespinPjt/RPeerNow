@@ -1,5 +1,6 @@
 package com.example.peernow360.service;
 
+import com.example.peernow360.dto.InvitationDto;
 import com.example.peernow360.dto.ProjectDto;
 import com.example.peernow360.dto.TeamDto;
 import com.example.peernow360.dto.UserMemberDto;
@@ -128,4 +129,9 @@ public class ProjectService implements IProjectService {
     }
 
 
+    public List<InvitationDto> projectInvitation(InvitationDto invitationDto) {
+        log.info("projectInvitation()");
+
+        return  iProjectMapper.projectInvitation(invitationDto);
+    }
 }

@@ -32,17 +32,23 @@
     </select>
 
     <select id="peerlist" parameterType="HashMap" resultType="com.example.peernow360.dto.UserMemberDto">
-        select u.id, u.name, u.mail, u.phone, u.team, u.image, u.grade
+        select u.id, u.name, u.mail, u.phone, u.team, u.image, u.grade, p.no, t.role, t.status
         from team t
-                 join project p on t.no = p.no
-                 right outer join user u on t.peer_id =u.id
-        where p.no = #{no} or u.id = #{owner}
+        join project p on t.no = p.no
+        right outer join user u on t.peer_id = u.id
+        where p.no = #{no}
+        union
+        select u.id, u.name, u.mail, u.phone, u.team, u.image, u.grade, p.no, null as role, null as status
+        from user u
+                 join project p on p.user_id = u.id
+        where p.user_id = #{owner} and p.no = #{no};
+
     </select>
 
     <update id="modifyProject" parameterType="com.example.peernow360.dto.ProjectDto">
         update project p join team t on p.no = t.no
         set title = #{title}, detail = #{detail}, start_date = #{start_date}, end_date = #{end_date}, mod_date = now()
-        where t.role = 'PM' and peer_id = #{user_id} and p.no = #{no}
+        where p.user_id = #{user_id} and p.no = #{no}
     </update>
 
     <update id="acceptProject" parameterType="HashMap">
@@ -59,12 +65,29 @@
     </update>
 
     <delete id="deleteProject" parameterType="HashMap">
-        delete p from project p
-        join team t on p.no = t.no
-        where t.role = 'PM' and t.peer_id = #{user_id} and p.no = #{no}
+        delete from project
+        where no = #{no} and user_id = #{user_id}
     </delete>
 
-
+    <select id="projectInvitation" parameterType="com.example.peernow360.dto.InvitationDto" resultType="com.example.peernow360.dto.InvitationDto">
+        select
+            u.name as owner_name,
+            u.id as owner_id,
+            u.image owner_image,
+            t.status as status,
+            p.title as project_title,
+            p.start_date as start_date,
+            p.end_date as end_date,
+            t.peer_id as user_id
+        from
+            team t
+                left join
+            project p on t.no = p.no
+                left join
+            user u on p.user_id = u.id
+        where
+            t.peer_id = #{user_id};
+    </select>
 
 
 

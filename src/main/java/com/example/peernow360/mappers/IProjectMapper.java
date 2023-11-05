@@ -1,6 +1,7 @@
 package com.example.peernow360.mappers;
 
 
+import com.example.peernow360.dto.InvitationDto;
 import com.example.peernow360.dto.ProjectDto;
 import com.example.peernow360.dto.TeamDto;
 import com.example.peernow360.dto.UserMemberDto;
@@ -35,4 +36,6 @@ public interface IProjectMapper {
     List<ProjectDto> projectList(String user_id);
 
     List<UserMemberDto> peerlist(Map<String, Object> map);
+
+    List<InvitationDto> projectInvitation(InvitationDto invitationDto);
 }
