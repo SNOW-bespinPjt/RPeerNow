@@ -1,6 +1,7 @@
 package com.example.peernow360.controller;
 
 import com.example.peernow360.dto.BacklogDto;
+import com.example.peernow360.dto.BurnDownDto;
 import com.example.peernow360.response.ListResponse;
 import com.example.peernow360.response.ResponseService;
 import com.example.peernow360.service.KanbanService;
@@ -69,14 +70,23 @@ public class KanbanController {
     /*
      * 번다운 차트 (매일 09:00에 실행)
      */
-//    @Scheduled(cron = "0 0 9 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 0 10 * * *", zone = "Asia/Seoul")
     @PutMapping("/burndown")
     public void modifyBurnDown() {
         log.info("[KanbanController] updateBurnDown()");
 
         kanbanService.updateBurnDown();
 
-        //이곳에서 DB에서 시작일과 종료일을 가져오는 로직을 작성.
+    }
+
+    /*
+     * 번다운 차트 가져오기
+     */
+    @GetMapping("/burndown")
+    public ListResponse<BurnDownDto> callBurndown(@RequestParam (value = "sprint_no") int sprint_no) {
+        log.info("[KanbanController] callBurndown()");
+
+        return responseService.getListResponse(kanbanService.callInBurndown(sprint_no));
 
     }
 

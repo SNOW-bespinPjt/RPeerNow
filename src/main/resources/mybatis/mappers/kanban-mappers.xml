@@ -55,7 +55,7 @@
     </update>
 
     <select id="compareEndTime" parameterType="String"
-            resultType="com.example.peernow360.dto.SprintDto">
+            resultType="com.example.peernow360.dto.BurnDownDto">
 
         select
             *
@@ -63,9 +63,14 @@
             burndown
         where
             #{nowTime} <![CDATA[<=]]> end_date
+        AND
+            #{nowTime} <![CDATA[>=]]> start_date
+        AND
+            no = ori_no
 
     </select>
 
+    <!-- Sprint Service -->
     <insert id="createBurndown" parameterType="com.example.peernow360.dto.SprintDto">
 
         INSERT INTO
@@ -75,6 +80,67 @@
 
     </insert>
 
+    <insert id="updateBurndown" parameterType="com.example.peernow360.dto.BurnDownDto">
 
+        INSERT INTO
+            burndown(ori_no,
+                     reg_date,
+                     mod_date,
+                     sprint_no,
+                     lapse,
+                     start_date,
+                     end_date,
+                     task)
+        SELECT #{no},
+               now(),
+               now(),
+               sprint_no,
+               lapse +1,
+               start_date,
+               end_date,
+               (SELECT COUNT(*) FROM backlog WHERE sprint_no = #{sprint_no} AND status NOT IN ("done"))
+        FROM
+            burndown
+        WHERE
+            no = #{no}
+
+
+
+    </insert>
+
+    <select id="searchBurndown" parameterType="Integer"
+                resultType="com.example.peernow360.dto.BurnDownDto">
+
+        SELECT
+            lapse,task,DATEDIFF(end_date, start_date) AS sub_day
+        FROM
+            burndown
+        WHERE
+            sprint_no = #{sprint_no}
+        ORDER BY
+            ori_no
+
+    </select>
+
+    <select id="getMaxNo" resultType="Integer">
+
+        SELECT
+            Max(no)
+        FROM
+            burndown
+
+    </select>
+
+    <update id="updateNo" parameterType="Integer">
+
+        UPDATE
+            burndown
+        SET
+            ori_no = #{maxNo}
+        WHERE
+            no = #{maxNo}
+
+
+    </update>
 
 </mapper>
