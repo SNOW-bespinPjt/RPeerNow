@@ -28,7 +28,11 @@ public class ResponseService {
 
         ListResponse<T> listResponse = new ListResponse<>();
         listResponse.setDatalist(dataList);
-        setSuccessResponse(listResponse);
+        if (dataList == null) {
+            setFailResponse(listResponse);;
+        } else {
+            setSuccessResponse(listResponse);
+        }
 
         return listResponse;
     }
@@ -36,14 +40,18 @@ public class ResponseService {
     // 맵 데이터 처리
     public<K, V> MapResponse<K, V> getMapResponse(Map<K, V> dataMap) {
 
+        System.out.println(("dataMap: " + dataMap));
+
         MapResponse<K, V> mapResponse = new MapResponse<>();
         mapResponse.setDataMap(dataMap);
         setSuccessResponse(mapResponse);
 
-        if (dataMap.isEmpty()) {
-            setFailResponse(mapResponse);;
-        } else {
+        if (dataMap != null && dataMap.size() > 0 || dataMap != null && dataMap.isEmpty()) {
             setSuccessResponse(mapResponse);
+
+        } else {
+            setFailResponse(mapResponse);;
+
         }
 
         return mapResponse;

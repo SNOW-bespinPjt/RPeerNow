@@ -30,7 +30,7 @@ public class KanbanService implements IKanbanService {
 
         List<BacklogDto> backlogDtos = iKanbanMapper.showKanbanInfo(sprint_no);
 
-        if (StringUtils.hasText(backlogDtos.get(0).getTitle())) {
+        if (backlogDtos != null && backlogDtos.size() > 0) {
             log.info("스프린트에 해당하는 백로그를 불러오는데 성공하였습니다.");
 
             return backlogDtos;
@@ -50,7 +50,7 @@ public class KanbanService implements IKanbanService {
 
         List<BacklogDto> backlogDtos = iKanbanMapper.showOtherInfo();
 
-        if (StringUtils.hasText(backlogDtos.get(0).getTitle())) {
+        if (backlogDtos != null && backlogDtos.size() > 0) {
             log.info("스프린트에 해당하는 백로그를 불러오는데 성공하였습니다.");
 
             return backlogDtos;
@@ -121,7 +121,7 @@ public class KanbanService implements IKanbanService {
         log.info("nowTime: " + nowTime);
 
         List<BurnDownDto> burnDownDtos = iKanbanMapper.compareEndTime(nowTime);
-        if(burnDownDtos.get(0).getNo() > 0) {
+        if(burnDownDtos != null && burnDownDtos.size() > 0) {
             log.info("현재 진행중인 스프린트가 존재합니다");
             log.info("SprintDto : " + burnDownDtos);
 
@@ -148,7 +148,7 @@ public class KanbanService implements IKanbanService {
 
         List<BurnDownDto> burnDownDtos = iKanbanMapper.searchBurndown(sprint_no);
 
-        if(burnDownDtos.size() > 0) {
+        if(burnDownDtos != null && burnDownDtos.size() > 0) {
             log.info("번다운 차트 기록을 불러오는데 성공하였습니다.");
 
             return burnDownDtos;
