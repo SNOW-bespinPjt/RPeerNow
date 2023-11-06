@@ -31,7 +31,7 @@ public class BacklogController {
     @Transactional
     public String createBacklog(@RequestParam (value = "sprint_no", required = false) String sprint_no, //백로그만 생성할 시 -> sprintnumber을 받지 않는다.
                                 @RequestPart BacklogDto backlogDto,
-                                @RequestPart List<FileDto> fileDto) {
+                                @RequestPart (required = false) List<FileDto> fileDto) {
         log.info("[BacklogController] createBacklog()");
 
         return backlogService.createNewBacklog(backlogDto, sprint_no, fileDto);
@@ -92,7 +92,7 @@ public class BacklogController {
     @Transactional
     public String backlogModify(@RequestParam (value = "no") int no,
                                 @RequestPart BacklogDto backlogDto,
-                                @RequestPart List<FileDto> fileDto) {
+                                @RequestPart (required = false) List<FileDto> fileDto) {
         log.info("[BacklogController] backlogModify()");
 
         return backlogService.backlogUpdateInfo(backlogDto, no, fileDto);

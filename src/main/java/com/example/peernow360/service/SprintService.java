@@ -49,10 +49,13 @@ public class SprintService implements ISprintService {
         if(result > 0) {
             log.info("스프린트 생성에 성공하였습니다.");
 
-            // 스프린트 생성 시 담은 백로그들 스프린트 번호 업데이트.
-            for(BacklogDto backlogDtos : backlogDto) {
-                msgData.put("backlog_no", backlogDtos.getNo());
-                iBacklogMapper.updateBacklogSprint(msgData);
+            if(backlogDto != null) {
+                // 스프린트 생성 시 담은 백로그들 스프린트 번호 업데이트.
+                for(BacklogDto backlogDtos : backlogDto) {
+                    msgData.put("backlog_no", backlogDtos.getNo());
+                    iBacklogMapper.updateBacklogSprint(msgData);
+
+                }
 
             }
 
@@ -61,7 +64,20 @@ public class SprintService implements ISprintService {
 
             int isCreate = iKanbanMapper.createBurndown(sprintInfo);
 
-            log.info("isCreate : " + isCreate);
+            if(isCreate > 0) {
+                log.info("번다운 차트를 생성하는데 성공하였습니다.");
+
+                /*
+                 * 현재 번다운 차트가 생성되었다.. 그러면 가장 최신꺼는 no값이 가장 높은 즉 Max값일것이다. 그것을 가져온다.
+                 */
+                int maxNo = iKanbanMapper.getMaxNo();
+
+                /*
+                 * 가장 최신의 no값을 ori_no에다가 넣어줄 것이다.
+                 */
+                iKanbanMapper.updateNo(maxNo);
+
+            }
 
             return "success";
 

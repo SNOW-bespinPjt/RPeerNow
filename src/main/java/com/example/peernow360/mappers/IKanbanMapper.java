@@ -1,6 +1,7 @@
 package com.example.peernow360.mappers;
 
 import com.example.peernow360.dto.BacklogDto;
+import com.example.peernow360.dto.BurnDownDto;
 import com.example.peernow360.dto.SprintDto;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -33,11 +34,31 @@ public interface IKanbanMapper {
      * 현재시간과 스프린트 종료 시간과 비교해서 아직 진행중인
      * 스프린트 가져오기
      */
-    public SprintDto compareEndTime(String nowTime);
+    public List<BurnDownDto> compareEndTime(String nowTime);
 
     /*
      * 번다운 차트 생성
      */
     public int createBurndown(SprintDto sprintInfo);
+
+    /*
+     * 번다운 차트 최신화(09:00 마다)
+     */
+    public void updateBurndown(BurnDownDto burnDownDto);
+
+    /*
+     * 번다운 차트 가져오기
+     */
+    public List<BurnDownDto> searchBurndown(int sprint_no);
+
+    /*
+     * 현재 번다운 차트가 생성되었다.. 그러면 가장 최신꺼는 no값이 가장 높은 즉 Max값일것이다. 그것을 가져온다.
+     */
+    public int getMaxNo();
+
+    /*
+     * 가장 최신의 No값으로 수정해주는 작업
+     */
+    public void updateNo(int maxNo);
 
 }
