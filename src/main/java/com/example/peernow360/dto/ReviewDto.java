@@ -20,5 +20,5 @@ public class ReviewDto {
     private int score5;
     private String reg_date;
     private int total;
-    private float avg;
+    private int avg;
 }
