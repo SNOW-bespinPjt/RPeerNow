@@ -68,10 +68,9 @@ public class KanbanController {
     }
 
     /*
-     * 번다운 차트 (매일 09:00에 실행)
+     * 번다운 차트 (매일 10:00에 실행)
      */
     @Scheduled(cron = "0 0 10 * * *", zone = "Asia/Seoul")
-    @PutMapping("/burndown")
     public void modifyBurnDown() {
         log.info("[KanbanController] updateBurnDown()");
 
