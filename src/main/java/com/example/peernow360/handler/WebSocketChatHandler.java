@@ -30,7 +30,6 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
 
     }
 
-
     /*
      * HTTP 기반의 세션과는 목적과 사용되는 맥락이 다릅니다.
      * WebSocketSession은 WebSocket 통신의 연결을 관리하는 데 사용되며,

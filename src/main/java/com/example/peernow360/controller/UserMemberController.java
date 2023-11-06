@@ -7,6 +7,8 @@ import com.example.peernow360.response.ResponseService;
 import com.example.peernow360.response.SingleResponse;
 import com.example.peernow360.security.JWTtokenProvider;
 import com.example.peernow360.service.UserMemberService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -27,6 +29,7 @@ import java.util.Map;
 @Log4j2
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
+@Tag(name = "userMember", description = "유저멤버 서비스")
 public class UserMemberController {
 
     private final UserMemberService userMemberService;
@@ -37,6 +40,7 @@ public class UserMemberController {
      * 유저 계정 생성
      */
     @PostMapping("/join")
+    @Operation(summary = "회원가입", description = "회원가입", tags = {"create"})
     public String createAccountConfirm(@RequestBody UserMemberDto userMemberDto) {
         log.info("[UserMemberController] createAccountConfirm()");
 
@@ -60,6 +64,7 @@ public class UserMemberController {
      * 유저 계정 로그인
      */
     @PostMapping("/login")
+    @Operation(summary = "로그인", description = "로그인", tags = {"create"})
     public ResponseEntity<Map> userLogin(@RequestBody UserMemberDto userMemberDto, HttpServletResponse response) {
         log.info("[HomeController] UserLogin()");
 
@@ -98,6 +103,7 @@ public class UserMemberController {
      * accessToken 완료시 refreshToken을 이용한 재발급
      */
     @PostMapping("/request_refreshToken")
+    @Operation(summary = "refreshtoken 발급", description = "refreshtoken 발급", tags = {"create"})
     public ResponseEntity<Map<String, Object>> reissuanceAccessToken(@RequestHeader(value = "cookie") String refreshToken, HttpServletResponse response) {
         log.info("[HomeController] ReissuanceRefreshToken()");
 
@@ -150,6 +156,7 @@ public class UserMemberController {
      * 회원 정보 불러오기
      */
     @GetMapping("/detail")
+    @Operation(summary = "회원정보 불러오기", description = "회원정보 불러오기", tags = {"detail"})
     public SingleResponse<UserMemberDto> userDetail() {
         log.info("[HomeController] userDetail()");
 
@@ -160,6 +167,7 @@ public class UserMemberController {
 
     @PostMapping("/logout_info")
     @Transactional
+    @Operation(summary = "로그아웃", description = "로그아웃", tags = {"create"})
     public String logOutInfo(@RequestHeader(value = "cookie") String refreshToken, HttpServletResponse response) {
         log.info("[HomeController] logOut()");
 
@@ -185,6 +193,7 @@ public class UserMemberController {
      */
     @DeleteMapping("/leave")
     @Transactional
+    @Operation(summary = "계정 삭제", description = "계정 삭제", tags = {"delete"})
     public String deleteAccountConfirm(@RequestParam ("id") String id, @RequestHeader(value = "cookie") String refreshToken, HttpServletResponse response) {
         log.info("[HomeController] deleteAccountConfirm()");
         log.info("id : " + id);
@@ -207,6 +216,7 @@ public class UserMemberController {
      * 유저 계정 수정
      */
     @PutMapping("/change")
+    @Operation(summary = "계정 수정", description = "계정 수정", tags = {"modify"})
     public String updateAccountConfirm(@RequestParam ("id") String id, @RequestPart UserMemberDto userMemberDto) {
         log.info("[HomeController] deleteAccountConfirm()");
 
