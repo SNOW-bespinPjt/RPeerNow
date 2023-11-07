@@ -75,6 +75,7 @@
             u.id as owner_id,
             u.image owner_image,
             t.status as status,
+            p.no as project_number,
             p.title as project_title,
             p.start_date as start_date,
             p.end_date as end_date,

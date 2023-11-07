@@ -40,5 +40,8 @@
         where no = #{no}
     </select>
 
-
+    <insert id="test" parameterType="com.example.peernow360.dto.TestDto">
+        insert into test(user_id, test, file)
+        values(#{user_id}, #{test}, #{file})
+    </insert>
 </mapper>

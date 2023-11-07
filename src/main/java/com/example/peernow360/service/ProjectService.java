@@ -23,6 +23,12 @@ public class ProjectService implements IProjectService {
 
     private final IProjectMapper iProjectMapper;
 
+//    @Transactional
+//    public void Project() {
+//        createProject();
+//
+//    }
+
     public int createProject(Map<String, Object> map, ProjectDto project, List<TeamDto> teams) {
         log.info("createProject()");
 

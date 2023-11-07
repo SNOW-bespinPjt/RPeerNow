@@ -2,6 +2,7 @@ package com.example.peernow360.controller;
 
 import com.example.peernow360.dto.PeerDto;
 import com.example.peernow360.dto.ReviewDto;
+import com.example.peernow360.dto.TestDto;
 import com.example.peernow360.response.ListResponse;
 import com.example.peernow360.response.ResponseResult;
 import com.example.peernow360.response.ResponseService;
@@ -14,6 +15,10 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
 
 @RestController
 @Log4j2
@@ -63,5 +68,19 @@ public class ReviewController {
         peerDto.setUser_id(user_id);
 
         return responseService.getSingleResponse(reviewService.evaluationInfo(peerDto));
+    }
+
+    @PostMapping("/test")
+    public String test(@RequestPart("image") MultipartFile multipartFile, @RequestPart TestDto testDto) throws IOException {
+        log.info("test");
+
+        User userInfo = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String user_id = userInfo.getUsername();
+
+        testDto.setUser_id(user_id);
+
+        int result = reviewService.test(multipartFile, testDto);
+
+        return ResponseResult.result(result);
     }
 }
