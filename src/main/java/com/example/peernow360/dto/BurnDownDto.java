@@ -6,6 +6,7 @@ import lombok.Data;
 public class BurnDownDto {
 
     private int no;
+    private int ori_no;
     private int sprint_no;
     private int lapse;
     private int task;

@@ -13,7 +13,7 @@ public interface IBacklogService {
     /*
      * 백로그 생성
      */
-    public String createNewBacklog(BacklogDto backlogDto, String sprint_no, List<FileDto> fileDto);
+    public String createNewBacklog(BacklogDto backlogDto, int project_no, String sprint_no, List<FileDto> fileDto);
 
     /*
      * 백로그 리스트 불러오기

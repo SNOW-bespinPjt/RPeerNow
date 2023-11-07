@@ -45,10 +45,10 @@ public class KanbanService implements IKanbanService {
     }
 
     @Override
-    public List<BacklogDto> searchBacklogsOther() {
+    public List<BacklogDto> searchBacklogsOther(int project_no) {
         log.info("[KanbanService] searchBacklogsOther()");
 
-        List<BacklogDto> backlogDtos = iKanbanMapper.showOtherInfo();
+        List<BacklogDto> backlogDtos = iKanbanMapper.showOtherInfo(project_no);
 
         if (backlogDtos != null && backlogDtos.size() > 0) {
             log.info("스프린트에 해당하는 백로그를 불러오는데 성공하였습니다.");
