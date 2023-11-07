@@ -171,4 +171,17 @@
 
     </update>
 
+    <select id="searchAllBacklogList" parameterType="Integer"
+            resultType="com.example.peernow360.dto.BacklogDto">
+
+        select
+            *
+        from
+            backlog
+        where
+            sprint_no in (select sprint_no from sprint where project_no = #{project_no})
+
+
+    </select>
+
 </mapper>

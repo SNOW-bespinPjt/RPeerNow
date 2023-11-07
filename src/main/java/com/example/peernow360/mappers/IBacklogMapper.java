@@ -80,4 +80,9 @@ public interface IBacklogMapper {
      */
     public List<BacklogDto> searchBacklogDayAndIng(int sprintNo);
 
+    /*
+     * 프로젝트안에 있는 전체 백로그 불러오기
+     */
+    public List<BacklogDto> searchAllBacklogList(int projectNo)
+    ;
 }

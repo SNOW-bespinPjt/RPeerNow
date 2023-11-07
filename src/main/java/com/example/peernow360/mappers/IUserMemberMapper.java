@@ -79,6 +79,9 @@ public interface IUserMemberMapper {
      */
     public boolean selectBlackListToken(String refreshToken);
 
-
+    /*
+     * 유저 아이디를 이용해 사용자 이름 불러오기(채팅에 쓰일 메서드)
+     */
+    public String selectUserName(String user_id);
 
 }

@@ -5,7 +5,6 @@ import com.example.peernow360.dto.FileDto;
 import com.example.peernow360.response.ListResponse;
 import com.example.peernow360.response.MapResponse;
 import com.example.peernow360.response.ResponseService;
-import com.example.peernow360.response.SingleResponse;
 import com.example.peernow360.service.BacklogService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -65,6 +63,17 @@ public class BacklogController {
         log.info("[BacklogController] backlogDetailByNo()");
 
         return responseService.getMapResponse(backlogService.backlogDetailInfo(no));
+
+    }
+
+    /*
+     * 프로젝트안에 담겨있는 전체 백로그 불러오기
+     */
+    @GetMapping("/all")
+    public ListResponse<BacklogDto> searchAllBacklog(@RequestParam (value = "project_no") int project_no) {
+        log.info("[BacklogController] searchAllBacklog()");
+
+        return responseService.getListResponse(backlogService.searchALlbacklogList(project_no));
 
     }
 

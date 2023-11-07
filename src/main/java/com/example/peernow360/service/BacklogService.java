@@ -219,6 +219,28 @@ public class BacklogService implements IBacklogService {
 
         }
     }
+
+    @Override
+    public List<BacklogDto> searchALlbacklogList(int project_no) {
+        log.info("[BacklogService] backlogDeleteInfo()");
+
+        List<BacklogDto> backlogDtos = iBacklogMapper.searchAllBacklogList(project_no);
+        log.info("backlogDtos : " + backlogDtos);
+
+        if(backlogDtos != null && backlogDtos.size() > 0) {
+            log.info("프로젝트안에 존재하는 모든 백로그를 가져오는데 성공하였습니다.");
+
+            return backlogDtos;
+
+        } else {
+            log.info("프로젝트안에 존재하는 모든 백로그를 가져오는데 성공하였습니다.");
+
+            return backlogDtos;
+
+        }
+
+    }
+
 }
 
 //    CREATEBACKLOG 한게 아까워서 무덤에 놔두다..
