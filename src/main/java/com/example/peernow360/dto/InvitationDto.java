@@ -12,6 +12,7 @@ public class InvitationDto {
     private String owner_image;
     private String owner_id;
     private String owner_name;
+    private int project_number;
     private String project_title;
     private String start_date;
     private String end_date;
