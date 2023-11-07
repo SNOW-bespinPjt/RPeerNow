@@ -39,10 +39,10 @@ public class UserMemberController {
     private final JWTtokenProvider jwTtokenProvider;
 
     @GetMapping("/gettest")
-    public Object dontTouchMeNoDelete(){
+    public String dontTouchMeNoDelete(){
         
 
-        return "okayGoServer!!"
+        return "okayGoServer!!";
     }
     
 
