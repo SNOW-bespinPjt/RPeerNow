@@ -122,6 +122,7 @@ public class ProjectService implements IProjectService {
         return result;
     }
 
+    @Transactional
     public int deleteProject(int no, String user_id) {
         log.info("deleteProject()");
 

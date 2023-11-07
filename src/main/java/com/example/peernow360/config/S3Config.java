@@ -3,6 +3,7 @@ package com.example.peernow360.config;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.InstanceProfileCredentialsProvider;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 
@@ -24,6 +25,7 @@ public class S3Config {
     @Bean
     public AmazonS3 amazonS3Client() {
         AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
+//        AWSCredentials credentials = new InstanceProfileCredentialsProvider();
 
         return AmazonS3ClientBuilder
                 .standard()
