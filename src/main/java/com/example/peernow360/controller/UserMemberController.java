@@ -38,6 +38,14 @@ public class UserMemberController {
     private final ResponseService responseService;
     private final JWTtokenProvider jwTtokenProvider;
 
+    @GetMapping("/gettest")
+    public Object dontTouchMeNoDelete(){
+        
+
+        return "okayGoServer!!"
+    }
+    
+
     /*
      * 유저 계정 생성
      */
