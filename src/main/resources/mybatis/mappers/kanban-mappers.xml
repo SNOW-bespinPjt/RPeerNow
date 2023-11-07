@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.peernow360.mappers.IKanbanMapper">
+
+    <select id="showKanbanInfo" parameterType="Integer"
+            resultType="com.example.peernow360.dto.BacklogDto">
+
+        SELECT
+            *
+        FROM
+            backlog
+        WHERE
+            sprint_no = #{sprint_no}
+
+    </select>
+
+    <select id="showOtherInfo" parameterType="Integer"
+            resultType="com.example.peernow360.dto.BacklogDto">
+
+        SELECT
+            *
+        FROM
+            backlog
+        WHERE
+            sprint_no = 0
+
+    </select>
+
+    <update id="updateSprint" parameterType="com.example.peernow360.dto.BacklogDto">
+
+        UPDATE
+            backlog
+        SET
+            sprint_no = #{sprint_no}
+        WHERE
+            sprint_no = 0
+        AND
+            no = #{no}
+
+    </update>
+
+    <update id="updateNone" parameterType="com.example.peernow360.dto.BacklogDto">
+
+        UPDATE
+            backlog
+        SET
+            sprint_no = 0
+        WHERE
+            no = #{no}
+        AND
+            sprint_no = #{sprint_no}
+
+    </update>
+
+    <select id="compareEndTime" parameterType="String"
+            resultType="com.example.peernow360.dto.BurnDownDto">
+
+        select
+            *
+        from
+            burndown
+        where
+            #{nowTime} <![CDATA[<=]]> end_date
+        AND
+            #{nowTime} <![CDATA[>=]]> start_date
+        AND
+            no = ori_no
+
+    </select>
+
+    <!-- Sprint Service -->
+    <insert id="createBurndown" parameterType="com.example.peernow360.dto.SprintDto">
+
+        INSERT INTO
+            burndown(sprint_no, lapse, start_date, end_date, reg_date, mod_date, task)
+        SELECT #{no}, 1, #{start_date}, #{end_date}, NOW(), NOW(),
+        (SELECT count(*) FROM backlog WHERE sprint_no = #{no} AND status NOT IN ("done"))
+
+    </insert>
+
+    <insert id="updateBurndown" parameterType="com.example.peernow360.dto.BurnDownDto">
+
+        INSERT INTO
+            burndown(ori_no,
+                     reg_date,
+                     mod_date,
+                     sprint_no,
+                     lapse,
+                     start_date,
+                     end_date,
+                     task)
+        SELECT #{no},
+               now(),
+               now(),
+               sprint_no,
+               lapse +1,
+               start_date,
+               end_date,
+               (SELECT COUNT(*) FROM backlog WHERE sprint_no = #{sprint_no} AND status NOT IN ("done"))
+        FROM
+            burndown
+        WHERE
+            no = #{no}
+
+
+
+    </insert>
+
+    <select id="searchBurndown" parameterType="Integer"
+                resultType="com.example.peernow360.dto.BurnDownDto">
+
+        SELECT
+            lapse,task,DATEDIFF(end_date, start_date) AS sub_day
+        FROM
+            burndown
+        WHERE
+            sprint_no = #{sprint_no}
+        ORDER BY
+            ori_no
+
+    </select>
+
+    <select id="getMaxNo" resultType="Integer">
+
+        SELECT
+            Max(no)
+        FROM
+            burndown
+
+    </select>
+
+    <update id="updateNo" parameterType="Integer">
+
+        UPDATE
+            burndown
+        SET
+            ori_no = #{maxNo}
+        WHERE
+            no = #{maxNo}
+
+
+    </update>
+
+</mapper>

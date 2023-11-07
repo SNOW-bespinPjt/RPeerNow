@@ -16,26 +16,47 @@
                    end_date,
                    reg_date,
                    mod_date)
-        VALUES
-            (#{project_no},
+        select
+            #{project_no},
              #{user_id},
              #{title},
              #{detail},
              #{start_date},
-             #{end_date},
+            date_sub(date_add(#{end_date}, INTERVAL 1 DAY), INTERVAL 1 second),
              NOW(),
-             NOW())
+             NOW()
+        FROM
+            team
+        WHERE
+            role = "SM"
+        AND
+            peer_id = #{user_id}
+        AND
+            no = #{project_no}
 
     </insert>
     
-    <select id="searchSprintDetail" parameterType="Integer" resultType="com.example.peernow360.dto.SprintDto">
+    <select id="searchSprintListDetail" parameterType="Integer"
+            resultType="com.example.peernow360.dto.SprintDto">
 
         SELECT
             *
         FROM
             sprint
         WHERE
-            project_no=#{project_no}
+            project_no = #{project_no}
+
+    </select>
+
+    <select id="searchSprintDetail" parameterType="Integer"
+            resultType="com.example.peernow360.dto.SprintDto">
+
+        SELECT
+            *
+        FROM
+            sprint
+        WHERE
+            no = #{no}
 
     </select>
 
@@ -51,15 +72,41 @@
             mod_date = NOW()
         WHERE
             no = #{no}
+        AND
+            EXISTS(
+                SELECT
+                    *
+                FROM
+                    team
+                WHERE
+                    role IN ("PM", "SM")
+                AND
+                    peer_id = #{user_id}
+                AND
+                    no = #{project_no}
+            )
 
     </update>
 
-    <delete id="removeSprintInfo" parameterType="Integer">
+    <delete id="removeSprintInfo" parameterType="com.example.peernow360.dto.SprintDto">
 
         DELETE FROM
                 sprint
         WHERE
             no = #{no}
+        AND
+            EXISTS(
+                SELECT
+                    *
+                FROM
+                    team
+                WHERE
+                    role IN ("TM")
+                  AND
+                    peer_id = #{user_id}
+                  AND
+                    no = #{project_no}
+            )
 
     </delete>
 

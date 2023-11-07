@@ -3,6 +3,7 @@ package com.example.peernow360.service;
 import com.example.peernow360.dto.BacklogDto;
 import com.example.peernow360.dto.SprintDto;
 import com.example.peernow360.mappers.IBacklogMapper;
+import com.example.peernow360.mappers.IKanbanMapper;
 import com.example.peernow360.mappers.ISprintMapper;
 import com.example.peernow360.service.impl.ISprintService;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,8 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +24,7 @@ public class SprintService implements ISprintService {
 
     private final ISprintMapper iSprintMapper;
     private final IBacklogMapper iBacklogMapper;
+    private final IKanbanMapper iKanbanMapper;
 
     @Override
     public String createNewSprint(SprintDto sprintDto, int project_no, List<BacklogDto> backlogDto) {
@@ -45,29 +49,52 @@ public class SprintService implements ISprintService {
         if(result > 0) {
             log.info("스프린트 생성에 성공하였습니다.");
 
-            // 스프린트 생성 시 담은 백로그들 스프린트 번호 업데이트.
-            for(BacklogDto backlogDtos : backlogDto) {
-                msgData.put("backlog_no", backlogDtos.getNo());
-                iBacklogMapper.updateBacklogSprint(msgData);
+            if(backlogDto != null) {
+                // 스프린트 생성 시 담은 백로그들 스프린트 번호 업데이트.
+                for(BacklogDto backlogDtos : backlogDto) {
+                    msgData.put("backlog_no", backlogDtos.getNo());
+                    iBacklogMapper.updateBacklogSprint(msgData);
+
+                }
 
             }
 
-            return "SUCCESS";
+            SprintDto sprintInfo = iSprintMapper.searchSprintDetail(sprintDto.getNo());
+            log.info("sprintINfo : " + sprintInfo.getNo());
+
+            int isCreate = iKanbanMapper.createBurndown(sprintInfo);
+
+            if(isCreate > 0) {
+                log.info("번다운 차트를 생성하는데 성공하였습니다.");
+
+                /*
+                 * 현재 번다운 차트가 생성되었다.. 그러면 가장 최신꺼는 no값이 가장 높은 즉 Max값일것이다. 그것을 가져온다.
+                 */
+                int maxNo = iKanbanMapper.getMaxNo();
+
+                /*
+                 * 가장 최신의 no값을 ori_no에다가 넣어줄 것이다.
+                 */
+                iKanbanMapper.updateNo(maxNo);
+
+            }
+
+            return "success";
 
         } else {
-            log.info("스프린트 생성에 성공하였습니다.");
+            log.info("스프린트 생성에 실패하였습니다.");
 
-            return "FAIL";
+            return "fail";
 
         }
 
     }
 
     @Override
-    public List<SprintDto> sprintDetailInfo(int project_no) {
+    public List<SprintDto> sprintListDetailInfo(int project_no) {
         log.info("[SprintService] sprintDetailInfo()");
 
-        List<SprintDto> sprintDtos  = iSprintMapper.searchSprintDetail(project_no);
+        List<SprintDto> sprintDtos  = iSprintMapper.searchSprintListDetail(project_no);
 
         if(sprintDtos.get(0).getNo() > 0) {
             log.info("스프린트 정보를 불러오는데 성공하였습니다.");
@@ -84,24 +111,45 @@ public class SprintService implements ISprintService {
     }
 
     @Override
+    public SprintDto sprintDetailInfo(int no) {
+        log.info("[SprintService] sprintDetailInfo()");
+
+        SprintDto sprintDto = iSprintMapper.searchSprintDetail(no);
+
+        if(StringUtils.hasText(sprintDto.getUser_id())) {
+            log.info("스프린트 상세 정보를 불러오는데 성공하였습니다.");
+
+            return sprintDto;
+
+        } else {
+            log.info("스프린트 상세 정보를 불러오는데 실패하였습니다.");
+
+            return null;
+        }
+
+    }
+
+    @Override
     public String updateSprint(SprintDto sprintDto, int no) {
         log.info("[SprintService] sprintDetailInfo()");
 
-        Map<String, Object> data = new HashMap<>();
+        User user_info = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String user_id = user_info.getUsername();
 
         sprintDto.setNo(no);
+        sprintDto.setUser_id(user_id);
 
         int result = iSprintMapper.updateSprintInfo(sprintDto);
 
         if(result > 0) {
             log.info("스프린트 정보를 수정하는데 성공하였습니다.");
 
-            return "SUCCESS";
+            return "success";
 
         } else {
             log.info("스프린트 정보를 수정하는데 실패하였습니다.");
 
-            return "FAIL";
+            return "fail";
 
         }
 
@@ -109,25 +157,29 @@ public class SprintService implements ISprintService {
     }
 
     @Override
-    public String removeSprint(int no) {
+    public String removeSprint(SprintDto sprintDto) {
         log.info("[SprintService] removeSprint()");
 
-        Map<String, Object> data = new HashMap<>();
+        User user_info = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String user_id = user_info.getUsername();
 
-        int result = iSprintMapper.removeSprintInfo(no);
+        sprintDto.setUser_id(user_id);
+
+        int result = iSprintMapper.removeSprintInfo(sprintDto);
 
         if(result > 0) {
             log.info("스프린트 정보를 삭제하는데 성공하였습니다.");
 
-            return "SUCCESS";
+            return "success";
 
         } else {
             log.info("스프린트 정보를 삭제하는데 실패하였습니다.");
 
-            return "FAIL";
+            return "fail";
 
         }
 
     }
+
 
 }

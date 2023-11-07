@@ -153,12 +153,12 @@ public class BacklogService implements IBacklogService {
         if(result > 0) {
             log.info("STATUS 변경에 성공하였습니다.");
 
-            return "SUCCESS";
+            return "success";
 
         } else {
             log.info("STATUS 변경에 실패하였습니다.");
 
-            return "FAIL";
+            return "fail";
 
         }
 
@@ -184,12 +184,12 @@ public class BacklogService implements IBacklogService {
 
             }
 
-            return "SUCCESS";
+            return "success";
 
         } else {
             log.info("백로그 수정에 실패하였습니다.");
 
-            return "FAIL";
+            return "fail";
 
         }
 
