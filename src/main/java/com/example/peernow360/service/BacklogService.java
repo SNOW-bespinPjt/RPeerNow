@@ -49,9 +49,12 @@ public class BacklogService implements IBacklogService {
         if(result > 0) {
             log.info("백로그 생성에 성공하였습니다.");
 
-            for(FileDto fileName : fileDto) {
-                msgData.put("name", fileName.getName());
-                iBacklogMapper.insertBacklogFile(msgData);
+            if(fileDto != null) {
+                for (FileDto fileName : fileDto) {
+                    msgData.put("name", fileName.getName());
+                    iBacklogMapper.insertBacklogFile(msgData);
+
+                }
 
             }
 
@@ -74,7 +77,7 @@ public class BacklogService implements IBacklogService {
 
         List<BacklogDto> backlogDtos = iBacklogMapper.searchBacklogList(sprint_no);
 
-        if(StringUtils.hasText(backlogDtos.get(0).getUser_id())) {
+        if(backlogDtos != null && backlogDtos.size() > 0) {
             log.info("CALL BACKLOG INFO SUCCESS!!");
 
             List<FileDto> fileDtos = iBacklogMapper.searchBacklogFiles(sprint_no);
@@ -100,8 +103,9 @@ public class BacklogService implements IBacklogService {
         Map<String, Object> data = new HashMap<>();
 
         BacklogDto backlogDto = iBacklogMapper.searchBacklogDetail(no);
+        log.info("backlogDto: " + backlogDto);
 
-        if(StringUtils.hasText(backlogDto.getUser_id())) {
+        if(backlogDto != null) {
             log.info("백로그 상세정보를 불러오는데 성공하였습니다.");
 
             List<FileDto> fileDtos = iBacklogMapper.searchBacklogFile(no);
@@ -125,8 +129,9 @@ public class BacklogService implements IBacklogService {
         log.info("[BacklogService] backlogDayAndIngInfo()");
 
         List<BacklogDto> backlogDtos = iBacklogMapper.searchBacklogDayAndIng(sprintNo);
+        log.info("backlogDtos: " + backlogDtos);
 
-        if(StringUtils.hasText(backlogDtos.get(0).getUser_id())) {
+        if(backlogDtos != null && backlogDtos.size() >0 ) {
             log.info("오늘 날짜에 진행중인 백로그들을 불러오는데 성공하였습니다.");
 
             return backlogDtos;
@@ -214,6 +219,28 @@ public class BacklogService implements IBacklogService {
 
         }
     }
+
+    @Override
+    public List<BacklogDto> searchALlbacklogList(int project_no) {
+        log.info("[BacklogService] backlogDeleteInfo()");
+
+        List<BacklogDto> backlogDtos = iBacklogMapper.searchAllBacklogList(project_no);
+        log.info("backlogDtos : " + backlogDtos);
+
+        if(backlogDtos != null && backlogDtos.size() > 0) {
+            log.info("프로젝트안에 존재하는 모든 백로그를 가져오는데 성공하였습니다.");
+
+            return backlogDtos;
+
+        } else {
+            log.info("프로젝트안에 존재하는 모든 백로그를 가져오는데 성공하였습니다.");
+
+            return backlogDtos;
+
+        }
+
+    }
+
 }
 
 //    CREATEBACKLOG 한게 아까워서 무덤에 놔두다..

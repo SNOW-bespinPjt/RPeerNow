@@ -45,6 +45,9 @@ public interface IBacklogService {
      */
     public String backlogDeleteInfo(int no);
 
-
+    /*
+     * 프로젝트안에 있는 전체 백로그 불러오기
+     */
+    public Object searchALlbacklogList(int project_no);
 
 }

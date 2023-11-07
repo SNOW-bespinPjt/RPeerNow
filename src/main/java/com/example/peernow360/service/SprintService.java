@@ -96,7 +96,7 @@ public class SprintService implements ISprintService {
 
         List<SprintDto> sprintDtos  = iSprintMapper.searchSprintListDetail(project_no);
 
-        if(sprintDtos.get(0).getNo() > 0) {
+        if(sprintDtos != null && sprintDtos.size() > 0) {
             log.info("스프린트 정보를 불러오는데 성공하였습니다.");
 
             return sprintDtos;
@@ -116,7 +116,7 @@ public class SprintService implements ISprintService {
 
         SprintDto sprintDto = iSprintMapper.searchSprintDetail(no);
 
-        if(StringUtils.hasText(sprintDto.getUser_id())) {
+        if(sprintDto != null) {
             log.info("스프린트 상세 정보를 불러오는데 성공하였습니다.");
 
             return sprintDto;

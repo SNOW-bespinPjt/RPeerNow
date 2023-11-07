@@ -199,7 +199,7 @@ public class UserMemberService implements IUserMemberService {
 
         UserMemberDto userMemberDto = iUserMemberMapper.searchUserDetail(id);
 
-        if(StringUtils.hasText(userMemberDto.getId())) {
+        if(userMemberDto != null) {
             log.info("계정 상세 정보를 불러오는데 성공하였습니다.");
 
             return userMemberDto;

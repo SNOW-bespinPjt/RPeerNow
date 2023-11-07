@@ -112,7 +112,7 @@
                 resultType="com.example.peernow360.dto.BurnDownDto">
 
         SELECT
-            lapse,task,DATEDIFF(end_date, start_date) AS sub_day
+            lapse,task,DATEDIFF(end_date, start_date) + 1 AS sub_day
         FROM
             burndown
         WHERE

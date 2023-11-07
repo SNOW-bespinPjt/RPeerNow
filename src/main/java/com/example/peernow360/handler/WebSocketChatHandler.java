@@ -1,5 +1,8 @@
 package com.example.peernow360.handler;
 
+import com.example.peernow360.dto.ChatMessage;
+import com.example.peernow360.dto.ChatRoomDto;
+import com.example.peernow360.service.ChatService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -23,13 +26,12 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
      */
 
     private final ObjectMapper objectMapper;
-//    private final ChatService service;
+    private final ChatService chatService;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 
     }
-
 
     /*
      * HTTP 기반의 세션과는 목적과 사용되는 맥락이 다릅니다.
@@ -37,14 +39,14 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
      * 사용자의 웹 애플리케이션 세션과는 직접적인 연관이 없습니다.
      */
     @Override
-    protected void handleTextMessage(WebSocketSession sesison, TextMessage message) throws Exception {
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         log.info("[WebSocketChatHandler] handleTextMessage()");
 
         String payload = message.getPayload();
         log.info("payload {},", payload);
 
         ChatMessage chatMessage = objectMapper.readValue(payload, ChatMessage.class);
-        ChatRoom room = chatService.findRoomById(chatMessage.getRoomId()); //방에 있는 현재 사용자 한명이 WebsocketSession
+        ChatRoomDto room = chatService.findRoomById(chatMessage.getRoomId()); //방에 있는 현재 사용자 한명이 WebsocketSession
 
         Set<WebSocketSession> sessions = room.getSessions();
 
@@ -58,7 +60,7 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
         } else if(chatMessage.getType().equals(ChatMessage.MessageType.QUIT)) {
             sessions.remove(session);
             chatMessage.setMessage(chatMessage.getSender() + "님이 퇴장했습니다.");
-            sendToEachSocket(sessions, new TextMessage(objectMapper.writeValueAssString(chatMessage)));
+            sendToEachSocket(sessions, new TextMessage(objectMapper.writeValueAsString(chatMessage)));
 
         } else {
             sendToEachSocket(sessions, message); // 입장, 퇴장 아닐 때는 클라이언트로부터 온 메세지 그대로 전달.
