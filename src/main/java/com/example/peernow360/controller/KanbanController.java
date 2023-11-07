@@ -43,10 +43,10 @@ public class KanbanController {
      */
     @GetMapping("/others")
     @Operation(summary = "등록되지 않은 백로그 목록", description = "등록되지 않은 백로그 목록", tags = {"detail"})
-    public ListResponse<BacklogDto> showBacklogsOther() {
+    public ListResponse<BacklogDto> showBacklogsOther(@RequestParam (value = "project_no") int project_no) {
         log.info("[KanbanController] showKanban()");
 
-        return responseService.getListResponse(kanbanService.searchBacklogsOther());
+        return responseService.getListResponse(kanbanService.searchBacklogsOther(project_no));
 
     }
 
@@ -79,7 +79,7 @@ public class KanbanController {
      */
     @Scheduled(cron = "0 0 10 * * *", zone = "Asia/Seoul")
     @Operation(summary = "번다운 차트 기록 스케쥬링", description = "번다운 차트 기록 스케쥬링", tags = {"create"})
-    public void modifyBurnDown() {
+    public synchronized void modifyBurnDown() {
         log.info("[KanbanController] updateBurnDown()");
 
         kanbanService.updateBurnDown();

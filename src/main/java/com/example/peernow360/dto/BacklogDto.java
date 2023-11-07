@@ -6,6 +6,7 @@ import lombok.Data;
 public class BacklogDto {
 
     private int no;
+    private int project_no;
     private int sprint_no;
     private String user_id;
     private String title;

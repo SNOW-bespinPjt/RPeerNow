@@ -22,7 +22,7 @@ public class BacklogService implements IBacklogService {
     private final IBacklogMapper iBacklogMapper;
 
     @Override
-    public String createNewBacklog(BacklogDto backlogDto, String sprint_no, List<FileDto> fileDto) {
+    public String createNewBacklog(BacklogDto backlogDto, int project_no, String sprint_no, List<FileDto> fileDto) {
         log.info("[BacklogService] backlogListInfo()");
 
         Map<String, Object> msgData = new HashMap<>();
@@ -41,6 +41,7 @@ public class BacklogService implements IBacklogService {
 
         backlogDto.setUser_id(user_id);
         backlogDto.setSprint_no(Integer.parseInt(sprint_no));
+        backlogDto.setProject_no(project_no);
 
         int result = iBacklogMapper.createBacklogInfo(backlogDto);
         log.info("backlogDto.getNo() : " + backlogDto.getNo());

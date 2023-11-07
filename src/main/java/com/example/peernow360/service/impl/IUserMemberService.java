@@ -2,7 +2,9 @@ package com.example.peernow360.service.impl;
 
 
 import com.example.peernow360.dto.UserMemberDto;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Map;
 
 public interface IUserMemberService {
@@ -10,7 +12,7 @@ public interface IUserMemberService {
     /*
      * 유저 계정 생성
      */
-    public int createAccountConfirm(UserMemberDto userMemberDto);
+    public int createAccountConfirm(UserMemberDto userMemberDto, MultipartFile multipartFile) throws IOException;
 
     /*
      * 유저 로그인

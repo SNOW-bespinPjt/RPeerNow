@@ -15,7 +15,7 @@ public interface IKanbanService {
     /*
      * 스프린트에 등록되지 않은 백로그 목록만 가져오기
      */
-    public List<BacklogDto> searchBacklogsOther();
+    public List<BacklogDto> searchBacklogsOther(int project_no);
 
     /*
      * 스프린트에 미등록된 백로그를 등록

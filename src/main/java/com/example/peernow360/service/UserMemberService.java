@@ -19,7 +19,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,6 +35,7 @@ public class UserMemberService implements IUserMemberService {
     private final IUserMemberMapper iUserMemberMapper;
     private final UserDetailsService userDetailsService;
     private final JWTtokenProvider jwTtokenProvider;
+    private final S3Uploader s3Uploader;
 
     private final int INSERT_ACCOUNT_AT_DB_SUCCESS = 1;
     private final int INSERT_ACCOUNT_AT_DB_FAIL = 0;
@@ -43,15 +46,23 @@ public class UserMemberService implements IUserMemberService {
     private String HttpHeaderValue;
 
     @Override
-    public int createAccountConfirm(UserMemberDto userMemberDto) {
+    public int createAccountConfirm(UserMemberDto userMemberDto, MultipartFile multipartFile) throws IOException {
         log.info("[UserMemberService] createAccountConfirm()");
         log.info("userMemberDto id : {} pw : {} " , userMemberDto.getId(), userMemberDto.getPw());
+        log.info("multipartFile : {}" ,multipartFile);
 
         boolean isUserId = iUserMemberMapper.duplicateById(userMemberDto.getId());
 
         // 중복ID가 없을 시
         if(!isUserId) {
+            if(multipartFile!=null) {
+                String storedFileName = s3Uploader.upload(multipartFile, userMemberDto.getId());
+                userMemberDto.setImage(storedFileName);
+
+            }
+
             userMemberDto.setPw(passwordEncoder.encode(userMemberDto.getPw()));
+
             int result = iUserMemberMapper.insertUserMember(userMemberDto);
 
             switch (result) {
@@ -60,12 +71,16 @@ public class UserMemberService implements IUserMemberService {
 
                 case INSERT_ACCOUNT_AT_DB_FAIL:
                     log.info("INSERT ACCOUNT AT DB FAIL");
+
                     return result;
 
                 case INSERT_ACCOUNT_AT_DB_SUCCESS:
                     log.info("INSERT ACCOUNT AT DB SUCCESS");
+
                     return result;
+
             }
+
         }
 
         log.info("ID_IS_ALREADY_EXIST");
@@ -216,7 +231,6 @@ public class UserMemberService implements IUserMemberService {
      * Transactional
      * 트랜잭션이 시작되고, 메서드가 성공적으로 실행되면 트랜잭션이 커밋됩니다. 만약 예외가 발생하면 트랜잭션이 롤백됩니다.
      */
-    @Transactional
     @Override
     public String logOutInfo(String refreshToken) {
         log.info("[UserMemberService] logOut()");
