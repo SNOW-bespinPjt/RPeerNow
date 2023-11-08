@@ -46,21 +46,14 @@ public class UserMemberService implements IUserMemberService {
     private String HttpHeaderValue;
 
     @Override
-    public int createAccountConfirm(UserMemberDto userMemberDto, MultipartFile multipartFile) throws IOException {
+    public int createAccountConfirm(UserMemberDto userMemberDto) {
         log.info("[UserMemberService] createAccountConfirm()");
         log.info("userMemberDto id : {} pw : {} " , userMemberDto.getId(), userMemberDto.getPw());
-        log.info("multipartFile : {}" ,multipartFile);
 
         boolean isUserId = iUserMemberMapper.duplicateById(userMemberDto.getId());
 
         // 중복ID가 없을 시
         if(!isUserId) {
-            if(multipartFile!=null) {
-                String storedFileName = s3Uploader.upload(multipartFile, userMemberDto.getId());
-                userMemberDto.setImage(storedFileName);
-
-            }
-
             userMemberDto.setPw(passwordEncoder.encode(userMemberDto.getPw()));
 
             int result = iUserMemberMapper.insertUserMember(userMemberDto);
@@ -286,10 +279,17 @@ public class UserMemberService implements IUserMemberService {
     }
 
     @Override
-    public String updateAccountConfirm(String id, UserMemberDto userMemberDto) {
+    public String updateAccountConfirm(String id, UserMemberDto userMemberDto, MultipartFile image) throws IOException {
         log.info("[UserMemberService] updateAccountConfirm()");
 
         userMemberDto.setId(id);
+
+        if(image != null) {
+            log.info("이미지가 존재합니다");
+            String storedFileName = s3Uploader.upload(image, userMemberDto.getId());
+            userMemberDto.setImage(storedFileName);
+
+        }
 
         int result = iUserMemberMapper.modifyAccountInfo(userMemberDto);
 

@@ -4,6 +4,7 @@ import com.example.peernow360.dto.BacklogDto;
 import com.example.peernow360.dto.FileDto;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +14,7 @@ public interface IBacklogService {
     /*
      * 백로그 생성
      */
-    public String createNewBacklog(BacklogDto backlogDto, int project_no, String sprint_no, List<FileDto> fileDto);
+    public String createNewBacklog(BacklogDto backlogDto, int project_no, String sprint_no, MultipartFile[] fileDto) throws IOException;
 
     /*
      * 백로그 리스트 불러오기
@@ -38,7 +39,7 @@ public interface IBacklogService {
     /*
      * 백로그 상세정보 수정
      */
-    public String backlogUpdateInfo(BacklogDto backlogDto, int no, List<FileDto> fileDto);
+    public String backlogUpdateInfo(BacklogDto backlogDto, int no, MultipartFile[] fileDto) throws IOException;
 
     /*
      * 백로그 삭제

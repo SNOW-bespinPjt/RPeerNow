@@ -15,5 +15,7 @@ public class BacklogDto {
     private String reg_date;
     private String mod_date;
 
+    private String image;
+
 
 }

@@ -4,6 +4,7 @@ package com.example.peernow360.mappers;
 import com.example.peernow360.dto.UserMemberDto;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
 import java.util.Map;
 
 @Mapper

@@ -21,11 +21,6 @@ public interface IBacklogMapper {
     public int insertBacklogFile(Map<String, Object> msgData);
 
     /*
-     * 백로그 파일 삽입(DB에 저장)
-     */
-    public int insertBacklogFile(FileDto file);
-
-    /*
      * 백로그 리스트 불러오기
      */
     public List<BacklogDto> searchBacklogList(int sprint_no);
@@ -54,11 +49,6 @@ public interface IBacklogMapper {
      * 백로그 상세정보 수정
      */
     public int updateBacklogInfo(BacklogDto backlogDto);
-
-    /*
-     * 백로그 파일 정보 삽입(수정)
-     */
-    public void insertAndUptBacklogFile(FileDto file);
 
     /*
      * 백로그 정보 삭제
