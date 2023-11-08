@@ -112,4 +112,15 @@ public class KanbanController {
 
     }
 
+    /*
+     * 프로젝트 번호에 속해있는 전체 번다운 차트 가져오기(30일치)
+     */
+    @GetMapping("/allburndown")
+    @Operation(summary = "전체 번다운 차트 기록 불러오기", description = "전체 번다운 차트 기록 불러오기", tags = {"detail"})
+    public ListResponse<BurnDownDto> callAllBurndown(@RequestParam (value = "project_no") int project_no) {
+        log.info("[KanbanController] callBurndown()");
+
+        return responseService.getListResponse(kanbanService.callInAllBurndown(project_no));
+
+    }
 }

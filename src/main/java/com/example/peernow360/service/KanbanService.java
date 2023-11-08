@@ -144,7 +144,7 @@ public class KanbanService implements IKanbanService {
 
     @Override
     public List<BurnDownDto> callInBurndown(int sprint_no) {
-        log.info("[KanbanService] updateBurnDown()");
+        log.info("[KanbanService] callInBurndown()");
 
         List<BurnDownDto> burnDownDtos = iKanbanMapper.searchBurndown(sprint_no);
 
@@ -158,6 +158,27 @@ public class KanbanService implements IKanbanService {
 
             return null;
         }
+
+    }
+
+    @Override
+    public List<BurnDownDto> callInAllBurndown(int project_No) {
+        log.info("[KanbanService] callInAllBurndown()");
+
+        List<BurnDownDto> burnDownDtos = iKanbanMapper.searchAllBurndown(project_No);
+
+        if(burnDownDtos != null && burnDownDtos.size() > 0) {
+            log.info("번다운 차트 기록을 불러오는데 성공하였습니다.");
+
+            return burnDownDtos;
+
+        } else {
+            log.info("번다운 차트 기록을 불러오는데 실패하였습니다.");
+
+            return null;
+        }
+
+
 
     }
 
