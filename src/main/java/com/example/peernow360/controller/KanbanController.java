@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 @RestController
 @Slf4j
@@ -25,6 +27,7 @@ public class KanbanController {
 
     private final KanbanService kanbanService;
     private final ResponseService responseService;
+    private final Lock lock = new ReentrantLock();
 
     /*
      * 칸반보드에 보일 백로그 가져오기 (이전에 백로그 컨트롤러에도 해당 메서드 내용이 존재)
@@ -77,13 +80,23 @@ public class KanbanController {
 
     /*
      * 번다운 차트 (매일 10:00에 실행)
+     * Synchronized와 ReentrantLock을 이용해 스케쥴링된 작업을 동시에 실행되지 않도록 동시성 제어를 함.
      */
     @Scheduled(cron = "0 0 10 * * *", zone = "Asia/Seoul")
     @Operation(summary = "번다운 차트 기록 스케쥬링", description = "번다운 차트 기록 스케쥬링", tags = {"create"})
     public synchronized void modifyBurnDown() {
         log.info("[KanbanController] updateBurnDown()");
 
-        kanbanService.updateBurnDown();
+        lock.lock();
+
+        try{
+            kanbanService.updateBurnDown();
+
+        } finally {
+            //작업이 끝나면 unlock으로 Lock 해제
+            lock.unlock();
+
+        }
 
     }
 
