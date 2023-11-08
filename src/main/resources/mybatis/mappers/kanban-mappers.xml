@@ -186,4 +186,19 @@
 
     </update>
 
+    <select id="searchAllBurndown" parameterType="Integer"
+            resultType="com.example.peernow360.dto.BurnDownDto">
+
+        SELECT
+            *
+        FROM
+            burndown
+        WHERE sprint_no IN
+              (SELECT distinct sprint_no FROM sprint WHERE project_no = 1)
+          AND end_date <![CDATA[>=]]> DATE_SUB(NOW(), INTERVAL 30 day)
+          AND start_date <![CDATA[<]]> NOW()
+        ORDER BY sprint_no;
+
+    </select>
+
 </mapper>

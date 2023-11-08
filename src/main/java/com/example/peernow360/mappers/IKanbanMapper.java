@@ -61,4 +61,8 @@ public interface IKanbanMapper {
      */
     public void updateNo(int maxNo);
 
+    /*
+     * 프로젝트에 포함된 모든 번다운 차트 불러오기(30일치)
+     */
+    public List<BurnDownDto> searchAllBurndown(int project_No);
 }
