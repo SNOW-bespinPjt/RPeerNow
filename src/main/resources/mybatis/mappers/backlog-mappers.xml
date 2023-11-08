@@ -9,6 +9,7 @@
 
         INSERT INTO
             backlog(
+                    project_no,
                    sprint_no,
                    user_id,
                    title,
@@ -17,7 +18,8 @@
                    reg_date,
                    mod_date)
         VALUES
-            (#{sprint_no},
+            (#{project_no},
+             #{sprint_no},
              #{user_id},
              #{title},
              #{detail},
@@ -180,7 +182,6 @@
             backlog
         where
             sprint_no in (select sprint_no from sprint where project_no = #{project_no})
-
 
     </select>
 

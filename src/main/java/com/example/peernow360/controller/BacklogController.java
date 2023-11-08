@@ -10,13 +10,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@Log4j2
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/project/backlog")
 @Tag(name = "backlog", description = "백로그")
@@ -31,12 +32,13 @@ public class BacklogController {
     @PostMapping("")
     @Transactional
     @Operation(summary = "백로그 생성", description = "백로그 생성", tags = {"create"})
-    public String createBacklog(@RequestParam (value = "sprint_no", required = false) String sprint_no, //백로그만 생성할 시 -> sprintnumber을 받지 않는다.
+    public String createBacklog(@RequestParam (value = "project_no") int project_no,
+                                @RequestParam (value = "sprint_no", required = false) String sprint_no, //백로그만 생성할 시 -> sprintnumber을 받지 않는다.
                                 @RequestPart BacklogDto backlogDto,
                                 @RequestPart (required = false) List<FileDto> fileDto) {
         log.info("[BacklogController] createBacklog()");
 
-        return backlogService.createNewBacklog(backlogDto, sprint_no, fileDto);
+        return backlogService.createNewBacklog(backlogDto,project_no, sprint_no, fileDto);
 
     }
 

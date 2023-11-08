@@ -20,7 +20,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,15 +38,23 @@ public class UserMemberController {
     private final ResponseService responseService;
     private final JWTtokenProvider jwTtokenProvider;
 
+    @GetMapping("/gettest")
+    public String dontTouchMeNoDelete(){
+        
+
+        return "okayGoServer!!";
+    }
+    
+
     /*
      * 유저 계정 생성
      */
     @PostMapping("/join")
     @Operation(summary = "회원가입", description = "회원가입", tags = {"create"})
-    public String createAccountConfirm(@RequestBody UserMemberDto userMemberDto) {
+    public String createAccountConfirm(@RequestPart(value = "image", required = false) MultipartFile multipartFile, @RequestBody UserMemberDto userMemberDto) throws IOException {
         log.info("[UserMemberController] createAccountConfirm()");
 
-        int result = userMemberService.createAccountConfirm(userMemberDto);
+        int result = userMemberService.createAccountConfirm(userMemberDto, multipartFile);
 
         if(result > 0) {
             log.info("회원가입에 성공하였습니다.");
@@ -223,20 +233,5 @@ public class UserMemberController {
         return userMemberService.updateAccountConfirm(id, userMemberDto);
 
     }
-
-    @GetMapping("/gettest")
-    public  String TestController(){
-        log.info("Test On!");
-
-        return "gettest Success!!";
-    }
-
-    @PostMapping("/posttest")
-    public String test() {
-        log.info("Test On!");
-
-        return "gettest success";
-    }
-
 
 }

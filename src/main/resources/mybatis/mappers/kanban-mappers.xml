@@ -25,6 +25,8 @@
             backlog
         WHERE
             sprint_no = 0
+        and
+            project_no = #{project_no}
 
     </select>
 
@@ -74,8 +76,21 @@
     <insert id="createBurndown" parameterType="com.example.peernow360.dto.SprintDto">
 
         INSERT INTO
-            burndown(sprint_no, lapse, start_date, end_date, reg_date, mod_date, task)
-        SELECT #{no}, 1, #{start_date}, #{end_date}, NOW(), NOW(),
+            burndown
+            (sprint_no,
+             lapse,
+             start_date,
+             end_date,
+             reg_date,
+             mod_date,
+             task)
+        SELECT
+            #{no},
+            1,
+            #{start_date},
+            #{end_date},
+            NOW(),
+            NOW(),
         (SELECT count(*) FROM backlog WHERE sprint_no = #{no} AND status NOT IN ("done"))
 
     </insert>
@@ -92,10 +107,10 @@
                      end_date,
                      task)
         SELECT #{no},
-               now(),
-               now(),
+               DATE_ADD(NOW(), INTERVAL 9 HOUR),
+               DATE_ADD(NOW(), INTERVAL 9 HOUR),
                sprint_no,
-               lapse +1,
+               (select count(*) from burndown where ori_no = #{no}) + 1,
                start_date,
                end_date,
                (SELECT COUNT(*) FROM backlog WHERE sprint_no = #{sprint_no} AND status NOT IN ("done"))
@@ -106,13 +121,15 @@
 
 
 
+
+
     </insert>
 
     <select id="searchBurndown" parameterType="Integer"
                 resultType="com.example.peernow360.dto.BurnDownDto">
 
         SELECT
-            lapse,task,DATEDIFF(end_date, start_date) + 1 AS sub_day
+            no, ori_no, sprint_no, lapse,task,DATEDIFF(end_date, start_date) + 1 AS sub_day, mod_date
         FROM
             burndown
         WHERE
