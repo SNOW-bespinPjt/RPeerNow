@@ -1,8 +1,8 @@
 package com.example.peernow360.service;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -11,10 +11,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Optional;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Service
 @Log4j2
@@ -27,53 +27,31 @@ public class S3Uploader {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    // MultipartFile을 전달받아 File로 전환한 후 S3에 업로드
     public String upload(MultipartFile multipartFile, String dirName) throws IOException {
-        log.info("multipartFile {}:",multipartFile);
 
-        File uploadFile = convert(multipartFile)
-                .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File 전환 실패"));
-        return upload(uploadFile, dirName);
+        return upload2(multipartFile, dirName);
     }
 
-    private Optional<File> convert(MultipartFile file) throws  IOException {
-        log.info("file.getOriginalFilename() : {}", file.getOriginalFilename());
+    private String upload2(MultipartFile uploadFile, String dirName) throws IOException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMddHHmmss");
+        String timestamp = dateFormat.format(new Date());
+        String fileName = dirName + "/" + timestamp + "_" + uploadFile.getOriginalFilename();
 
-        File convertFile = new File(file.getOriginalFilename());
-        log.info("convertFile() : {}", convertFile);
-        log.info("convertFile() : {}", convertFile.createNewFile());
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(uploadFile.getSize());
+        metadata.setContentType(uploadFile.getContentType());
 
-            try (FileOutputStream fos = new FileOutputStream(convertFile)) {
-                fos.write(file.getBytes());
-            }
-            return Optional.of(convertFile);
-
-    }
-
-    private String upload(File uploadFile, String dirName) {
-        String fileName = dirName + "/" + uploadFile.getName();
-        String uploadImageUrl = putS3(uploadFile, fileName);
-
-        removeNewFile(uploadFile);  // 로컬에 생성된 File 삭제 (MultipartFile -> File 전환 하며 로컬에 파일 생성됨)
+        String uploadImageUrl = putS3(fileName,uploadFile.getInputStream(),metadata);
 
         return uploadImageUrl;      // 업로드된 파일의 S3 URL 주소 반환
     }
 
-    private String putS3(File uploadFile, String fileName) {
+    private String putS3(String fileName, InputStream inputStream, ObjectMetadata metadata) {
         amazonS3Client.putObject(
-                new PutObjectRequest(bucket, fileName, uploadFile)
+                new PutObjectRequest(bucket, fileName,inputStream,metadata)
                         .withCannedAcl(CannedAccessControlList.PublicReadWrite)	// PublicRead 권한으로 업로드 됨
         );
         return amazonS3Client.getUrl(bucket, fileName).toString();
     }
-
-    private void removeNewFile(File targetFile) {
-        if(targetFile.delete()) {
-            log.info("파일이 삭제되었습니다.");
-        }else {
-            log.info("파일이 삭제되지 못했습니다.");
-        }
-    }
-
 
 }

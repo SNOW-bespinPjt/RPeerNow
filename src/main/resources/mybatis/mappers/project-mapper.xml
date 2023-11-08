@@ -65,8 +65,11 @@
     </update>
 
     <delete id="deleteProject" parameterType="HashMap">
-        delete from project
-        where no = #{no} and user_id = #{user_id}
+        delete from project where no = #{no} and user_id = #{user_id};
+        delete from sprint where project_no = #{no};
+        delete from backlog where sprint_no in (select sprint_no from sprint where project_no = #{no});
+        delete from backfile where backlog_no in (select no from backlog where sprint_no in (select no from sprint where project_no = #{no}));
+        delete from team where no = #{no};
     </delete>
 
     <select id="projectInvitation" parameterType="com.example.peernow360.dto.InvitationDto" resultType="com.example.peernow360.dto.InvitationDto">
