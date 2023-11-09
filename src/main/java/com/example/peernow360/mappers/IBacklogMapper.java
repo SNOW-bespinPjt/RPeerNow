@@ -28,7 +28,7 @@ public interface IBacklogMapper {
     /*
      * 백로그 파일 리스트 불러오기
      */
-    public List<FileDto> searchBacklogFiles(int sprint_no);
+    public FileDto searchBacklogFiles(int sprint_no);
 
     /*
      * 백로그 상세페이지 불러오기
@@ -38,7 +38,7 @@ public interface IBacklogMapper {
     /*
      * 백로그 상세정보 파일 불러오기
      */
-    public List<FileDto> searchBacklogFile(int no);
+    public FileDto searchBacklogFile(int no);
 
     /*
      * 백로그 status(상태 ex. todo -> 해야할 일 , ing -> 진행중, done -> 완료) 변경

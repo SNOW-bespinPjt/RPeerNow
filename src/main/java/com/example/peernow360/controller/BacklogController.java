@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class BacklogController {
     public String createBacklog(@RequestParam (value = "project_no") int project_no,
                                 @RequestParam (value = "sprint_no", required = false) String sprint_no, //백로그만 생성할 시 -> sprintnumber을 받지 않는다.
                                 @RequestPart BacklogDto backlogDto,
-                                @RequestPart (required = false) MultipartFile[] fileDto) throws IOException {
+                                @RequestPart (required = false) MultipartFile fileDto) throws IOException {
         log.info("[BacklogController] createBacklog()");
 
         return backlogService.createNewBacklog(backlogDto,project_no, sprint_no, fileDto);
@@ -114,7 +115,7 @@ public class BacklogController {
     @Operation(summary = "백로그 수정", description = "백로그 수정", tags = {"modify"})
     public String backlogModify(@RequestParam (value = "no") int no,
                                 @RequestPart BacklogDto backlogDto,
-                                @RequestPart (required = false) MultipartFile[] fileDto) throws IOException {
+                                @RequestPart (required = false) MultipartFile fileDto) throws IOException {
         log.info("[BacklogController] backlogModify()");
 
         return backlogService.backlogUpdateInfo(backlogDto, no, fileDto);

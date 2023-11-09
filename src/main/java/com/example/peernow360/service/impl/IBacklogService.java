@@ -14,7 +14,7 @@ public interface IBacklogService {
     /*
      * 백로그 생성
      */
-    public String createNewBacklog(BacklogDto backlogDto, int project_no, String sprint_no, MultipartFile[] fileDto) throws IOException;
+    public String createNewBacklog(BacklogDto backlogDto, int project_no, String sprint_no, MultipartFile fileDto) throws IOException;
 
     /*
      * 백로그 리스트 불러오기
@@ -39,7 +39,7 @@ public interface IBacklogService {
     /*
      * 백로그 상세정보 수정
      */
-    public String backlogUpdateInfo(BacklogDto backlogDto, int no, MultipartFile[] fileDto) throws IOException;
+    public String backlogUpdateInfo(BacklogDto backlogDto, int no, MultipartFile fileDto) throws IOException;
 
     /*
      * 백로그 삭제
