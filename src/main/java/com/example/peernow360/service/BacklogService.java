@@ -29,7 +29,7 @@ public class BacklogService implements IBacklogService {
     private final S3Uploader s3Uploader;
 
     @Override
-    public String createNewBacklog(BacklogDto backlogDto, int project_no, String sprint_no, MultipartFile[] fileDto) throws IOException {
+    public String createNewBacklog(BacklogDto backlogDto, int project_no, String sprint_no, MultipartFile fileDto) throws IOException {
         log.info("[BacklogService] backlogListInfo()");
 
         Map<String, Object> msgData = new HashMap<>();
@@ -53,15 +53,12 @@ public class BacklogService implements IBacklogService {
         if(result > 0) {
             log.info("백로그 생성에 성공하였습니다.");
 
-            if(fileDto != null && fileDto.length > 0) {
+            if(fileDto != null) {
                 log.info("이미지가 존재합니다");
 
-                for(MultipartFile fileName : fileDto) {
-                    String storedFileName = s3Uploader.upload(fileName, backlogDto.getUser_id());
-                    msgData.put("name", storedFileName);
-                    iBacklogMapper.insertBacklogFile(msgData);
-
-                }
+                String storedFileName = s3Uploader.upload(fileDto, backlogDto.getUser_id());
+                msgData.put("name", storedFileName);
+                iBacklogMapper.insertBacklogFile(msgData);
 
             }
 
@@ -87,7 +84,7 @@ public class BacklogService implements IBacklogService {
         if(backlogDtos != null && backlogDtos.size() > 0) {
             log.info("CALL BACKLOG INFO SUCCESS!!");
 
-            List<FileDto> fileDtos = iBacklogMapper.searchBacklogFiles(sprint_no);
+            FileDto fileDtos = iBacklogMapper.searchBacklogFiles(sprint_no);
 
             data.put("backlogDtos", backlogDtos);
             data.put("fileDtos", fileDtos);
@@ -115,7 +112,7 @@ public class BacklogService implements IBacklogService {
         if(backlogDto != null) {
             log.info("백로그 상세정보를 불러오는데 성공하였습니다.");
 
-            List<FileDto> fileDtos = iBacklogMapper.searchBacklogFile(no);
+            FileDto fileDtos = iBacklogMapper.searchBacklogFile(no);
 
             data.put("backlogDto", backlogDto);
             data.put("fileDtos", fileDtos);
@@ -177,7 +174,7 @@ public class BacklogService implements IBacklogService {
     }
 
     @Override
-    public String backlogUpdateInfo(BacklogDto backlogDto, int no, MultipartFile[] fileDto) throws IOException {
+    public String backlogUpdateInfo(BacklogDto backlogDto, int no, MultipartFile fileDto) throws IOException {
         log.info("[BacklogService] backlogUpdateInfo()");
 
         backlogDto.setNo(no);
@@ -187,7 +184,7 @@ public class BacklogService implements IBacklogService {
         if(result > 0) {
             log.info("백로그 수정에 성공하였습니다.");
 
-            if(fileDto != null && fileDto.length > 0) {
+            if(fileDto != null) {
                 log.info("이미지가 존재합니다");
 
                 Map<String, Object> msgData = new HashMap<>();
@@ -196,12 +193,10 @@ public class BacklogService implements IBacklogService {
                 int isDel = iBacklogMapper.removeBacklogFile(no);
                 log.info("isDel : 1 -> True / isDel : 0 -> false : " + isDel);
 
-                for (MultipartFile fileName : fileDto) {
-                    String storedFileName = s3Uploader.upload(fileName, backlogDto.getUser_id());
-                    msgData.put("name", storedFileName);
-                    iBacklogMapper.insertBacklogFile(msgData);
+                String storedFileName = s3Uploader.upload(fileDto, backlogDto.getUser_id());
+                msgData.put("name", storedFileName);
+                iBacklogMapper.insertBacklogFile(msgData);
 
-                }
             }
 
             return "success";
