@@ -56,7 +56,7 @@ public class BacklogService implements IBacklogService {
             if(fileDto != null) {
                 log.info("이미지가 존재합니다");
 
-                String storedFileName = s3Uploader.upload(fileDto, backlogDto.getUser_id());
+                String storedFileName = s3Uploader.upload(fileDto, String.valueOf(backlogDto.getNo()));
                 msgData.put("name", storedFileName);
                 iBacklogMapper.insertBacklogFile(msgData);
 
@@ -265,7 +265,7 @@ public class BacklogService implements IBacklogService {
 //        List<String> listFile = new ArrayList<>();
 //
 //        try{
-//            int result = iBacklogMapper.createBacklogInfo(backlogDto);
+//            int result = iBacklogMapper.createBacklogInfo(backlogDto);git
 //            Map<String, Object> map = new HashMap<>();
 //            log.info("backlogDto.getNo() : " + backlogDto.getNo());
 //            map.put("backlog_no", backlogDto.getNo());
