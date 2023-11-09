@@ -8,10 +8,12 @@ import com.example.peernow360.response.ResponseResult;
 import com.example.peernow360.response.ResponseService;
 import com.example.peernow360.response.SingleResponse;
 import com.example.peernow360.service.ReviewService;
+import com.example.peernow360.service.S3Download;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +31,8 @@ public class ReviewController {
 
     private final ResponseService responseService;
     private final ReviewService reviewService;
+
+    private final S3Download s3Download;
 
     @PostMapping("/evaluation")
     @Operation(summary = "동료 평가하기", description = "동료 평가하기", tags = {"create"})
@@ -83,4 +87,11 @@ public class ReviewController {
 
         return ResponseResult.result(result);
     }
+
+    @GetMapping("/download")
+    public ResponseEntity<byte[]> download() throws IOException {
+        log.info("download()");
+        return s3Download.getObject("btc2/2311072203071779390_704534_1454.png");
+    }
+
 }

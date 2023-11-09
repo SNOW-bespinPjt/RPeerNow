@@ -30,7 +30,7 @@ public class PayController {
     }
 
     @GetMapping("/success")
-    @Operation(summary = "결제 성공", description = "결제 성공", tags = {"create"})
+    @Operation(summary = "결제 성공", description = "결제 성공", tags = {"detail"})
     public SingleResponse<PayApproveDto> afterPayRequest(@RequestParam("pg_token") String pgToken) {
 
         return responseService.getSingleResponse(payService.approveResponse(pgToken));
