@@ -286,8 +286,8 @@ public class UserMemberService implements IUserMemberService {
 
         if(image != null) {
             log.info("이미지가 존재합니다");
-            String storedFileName = s3Uploader.upload(image, userMemberDto.getId());
-            userMemberDto.setImage(storedFileName);
+            s3Uploader.upload(image, userMemberDto.getId());
+            userMemberDto.setImage(image.getOriginalFilename());
 
         }
 

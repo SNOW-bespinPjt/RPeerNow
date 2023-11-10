@@ -1,6 +1,5 @@
 package com.example.peernow360.security;
 
-import com.example.peernow360.dto.ResponseDto;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,7 +12,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -38,10 +36,12 @@ public class JWTtokenFilter extends OncePerRequestFilter {
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-        log.info("[JWTtokenFilter]가즈아~ doFilter");
+        log.info("[JWTtokenFilter] DOFILTER NOW PROCESSING");
+
+        log.info("request project_no: " + request.getHeader("project_no"));
 
         String bearerToken = request.getHeader(HttpHeaderValue);
-        log.info("what is token:" + bearerToken);
+        log.info("Entry Bearertoken : " + bearerToken);
 
         // Header의 Authorization 값이 비어있으면 => Jwt Token을 전송하지 않음 => 로그인 하지 않음
         if (!StringUtils.hasText(bearerToken)) {
