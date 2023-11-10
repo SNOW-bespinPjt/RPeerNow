@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Log4j2
@@ -47,8 +48,8 @@ public class ReviewService implements IReviewService {
         peerDto.setAvg(iReviewMapper.avgScore(peerDto));
         peerDto.setBest(iReviewMapper.best(peerDto));
 
-        List<String> peerIds = iReviewMapper.getPeer(peerDto);
-        peerDto.setPeer_id(peerIds);
+//        List<Map<String, String>> peerIds = iReviewMapper.getPeer(peerDto);
+//        peerDto.setPeer_id(peerIds);
 
         return peerDto;
     }
