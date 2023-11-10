@@ -13,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @Log4j2
@@ -46,10 +45,8 @@ public class ReviewService implements IReviewService {
         log.info("evaluatinoInfo()");
 
         peerDto.setAvg(iReviewMapper.avgScore(peerDto));
-        peerDto.setBest(iReviewMapper.best(peerDto));
-
-//        List<Map<String, String>> peerIds = iReviewMapper.getPeer(peerDto);
-//        peerDto.setPeer_id(peerIds);
+        peerDto.setBest_id(iReviewMapper.bestId(peerDto));
+        peerDto.setBest_name(iReviewMapper.bestName(peerDto));
 
         return peerDto;
     }
@@ -59,12 +56,17 @@ public class ReviewService implements IReviewService {
         log.info("test()");
 
         if(multipartFile != null) {
-            String storedFileName = s3Uploader.upload(multipartFile, testDto.getUser_id());
-            testDto.setFile(storedFileName);
+            s3Uploader.upload(multipartFile, testDto.getUser_id());
+            testDto.setFile(multipartFile.getOriginalFilename());
         }
 
         int result = iReviewMapper.test(testDto);
 
         return result;
+    }
+
+    public String fileName(String userId) {
+
+        return iReviewMapper.fileName(userId);
     }
 }

@@ -95,7 +95,9 @@ public class ReviewController {
         User userInfo = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String user_id = userInfo.getUsername();
 
-        return s3Download.getObject(user_id + "/");
+        String fileName = reviewService.fileName(user_id);
+
+        return s3Download.getObject(user_id + "/" + fileName);
     }
 
 }
