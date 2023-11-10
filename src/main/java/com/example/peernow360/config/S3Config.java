@@ -21,7 +21,7 @@ public class S3Config {
     @Value("${cloud.aws.region.static}")
     private String region;
 
-    @Value("${modekey}")
+    @Value("${env.mode}")
     private  String env;
 
     @Bean
@@ -37,8 +37,8 @@ public class S3Config {
         }
         return AmazonS3ClientBuilder
                 .standard()
-                .withCredentials(new AWSStaticCredentialsProvider(credentials))
-//                .withCredentials(credentialsProvide)
+//                .withCredentials(new AWSStaticCredentialsProvider(credentials))
+                .withCredentials(credentialsProvide)
                 .withRegion(region)
                 .build();
     }
