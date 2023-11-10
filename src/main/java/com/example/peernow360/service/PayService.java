@@ -20,7 +20,7 @@ import org.springframework.web.client.RestTemplate;
 public class PayService {
 
     static final String cid = "TC0ONETIME"; // 가맹점 테스트 코드
-    static final String admin_Key = "0213830ee52de5184410e8146a130a69"; // 공개 조심! 본인 애플리케이션의 어드민 키를 넣어주세요
+    static final String admin_Key = "0213830ee52de5184410e8146a130a69"; // 공개 조심
     private PayReadyDto payReadyDto;
 
 
@@ -36,7 +36,7 @@ public class PayService {
         parameters.add("total_amount", "1000");
         parameters.add("vat_amount", "100");
         parameters.add("tax_free_amount", "900");
-        parameters.add("approval_url", "http://localhost:3000/api/pay/success"); // 성공 시 redirect url
+        parameters.add("approval_url", "http://localhost:8080/api/pay/success"); // 성공 시 redirect url
         parameters.add("cancel_url", "http://localhost:8080/pay/cancel"); // 취소 시 redirect url
         parameters.add("fail_url", "http://localhost:8080/pay/fail"); // 실패 시 redirect url
 

@@ -32,6 +32,8 @@
         where project_no = #{no}
         and user_id = #{user_id}
         and total = (select MAX(total) from review where project_no = #{no} and user_id = #{user_id})
+        order by reg_date desc
+        limit 1
     </select>
 
     <select id="getPeer" parameterType="com.example.peernow360.dto.PeerDto" resultType="String">

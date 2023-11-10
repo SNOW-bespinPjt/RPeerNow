@@ -91,7 +91,11 @@ public class ReviewController {
     @GetMapping("/download")
     public ResponseEntity<byte[]> download() throws IOException {
         log.info("download()");
-        return s3Download.getObject("btc2/2311072203071779390_704534_1454.png");
+
+        User userInfo = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String user_id = userInfo.getUsername();
+
+        return s3Download.getObject(user_id + "/");
     }
 
 }

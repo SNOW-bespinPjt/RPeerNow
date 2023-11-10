@@ -36,10 +36,10 @@ public class PayController {
         return responseService.getSingleResponse(payService.approveResponse(pgToken));
     }
 
-    @PostMapping("/refund")
-    @Operation(summary = "환불", description = "환불", tags = {"create"})
-    public SingleResponse<PayCancelDto> refund() {
-
-        return responseService.getSingleResponse(payService.kakaoCancel());
-    }
+//    @PostMapping("/refund")
+//    @Operation(summary = "환불", description = "환불", tags = {"create"})
+//    public SingleResponse<PayCancelDto> refund() {
+//
+//        return responseService.getSingleResponse(payService.kakaoCancel());
+//    }
 }

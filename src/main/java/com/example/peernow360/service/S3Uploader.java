@@ -37,7 +37,7 @@ public class S3Uploader {
 //        String timestamp = dateFormat.format(new Date());
 //        String fileName = dirName + "/" + timestamp + "_" + multipartFile.getOriginalFilename();
 
-        String fileName = dirName + "/" + "image.jpg";
+        String fileName = dirName + "/" + multipartFile.getOriginalFilename();
 
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(multipartFile.getSize());
