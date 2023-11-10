@@ -8,7 +8,8 @@ import java.util.List;
 public interface IReviewService {
 
     int createScore(ReviewDto reviewDto);
-    List<ReviewDto> feedback(int no);
+
+    List<ReviewDto> feedback(int no, String user_id);
 
     PeerDto evaluationInfo(PeerDto peerDto);
 }

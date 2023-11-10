@@ -14,10 +14,10 @@
         WHERE no = #{no}
     </update>
 
-    <select id="feedback" parameterType="Integer" resultType="com.example.peernow360.dto.ReviewDto">
+    <select id="feedback" parameterType="String" resultType="com.example.peernow360.dto.ReviewDto">
         select *
         from review
-        where project_no = #{no}
+        where project_no = #{no} and peer_id = #{user_id}
     </select>
 
     <select id="avgScore" parameterType="com.example.peernow360.dto.PeerDto" resultType="float">

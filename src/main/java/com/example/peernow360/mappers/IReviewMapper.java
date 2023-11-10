@@ -31,4 +31,6 @@ public interface IReviewMapper {
 
 
     String fileName(String userId);
+
+    List<ReviewDto> feedback(String no, String user_id);
 }

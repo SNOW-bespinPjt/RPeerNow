@@ -56,7 +56,10 @@ public class ReviewController {
     public ListResponse<ReviewDto> feedback(@RequestParam("projectNumber") int no) {
         log.info("feedback()");
 
-        return responseService.getListResponse(reviewService.feedback(no));
+        User userInfo = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String user_id = userInfo.getUsername();
+
+        return responseService.getListResponse(reviewService.feedback(no, user_id));
     }
 
     @GetMapping("")

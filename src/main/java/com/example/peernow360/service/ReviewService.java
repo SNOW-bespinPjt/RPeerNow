@@ -35,10 +35,10 @@ public class ReviewService implements IReviewService {
         return result;
     }
 
-    public List<ReviewDto> feedback(int no) {
+    public List<ReviewDto> feedback(int no, String user_id) {
         log.info("feedback()");
 
-        return iReviewMapper.feedback(no);
+        return iReviewMapper.feedback(String.valueOf(no), user_id);
     }
 
     public PeerDto evaluationInfo(PeerDto peerDto) {
