@@ -56,7 +56,6 @@ public class ReviewService implements IReviewService {
 
     public int test(MultipartFile multipartFile, TestDto testDto) throws IOException {
         log.info("test()");
-        log.info("multipartFile : {}" ,multipartFile);
 
         if(multipartFile != null) {
             String storedFileName = s3Uploader.upload(multipartFile, testDto.getUser_id());

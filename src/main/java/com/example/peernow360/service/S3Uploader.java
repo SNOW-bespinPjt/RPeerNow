@@ -27,21 +27,23 @@ public class S3Uploader {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
+//    public String upload(MultipartFile multipartFile, String dirName) throws IOException {
+//
+//        return upload2(multipartFile, dirName);
+//    }
+
     public String upload(MultipartFile multipartFile, String dirName) throws IOException {
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMddHHmmss");
+//        String timestamp = dateFormat.format(new Date());
+//        String fileName = dirName + "/" + timestamp + "_" + multipartFile.getOriginalFilename();
 
-        return upload2(multipartFile, dirName);
-    }
-
-    private String upload2(MultipartFile uploadFile, String dirName) throws IOException {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMddHHmmss");
-        String timestamp = dateFormat.format(new Date());
-        String fileName = dirName + "/" + timestamp + "_" + uploadFile.getOriginalFilename();
+        String fileName = dirName + "/" + multipartFile.getOriginalFilename();
 
         ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(uploadFile.getSize());
-        metadata.setContentType(uploadFile.getContentType());
+        metadata.setContentLength(multipartFile.getSize());
+        metadata.setContentType(multipartFile.getContentType());
 
-        String uploadImageUrl = putS3(fileName,uploadFile.getInputStream(),metadata);
+        String uploadImageUrl = putS3(fileName,multipartFile.getInputStream(),metadata);
 
         return uploadImageUrl;      // 업로드된 파일의 S3 URL 주소 반환
     }
