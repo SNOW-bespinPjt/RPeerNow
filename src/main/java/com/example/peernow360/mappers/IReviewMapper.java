@@ -19,11 +19,16 @@ public interface IReviewMapper {
     void totalScore(ReviewDto total);
 
 
-    int avgScore(PeerDto peerDto);
+    float avgScore(PeerDto peerDto);
 
-    String best(PeerDto peerDto);
+    String bestId(PeerDto peerDto);
+
+    String bestName(PeerDto peerDto);
 
     List<String> getPeer(PeerDto peerDto);
 
     int test(TestDto testDto);
+
+
+    String fileName(String userId);
 }
