@@ -20,28 +20,48 @@
         where project_no = #{no}
     </select>
 
-    <select id="avgScore" parameterType="com.example.peernow360.dto.PeerDto" resultType="Integer">
-        select round(avg(total)) as avg
+    <select id="avgScore" parameterType="com.example.peernow360.dto.PeerDto" resultType="float">
+        select avg(total) as avg
         from (select * from review where peer_id = #{user_id} and project_no = #{no}) a
         group by project_no
     </select>
 
-    <select id="best" parameterType="com.example.peernow360.dto.PeerDto" resultType="String">
+    <select id="bestId" parameterType="com.example.peernow360.dto.PeerDto" resultType="String">
         select peer_id
         from review
         where project_no = #{no}
         and user_id = #{user_id}
         and total = (select MAX(total) from review where project_no = #{no} and user_id = #{user_id})
+        order by reg_date desc
+        limit 1
+    </select>
+
+    <select id="bestName" parameterType="com.example.peernow360.dto.PeerDto" resultType="String">
+        select u.name
+        from review r join user u on r.peer_id = u.id
+        where project_no = #{no}
+          and user_id = #{user_id}
+          and total = (select MAX(total) from review where project_no = #{no} and user_id = #{user_id})
+        order by r.reg_date desc
+            limit 1
     </select>
 
     <select id="getPeer" parameterType="com.example.peernow360.dto.PeerDto" resultType="String">
-        select peer_id
-        from team
-        where no = #{no}
+        select p.peer_id, u.name
+        from team p
+        join user u on p.peer_id = u.id
+        where p.no = #{no}
     </select>
 
     <insert id="test" parameterType="com.example.peernow360.dto.TestDto">
         insert into test(user_id, test, file)
         values(#{user_id}, #{test}, #{file})
     </insert>
+
+    <select id="fileName" parameterType="String" resultType="String">
+        select file
+        from test
+        where user_id = #{userId}
+    </select>
+
 </mapper>

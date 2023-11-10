@@ -117,9 +117,7 @@ public class ProjectService implements IProjectService {
         map.put("no", no);
         map.put("user_id", user_id);
 
-        int result = iProjectMapper.declineProject(map);
-
-        return result;
+        return iProjectMapper.declineProject(map);
     }
 
     @Transactional
@@ -130,9 +128,7 @@ public class ProjectService implements IProjectService {
         map.put("no", no);
         map.put("user_id", user_id);
 
-        int result = iProjectMapper.deleteProject(map);
-
-        return result;
+        return iProjectMapper.deleteProject(map);
     }
 
 
