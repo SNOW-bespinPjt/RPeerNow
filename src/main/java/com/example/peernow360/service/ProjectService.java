@@ -1,9 +1,6 @@
 package com.example.peernow360.service;
 
-import com.example.peernow360.dto.InvitationDto;
-import com.example.peernow360.dto.ProjectDto;
-import com.example.peernow360.dto.TeamDto;
-import com.example.peernow360.dto.UserMemberDto;
+import com.example.peernow360.dto.*;
 import com.example.peernow360.mappers.IProjectMapper;
 import com.example.peernow360.service.impl.IProjectService;
 import lombok.RequiredArgsConstructor;
@@ -98,14 +95,20 @@ public class ProjectService implements IProjectService {
 
     }
 
-    public int acceptProject(int no, String user_id) {
+    public int acceptProject(int no, String user_id, String role) {
         log.info("acceptProject()");
 
         Map<String, Object> map = new HashMap<>();
         map.put("no", no);
         map.put("user_id", user_id);
 
-        int result = iProjectMapper.acceptProject(map);
+        AcceptTeamDto acceptTeamDto = new AcceptTeamDto();
+        acceptTeamDto.setNo(no);
+        acceptTeamDto.setUser_id(user_id);
+        acceptTeamDto.setRole(role);
+
+        iProjectMapper.acceptProject(map);
+        int result = iProjectMapper.acceptTeam(acceptTeamDto);
 
         return result;
     }

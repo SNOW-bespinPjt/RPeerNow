@@ -102,13 +102,13 @@ public class ProjectController {
 
     @PutMapping("/accept")
     @Operation(summary = "프로젝트 수락", description = "프로젝트 수락", tags = {"modify"})
-    public String acceptProject(@RequestParam("projectNumber") int no) {
+    public String acceptProject(@RequestParam("projectNumber") int no, @RequestParam("role") String role) {
         log.info("acceptProject()");
 
         User userInfo = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String user_id = userInfo.getUsername();
 
-        int result = projectService.acceptProject(no, user_id);
+        int result = projectService.acceptProject(no, user_id, role);
 
         return ResponseResult.result(result);
     }
