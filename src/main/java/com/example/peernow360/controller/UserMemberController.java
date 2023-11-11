@@ -1,10 +1,7 @@
 package com.example.peernow360.controller;
 
 import com.example.peernow360.dto.UserMemberDto;
-import com.example.peernow360.response.ListResponse;
-import com.example.peernow360.response.MapResponse;
-import com.example.peernow360.response.ResponseService;
-import com.example.peernow360.response.SingleResponse;
+import com.example.peernow360.response.*;
 import com.example.peernow360.security.JWTtokenProvider;
 import com.example.peernow360.service.UserMemberService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -51,7 +48,7 @@ public class UserMemberController {
      */
     @PostMapping("/join")
     @Operation(summary = "회원가입", description = "회원가입", tags = {"create"})
-    public String createAccountConfirm(@RequestPart(value = "image", required = false) MultipartFile multipartFile, @RequestBody UserMemberDto userMemberDto) throws IOException {
+    public String createAccountConfirm(@RequestPart(value = "image", required = false) MultipartFile multipartFile, @RequestPart UserMemberDto userMemberDto) throws IOException {
         log.info("[UserMemberController] createAccountConfirm()");
 
         int result = userMemberService.createAccountConfirm(userMemberDto, multipartFile);
@@ -232,6 +229,18 @@ public class UserMemberController {
 
         return userMemberService.updateAccountConfirm(id, userMemberDto);
 
+    }
+
+    @PutMapping("/imageChange")
+    @Operation(summary = "계정 이미지 수정", description = "계정 이미지 수정", tags = {"modify"})
+    public String updateAccountImage(@RequestParam ("id") String id,
+                                     @RequestParam(value = "fileName", required = false) String fileName,
+                                     @RequestPart("image") MultipartFile multipartFile) throws IOException {
+        log.info("[HomeController] updateAccountImage()");
+
+        int result = userMemberService.updateAccountImage(id, fileName, multipartFile);
+
+        return ResponseResult.result(result);
     }
 
 }

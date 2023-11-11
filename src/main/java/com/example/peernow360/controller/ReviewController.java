@@ -103,4 +103,17 @@ public class ReviewController {
         return s3Download.getObject(user_id + "/" + fileName);
     }
 
+    @DeleteMapping("/modify")
+    public String modify(@RequestParam(value = "fileName", required = false) String fileName, @RequestPart("image") MultipartFile multipartFile) throws IOException {
+        log.info("modify()");
+
+        User userInfo = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String user_id = userInfo.getUsername();
+
+        int result = reviewService.modify(user_id, fileName, multipartFile);
+
+        return ResponseResult.result(result);
+    }
+
+
 }

@@ -44,6 +44,6 @@ public interface IUserMemberService {
      */
     public String updateAccountConfirm(String id, UserMemberDto userMemberDto);
 
-
+    int updateAccountImage(String id, String fileName, MultipartFile multipartFile) throws IOException;
 
 }

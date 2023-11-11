@@ -69,4 +69,15 @@ public class ReviewService implements IReviewService {
 
         return iReviewMapper.fileName(userId);
     }
+
+    public int modify(String userId, String fileName, MultipartFile multipartFile) throws IOException {
+        log.info("modify()");
+
+        s3Uploader.delete(userId, fileName);
+        int result = iReviewMapper.delete(userId);
+
+        s3Uploader.upload(multipartFile, userId);
+
+        return result;
+    }
 }
