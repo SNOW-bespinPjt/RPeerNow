@@ -10,7 +10,7 @@ public class PeerDto {
 
     private int no;
     private String user_id;
-    private float avg;
+    private int avg;
     private String best_id;
     private String best_name;
 

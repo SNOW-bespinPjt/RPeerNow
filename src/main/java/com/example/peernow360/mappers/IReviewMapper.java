@@ -19,7 +19,7 @@ public interface IReviewMapper {
     void totalScore(ReviewDto total);
 
 
-    float avgScore(PeerDto peerDto);
+    int avgScore(PeerDto peerDto);
 
     String bestId(PeerDto peerDto);
 

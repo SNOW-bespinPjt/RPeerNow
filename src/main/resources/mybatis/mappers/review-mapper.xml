@@ -20,8 +20,8 @@
         where project_no = #{no} and peer_id = #{user_id}
     </select>
 
-    <select id="avgScore" parameterType="com.example.peernow360.dto.PeerDto" resultType="float">
-        select avg(total) as avg
+    <select id="avgScore" parameterType="com.example.peernow360.dto.PeerDto" resultType="Integer">
+        select round(avg(total)) as avg
         from (select * from review where peer_id = #{user_id} and project_no = #{no}) a
         group by project_no
     </select>

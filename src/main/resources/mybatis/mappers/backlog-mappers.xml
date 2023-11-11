@@ -224,7 +224,7 @@
             ON
                 b.user_id = u.id
         where
-            sprint_no in (select sprint_no from sprint where project_no = #{project_no})
+            project_no = #{project_no}
 
     </select>
 
