@@ -181,7 +181,7 @@
         from
             backlog
         where
-            sprint_no in (select sprint_no from sprint where project_no = #{project_no})
+            project_no = #{project_no}
 
     </select>
 
