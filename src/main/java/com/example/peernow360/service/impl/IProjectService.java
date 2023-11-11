@@ -17,7 +17,7 @@ public interface IProjectService {
 
     int modifyProject(ProjectDto projectDto);
 
-    int acceptProject(int no, String user_id);
+    int acceptProject(int no, String user_id, String role);
 
     int declineProject(int no, String user_id);
 

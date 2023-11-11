@@ -46,12 +46,12 @@
             limit 1
     </select>
 
-    <select id="getPeer" parameterType="com.example.peernow360.dto.PeerDto" resultType="String">
-        select p.peer_id, u.name
-        from team p
-        join user u on p.peer_id = u.id
-        where p.no = #{no}
-    </select>
+<!--    <select id="getPeer" parameterType="com.example.peernow360.dto.PeerDto" resultType="String">-->
+<!--        select a.peer_id, u.name-->
+<!--        from acceptteam a-->
+<!--        join user u on a.peer_id = u.id-->
+<!--        where p.no = #{no}-->
+<!--    </select>-->
 
     <insert id="test" parameterType="com.example.peernow360.dto.TestDto">
         insert into test(user_id, test, file)
