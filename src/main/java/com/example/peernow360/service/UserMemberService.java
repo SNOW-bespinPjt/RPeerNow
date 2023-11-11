@@ -54,6 +54,13 @@ public class UserMemberService implements IUserMemberService {
 
         // 중복ID가 없을 시
         if(!isUserId) {
+
+            if(multipartFile!=null) {
+                String storedFileName = s3Uploader.upload(multipartFile, userMemberDto.getId());
+                userMemberDto.setImage(multipartFile.getOriginalFilename());
+
+            }
+
             userMemberDto.setPw(passwordEncoder.encode(userMemberDto.getPw()));
 
             int result = iUserMemberMapper.insertUserMember(userMemberDto);
@@ -307,4 +314,17 @@ public class UserMemberService implements IUserMemberService {
 
     }
 
+    public int updateAccountImage(String id, String fileName, MultipartFile multipartFile) throws IOException {
+        log.info("updateAccountImage()");
+
+        s3Uploader.delete(id, fileName);
+
+        String image = multipartFile.getOriginalFilename();
+
+        int result = iUserMemberMapper.updateAccountImage(id, image);
+
+        s3Uploader.upload(multipartFile, id);
+
+        return result;
+    }
 }

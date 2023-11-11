@@ -208,4 +208,16 @@
 
     </select>
 
+    <update id="updateAccountImage"
+            parameterType="String">
+
+        UPDATE
+            user
+        SET
+            image = #{image}
+        WHERE
+            id = #{id}
+
+    </update>
+
 </mapper>

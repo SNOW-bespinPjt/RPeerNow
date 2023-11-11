@@ -64,4 +64,9 @@
         where user_id = #{userId}
     </select>
 
+    <delete id="delete" parameterType="String">
+        delete from test
+        where user_id = #{userId}
+    </delete>
+
 </mapper>

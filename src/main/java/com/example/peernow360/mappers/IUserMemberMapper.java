@@ -85,4 +85,5 @@ public interface IUserMemberMapper {
      */
     public String selectUserName(String user_id);
 
+    int updateAccountImage(String id, String image);
 }
