@@ -45,8 +45,8 @@ public class UserMemberService implements IUserMemberService {
     @Value("${jwt.HttpHeaderValue}")
     private String HttpHeaderValue;
 
-    @Override
-    public int createAccountConfirm(UserMemberDto userMemberDto) {
+
+    public int createAccountConfirm(MultipartFile multipartFile, UserMemberDto userMemberDto) throws IOException {
         log.info("[UserMemberService] createAccountConfirm()");
         log.info("userMemberDto id : {} pw : {} " , userMemberDto.getId(), userMemberDto.getPw());
 
