@@ -3,6 +3,7 @@ package com.example.peernow360.service;
 import com.example.peernow360.dto.PayApproveDto;
 import com.example.peernow360.dto.PayCancelDto;
 import com.example.peernow360.dto.PayReadyDto;
+import com.example.peernow360.mappers.IPayMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpEntity;
@@ -19,23 +20,23 @@ import org.springframework.web.client.RestTemplate;
 @Transactional
 public class PayService {
 
-    static final String cid = "TC0ONETIME"; // 가맹점 테스트 코드
     static final String admin_Key = "0213830ee52de5184410e8146a130a69"; // 공개 조심
     private PayReadyDto payReadyDto;
+    private final IPayMapper iPayMapper;
 
-
-    public PayReadyDto kakaoPayReady() {
+    public PayReadyDto kakaoPayReady(String user_id) {
+        log.info("kakaoPayReady()");
 
         // 카카오페이 요청 양식
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
-        parameters.add("cid", cid);
+        parameters.add("cid", "TC0ONETIME");
         parameters.add("partner_order_id", "가맹점 주문 번호");
-        parameters.add("partner_user_id", "가맹점 회원 ID");
-        parameters.add("item_name", "상품명");
+        parameters.add("partner_user_id", user_id);
+        parameters.add("item_name", "프리미엄 회원");
         parameters.add("quantity", "1");
-        parameters.add("total_amount", "1000");
+        parameters.add("total_amount", "1900");
         parameters.add("vat_amount", "100");
-        parameters.add("tax_free_amount", "900");
+        parameters.add("tax_free_amount", "1800");
         parameters.add("approval_url", "http://localhost:8080/api/pay/success"); // 성공 시 redirect url
         parameters.add("cancel_url", "http://localhost:8080/pay/cancel"); // 취소 시 redirect url
         parameters.add("fail_url", "http://localhost:8080/pay/fail"); // 실패 시 redirect url
@@ -61,7 +62,7 @@ public class PayService {
 
         // 카카오 요청
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
-        parameters.add("cid", cid);
+        parameters.add("cid", "TC0ONETIME");
         parameters.add("tid", payReadyDto.getTid());
         parameters.add("partner_order_id", "가맹점 주문 번호");
         parameters.add("partner_user_id", "가맹점 회원 ID");
@@ -78,6 +79,8 @@ public class PayService {
                 requestEntity,
                 PayApproveDto.class);
 
+//        iPayMapper.payInfo();
+
         return payApproveDto;
     }
 
@@ -85,7 +88,7 @@ public class PayService {
 
         // 카카오페이 요청
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
-        parameters.add("cid", cid);
+        parameters.add("cid", "TC0ONETIME");
         parameters.add("tid", "환불할 결제 고유 번호");
         parameters.add("cancel_amount", "환불 금액");
         parameters.add("cancel_tax_free_amount", "환불 비과세 금액");
