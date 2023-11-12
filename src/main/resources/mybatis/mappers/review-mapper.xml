@@ -69,4 +69,8 @@
         where user_id = #{userId}
     </delete>
 
+    <select id="peerlist" parameterType="com.example.peernow360.dto.PeerReviewDto" resultType="com.example.peernow360.dto.PeerReviewDto">
+
+    </select>
+
 </mapper>

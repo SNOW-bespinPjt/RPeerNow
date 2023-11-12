@@ -27,7 +27,7 @@ public interface IUserMemberService {
     /*
      * 회원 상세 정보
      */
-    public UserMemberDto userDetailInfo();
+    public UserMemberDto userDetailInfo() throws IOException;
 
      /*
       * 로그아웃

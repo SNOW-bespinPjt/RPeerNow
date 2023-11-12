@@ -17,8 +17,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -36,6 +34,7 @@ public class UserMemberService implements IUserMemberService {
     private final UserDetailsService userDetailsService;
     private final JWTtokenProvider jwTtokenProvider;
     private final S3Uploader s3Uploader;
+
 
     private final int INSERT_ACCOUNT_AT_DB_SUCCESS = 1;
     private final int INSERT_ACCOUNT_AT_DB_FAIL = 0;
@@ -204,8 +203,8 @@ public class UserMemberService implements IUserMemberService {
 
     }
 
-    @Override
-    public UserMemberDto userDetailInfo() {
+
+    public UserMemberDto userDetailInfo() throws IOException {
         log.info("[UserMemberService] userDetailInfo()");
 
         User user_info = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -326,5 +325,10 @@ public class UserMemberService implements IUserMemberService {
         s3Uploader.upload(multipartFile, id);
 
         return result;
+    }
+
+    public String fileName(String userId) {
+
+        return iUserMemberMapper.fileName(userId);
     }
 }
