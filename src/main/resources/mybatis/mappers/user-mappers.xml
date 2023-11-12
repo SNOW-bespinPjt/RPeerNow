@@ -220,4 +220,10 @@
 
     </update>
 
+    <select id="fileName" parameterType="String" resultType="String">
+        select image
+        from user
+        where id = #{userId}
+    </select>
+
 </mapper>

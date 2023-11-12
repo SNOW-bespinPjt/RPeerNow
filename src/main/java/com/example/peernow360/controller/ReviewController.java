@@ -1,6 +1,7 @@
 package com.example.peernow360.controller;
 
 import com.example.peernow360.dto.PeerDto;
+import com.example.peernow360.dto.PeerReviewDto;
 import com.example.peernow360.dto.ReviewDto;
 import com.example.peernow360.dto.TestDto;
 import com.example.peernow360.response.ListResponse;
@@ -75,6 +76,22 @@ public class ReviewController {
         peerDto.setUser_id(user_id);
 
         return responseService.getSingleResponse(reviewService.evaluationInfo(peerDto));
+    }
+
+    @GetMapping("/peerlist")
+    @Operation(summary = "나의 동료", description = "나의 동료", tags = {"detail"})
+    public ListResponse<PeerReviewDto> peerlist(@RequestParam("projectNumber") int no) {
+        log.info("peerlist()");
+
+        User userInfo = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String user_id = userInfo.getUsername();
+
+        PeerReviewDto peerReviewDto = new PeerReviewDto();
+        peerReviewDto.setNo(no);
+        peerReviewDto.setUser_id(user_id);
+
+        return responseService.getListResponse(reviewService.peerlist(peerReviewDto));
+
     }
 
     @PostMapping("/test")

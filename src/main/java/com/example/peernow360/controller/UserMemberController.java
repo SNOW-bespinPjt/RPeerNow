@@ -3,6 +3,7 @@ package com.example.peernow360.controller;
 import com.example.peernow360.dto.UserMemberDto;
 import com.example.peernow360.response.*;
 import com.example.peernow360.security.JWTtokenProvider;
+import com.example.peernow360.service.S3Download;
 import com.example.peernow360.service.UserMemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,6 +35,7 @@ public class UserMemberController {
     private final UserMemberService userMemberService;
     private final ResponseService responseService;
     private final JWTtokenProvider jwTtokenProvider;
+    private final S3Download s3Download;
 
     @GetMapping("/gettest")
     public String dontTouchMeNoDelete(){
@@ -168,13 +170,26 @@ public class UserMemberController {
      */
     @GetMapping("/detail")
     @Operation(summary = "회원정보 불러오기", description = "회원정보 불러오기", tags = {"detail"})
-    public SingleResponse<UserMemberDto> userDetail() {
+    public SingleResponse<UserMemberDto> userDetail() throws IOException {
         log.info("[HomeController] userDetail()");
 
         return responseService.getSingleResponse(userMemberService.userDetailInfo());
 
     }
 
+    @GetMapping("/userimg")
+    @Operation(summary = "회원 이미지", description = "회원 이미지", tags = {"detail"})
+    public ResponseEntity<byte[]> userimg() throws IOException {
+        log.info("userimg()");
+
+        User userInfo = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String user_id = userInfo.getUsername();
+
+        String fileName = userMemberService.fileName(user_id);
+
+        return s3Download.getObject(user_id + "/" + fileName);
+
+    }
 
     @PostMapping("/logout_info")
     @Transactional
@@ -237,7 +252,7 @@ public class UserMemberController {
 
     }
 
-    @PutMapping("/imageChange")
+    @PutMapping("/imagechange")
     @Operation(summary = "계정 이미지 수정", description = "계정 이미지 수정", tags = {"modify"})
     public String updateAccountImage(@RequestParam ("id") String id,
                                      @RequestParam(value = "fileName", required = false) String fileName,

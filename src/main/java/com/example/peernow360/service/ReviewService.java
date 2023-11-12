@@ -1,6 +1,7 @@
 package com.example.peernow360.service;
 
 import com.example.peernow360.dto.PeerDto;
+import com.example.peernow360.dto.PeerReviewDto;
 import com.example.peernow360.dto.ReviewDto;
 import com.example.peernow360.dto.TestDto;
 import com.example.peernow360.mappers.IReviewMapper;
@@ -79,5 +80,11 @@ public class ReviewService implements IReviewService {
         s3Uploader.upload(multipartFile, userId);
 
         return result;
+    }
+
+    public List<PeerReviewDto> peerlist(PeerReviewDto peerReviewDto) {
+        log.info("peerlist()");
+
+        return iReviewMapper.peerlist(peerReviewDto);
     }
 }
