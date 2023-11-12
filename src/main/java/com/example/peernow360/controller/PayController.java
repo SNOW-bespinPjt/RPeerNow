@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,8 +27,12 @@ public class PayController {
     @GetMapping("/ready")
     @Operation(summary = "결제 요청", description = "결제 요청", tags = {"create"})
     public PayReadyDto readyToKakaoPay() {
+        log.info("readyToKakaoPay()");
 
-        return payService.kakaoPayReady();
+        User userInfo = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String user_id = userInfo.getUsername();
+
+        return payService.kakaoPayReady(user_id);
     }
 
     @GetMapping("/success")
