@@ -33,8 +33,13 @@ public interface IKanbanService {
     public int updateBurnDown();
 
     /*
-     * 스프린트 번호에 맞는 모든 번다운 차트 가져오기
+     * 스프린트 번호에 맞는 번다운 차트 가져오기
      */
     public List<BurnDownDto> callInBurndown(int sprint_no);
+
+    /*
+     * 프로젝트 번호에 맞는 모든 번다운 차트 가져오기(30일치)
+     */
+    public List<BurnDownDto> callInAllBurndown(int project_No);
 
 }

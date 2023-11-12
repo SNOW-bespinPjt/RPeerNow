@@ -48,10 +48,14 @@ public class UserMemberController {
      */
     @PostMapping("/join")
     @Operation(summary = "회원가입", description = "회원가입", tags = {"create"})
+
     public String createAccountConfirm(@RequestPart(value = "image", required = false) MultipartFile multipartFile, @RequestPart UserMemberDto userMemberDto) throws IOException {
+
+
+
         log.info("[UserMemberController] createAccountConfirm()");
 
-        int result = userMemberService.createAccountConfirm(userMemberDto, multipartFile);
+        int result = userMemberService.createAccountConfirm(userMemberDto);
 
         if(result > 0) {
             log.info("회원가입에 성공하였습니다.");
@@ -224,10 +228,12 @@ public class UserMemberController {
      */
     @PutMapping("/change")
     @Operation(summary = "계정 수정", description = "계정 수정", tags = {"modify"})
-    public String updateAccountConfirm(@RequestParam ("id") String id, @RequestPart UserMemberDto userMemberDto) {
+    public String updateAccountConfirm(@RequestParam ("id") String id,
+                                       @RequestPart UserMemberDto userMemberDto,
+                                       @RequestPart (required = false) MultipartFile image ) throws IOException {
         log.info("[HomeController] deleteAccountConfirm()");
 
-        return userMemberService.updateAccountConfirm(id, userMemberDto);
+        return userMemberService.updateAccountConfirm(id, userMemberDto, image);
 
     }
 

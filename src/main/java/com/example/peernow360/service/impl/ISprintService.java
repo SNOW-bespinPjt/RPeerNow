@@ -11,7 +11,7 @@ public interface ISprintService {
     /*
      * 새로운 스프린트 생성
      */
-    public String createNewSprint(SprintDto sprintDto, int project_no, List<BacklogDto> backlogDto);
+    public String createNewSprint(SprintDto sprintDto, int project_no, int[] backlogDto);
 
     /*
      * 스프린트 번호를 이용한 (전체)스프린트 상세 정보 불러오기

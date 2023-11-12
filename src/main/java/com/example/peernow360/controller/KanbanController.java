@@ -9,15 +9,16 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 @RestController
-@Slf4j
+@Log4j2
 @RequiredArgsConstructor
 @RequestMapping("/api/kanban")
 @Tag(name = "kanban", description = "칸반보드")
@@ -25,6 +26,7 @@ public class KanbanController {
 
     private final KanbanService kanbanService;
     private final ResponseService responseService;
+    private final Lock lock = new ReentrantLock();
 
     /*
      * 칸반보드에 보일 백로그 가져오기 (이전에 백로그 컨트롤러에도 해당 메서드 내용이 존재)
@@ -77,13 +79,23 @@ public class KanbanController {
 
     /*
      * 번다운 차트 (매일 10:00에 실행)
+     * Synchronized와 ReentrantLock을 이용해 스케쥴링된 작업을 동시에 실행되지 않도록 동시성 제어를 함.
      */
     @Scheduled(cron = "0 0 10 * * *", zone = "Asia/Seoul")
     @Operation(summary = "번다운 차트 기록 스케쥬링", description = "번다운 차트 기록 스케쥬링", tags = {"create"})
     public synchronized void modifyBurnDown() {
         log.info("[KanbanController] updateBurnDown()");
 
-        kanbanService.updateBurnDown();
+        lock.lock();
+
+        try{
+            kanbanService.updateBurnDown();
+
+        } finally {
+            //작업이 끝나면 unlock으로 Lock 해제
+            lock.unlock();
+
+        }
 
     }
 
@@ -99,4 +111,15 @@ public class KanbanController {
 
     }
 
+    /*
+     * 프로젝트 번호에 속해있는 전체 번다운 차트 가져오기(30일치)
+     */
+    @GetMapping("/allburndown")
+    @Operation(summary = "전체 번다운 차트 기록 불러오기", description = "전체 번다운 차트 기록 불러오기", tags = {"detail"})
+    public ListResponse<BurnDownDto> callAllBurndown(@RequestParam (value = "project_no") int project_no) {
+        log.info("[KanbanController] callBurndown()");
+
+        return responseService.getListResponse(kanbanService.callInAllBurndown(project_no));
+
+    }
 }

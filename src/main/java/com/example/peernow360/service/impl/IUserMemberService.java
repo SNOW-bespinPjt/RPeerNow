@@ -12,7 +12,7 @@ public interface IUserMemberService {
     /*
      * 유저 계정 생성
      */
-    public int createAccountConfirm(UserMemberDto userMemberDto, MultipartFile multipartFile) throws IOException;
+    public int createAccountConfirm(UserMemberDto userMemberDto);
 
     /*
      * 유저 로그인
@@ -42,7 +42,7 @@ public interface IUserMemberService {
     /*
      * 유저 계정 수정
      */
-    public String updateAccountConfirm(String id, UserMemberDto userMemberDto);
+    public String updateAccountConfirm(String id, UserMemberDto userMemberDto, MultipartFile image) throws IOException;
 
     int updateAccountImage(String id, String fileName, MultipartFile multipartFile) throws IOException;
 

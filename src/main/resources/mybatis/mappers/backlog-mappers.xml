@@ -38,22 +38,26 @@
 
     </insert>
 
-    <insert id="insertAndUptBacklogFile" parameterType="com.example.peernow360.dto.FileDto">
-
-        INSERT INTO
-            backfile(backlog_no,name )
-        VALUES
-            ( #{backlog_no},#{name})
-
-    </insert>
-
     <select id="searchBacklogList" parameterType="Integer"
             resultType="com.example.peernow360.dto.BacklogDto">
 
         SELECT
-            *
+            b.no,
+            b.sprint_no,
+            b.user_id,
+            b.title,
+            b.detail,
+            b.status,
+            b.reg_date,
+            b.mod_date,
+            b.project_no,
+            u.image
         FROM
-            backlog
+            backlog b
+        JOIN
+            user u
+        ON
+            b.user_id = u.id
         WHERE
             sprint_no = #{sprint_no}
 
@@ -80,9 +84,22 @@
             resultType="com.example.peernow360.dto.BacklogDto">
 
         SELECT
-            *
+            b.no,
+            b.sprint_no,
+            b.user_id,
+            b.title,
+            b.detail,
+            b.status,
+            b.reg_date,
+            b.mod_date,
+            b.project_no,
+            u.image
         FROM
-            backlog
+            backlog b
+        JOIN
+            user u
+        ON
+            b.user_id = u.id
         WHERE
             no = #{no}
 
@@ -104,9 +121,22 @@
             resultType="com.example.peernow360.dto.BacklogDto">
 
         select
-            *
-        from
-            backlog
+            b.no,
+            b.sprint_no,
+            b.user_id,
+            b.title,
+            b.detail,
+            b.status,
+            b.reg_date,
+            b.mod_date,
+            b.project_no,
+            u.image
+        FROM
+            backlog b
+                JOIN
+            user u
+            ON
+                b.user_id = u.id
         where
             sprint_no = #{sprintNo}
         AND
@@ -177,9 +207,22 @@
             resultType="com.example.peernow360.dto.BacklogDto">
 
         select
-            *
-        from
-            backlog
+            b.no,
+            b.sprint_no,
+            b.user_id,
+            b.title,
+            b.detail,
+            b.status,
+            b.reg_date,
+            b.mod_date,
+            b.project_no,
+            u.image
+        FROM
+            backlog b
+                JOIN
+            user u
+            ON
+                b.user_id = u.id
         where
             project_no = #{project_no}
 

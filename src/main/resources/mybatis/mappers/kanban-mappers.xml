@@ -8,9 +8,22 @@
             resultType="com.example.peernow360.dto.BacklogDto">
 
         SELECT
-            *
+            b.no,
+            b.sprint_no,
+            b.user_id,
+            b.title,
+            b.detail,
+            b.status,
+            b.reg_date,
+            b.mod_date,
+            b.project_no,
+            u.image
         FROM
-            backlog
+            backlog b
+                JOIN
+            user u
+            ON
+                b.user_id = u.id
         WHERE
             sprint_no = #{sprint_no}
 
@@ -20,9 +33,22 @@
             resultType="com.example.peernow360.dto.BacklogDto">
 
         SELECT
-            *
+            b.no,
+            b.sprint_no,
+            b.user_id,
+            b.title,
+            b.detail,
+            b.status,
+            b.reg_date,
+            b.mod_date,
+            b.project_no,
+            u.image
         FROM
-            backlog
+            backlog b
+                JOIN
+            user u
+            ON
+                b.user_id = u.id
         WHERE
             sprint_no = 0
         and
@@ -83,7 +109,8 @@
              end_date,
              reg_date,
              mod_date,
-             task)
+             task,
+             done_job)
         SELECT
             #{no},
             1,
@@ -91,7 +118,8 @@
             #{end_date},
             NOW(),
             NOW(),
-        (SELECT count(*) FROM backlog WHERE sprint_no = #{no} AND status NOT IN ("done"))
+        (SELECT count(*) FROM backlog WHERE sprint_no = #{no} AND status NOT IN ("done")),
+        (SELECT count(*) FROM backlog WHERE sprint_no = #{no} AND status IN ("done"))
 
     </insert>
 
@@ -105,7 +133,8 @@
                      lapse,
                      start_date,
                      end_date,
-                     task)
+                     task,
+                     done_job)
         SELECT #{no},
                DATE_ADD(NOW(), INTERVAL 9 HOUR),
                DATE_ADD(NOW(), INTERVAL 9 HOUR),
@@ -113,15 +142,12 @@
                (select count(*) from burndown where ori_no = #{no}) + 1,
                start_date,
                end_date,
-               (SELECT COUNT(*) FROM backlog WHERE sprint_no = #{sprint_no} AND status NOT IN ("done"))
+               (SELECT COUNT(*) FROM backlog WHERE sprint_no = #{sprint_no} AND status NOT IN ("done")),
+                (SELECT COUNT(*) FROM backlog WHERE sprint_no = #{sprint_no} AND status IN ("done"))
         FROM
             burndown
         WHERE
             no = #{no}
-
-
-
-
 
     </insert>
 
@@ -129,7 +155,7 @@
                 resultType="com.example.peernow360.dto.BurnDownDto">
 
         SELECT
-            no, ori_no, sprint_no, lapse,task,DATEDIFF(end_date, start_date) + 1 AS sub_day, start_date, end_date, reg_date, mod_date
+            no, ori_no, sprint_no, lapse, task, done_job, DATEDIFF(end_date, start_date) + 1 AS sub_day, start_date, end_date, reg_date, mod_date
         FROM
             burndown
         WHERE
@@ -159,5 +185,20 @@
 
 
     </update>
+
+    <select id="searchAllBurndown" parameterType="Integer"
+            resultType="com.example.peernow360.dto.BurnDownDto">
+
+        SELECT
+            *
+        FROM
+            burndown
+        WHERE sprint_no IN
+              (SELECT distinct sprint_no FROM sprint WHERE project_no = 1)
+          AND end_date <![CDATA[>=]]> DATE_SUB(NOW(), INTERVAL 30 day)
+          AND start_date <![CDATA[<]]> NOW()
+        ORDER BY sprint_no;
+
+    </select>
 
 </mapper>
