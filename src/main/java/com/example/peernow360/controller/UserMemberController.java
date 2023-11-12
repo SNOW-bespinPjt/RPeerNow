@@ -55,7 +55,7 @@ public class UserMemberController {
 
         log.info("[UserMemberController] createAccountConfirm()");
 
-        int result = userMemberService.createAccountConfirm(userMemberDto);
+        int result = userMemberService.createAccountConfirm(multipartFile, userMemberDto);
 
         if(result > 0) {
             log.info("회원가입에 성공하였습니다.");

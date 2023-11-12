@@ -12,7 +12,7 @@ public interface IUserMemberService {
     /*
      * 유저 계정 생성
      */
-    public int createAccountConfirm(UserMemberDto userMemberDto);
+    public int createAccountConfirm(MultipartFile multipartFile, UserMemberDto userMemberDto) throws IOException;
 
     /*
      * 유저 로그인
