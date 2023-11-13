@@ -1,5 +1,6 @@
 package com.example.peernow360.controller;
 
+import com.amazonaws.services.s3.model.S3Object;
 import com.example.peernow360.dto.UserMemberDto;
 import com.example.peernow360.response.*;
 import com.example.peernow360.security.JWTtokenProvider;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -179,7 +182,7 @@ public class UserMemberController {
 
     @GetMapping("/userimg")
     @Operation(summary = "회원 이미지", description = "회원 이미지", tags = {"detail"})
-    public ResponseEntity<byte[]> userimg() throws IOException {
+    public Object userimg() throws IOException {
         log.info("userimg()");
 
         User userInfo = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -188,6 +191,7 @@ public class UserMemberController {
         String fileName = userMemberService.fileName(user_id);
 
         return s3Download.getObject(user_id + "/" + fileName);
+
 
     }
 
