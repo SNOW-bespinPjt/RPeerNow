@@ -33,7 +33,6 @@ public class S3GetImage {
 //        Map map= new HashMap();
 //        map.put("image",bytes);
 
-//        return map;
         return bytes;
     }
 
