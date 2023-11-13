@@ -9,6 +9,7 @@ import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import java.util.Map;
 public class ProjectService implements IProjectService {
 
     private final IProjectMapper iProjectMapper;
+    private final S3GetImage s3GetImage;
 
 //    @Transactional
 //    public void Project() {
@@ -26,7 +28,7 @@ public class ProjectService implements IProjectService {
 //
 //    }
 
-    public int createProject(Map<String, Object> map, ProjectDto project, List<TeamDto> teams) {
+    public int createProject(Map<String, Object> map, ProjectDto project, List<TeamDto> teams, AcceptTeamDto acceptTeamDto) {
         log.info("createProject()");
 
         project.setTitle((String) map.get("title"));
@@ -49,6 +51,11 @@ public class ProjectService implements IProjectService {
                 iProjectMapper.createTeam(team);
             }
         }
+//        AcceptTeamDto acceptTeamDto = new AcceptTeamDto();
+//        acceptTeamDto.setUser_id((String) map.get("user_id"));
+        acceptTeamDto.setNo(project.getNo());
+        iProjectMapper.createAcceptTeam(acceptTeamDto);
+
         return result;
     }
 
@@ -70,14 +77,16 @@ public class ProjectService implements IProjectService {
         return iProjectMapper.projectList(user_id);
     }
 
-    public List<UserMemberDto> peerlist(int no, String owner) {
+    public List<UserMemberDto> peerlist(int no) throws IOException {
         log.info("peerlist()");
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("no", no);
-        map.put("owner", owner);
+        List<UserMemberDto> list = iProjectMapper.peerlist(no);
+        for(UserMemberDto userMemberDto : list) {
+            Object image = s3GetImage.getObject(userMemberDto.getId() + "/" + userMemberDto.getImage());
+            userMemberDto.setImage(image);
+        }
 
-        return iProjectMapper.peerlist(map);
+        return list;
     }
 
     public int modifyProject(ProjectDto projectDto) {

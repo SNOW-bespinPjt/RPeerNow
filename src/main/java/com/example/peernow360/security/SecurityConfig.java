@@ -48,8 +48,8 @@ public class SecurityConfig {
                         ).permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/project/sprint").hasAnyRole("PM", "SM")
                         .requestMatchers("/api/project/sprint").hasRole("SM")
-                        .requestMatchers(HttpMethod.POST,"/api/project").hasAnyRole("PM", "SM", "TM")
-                        .requestMatchers("/api/project").hasRole("PM")
+                        .requestMatchers(HttpMethod.PUT,"/api/project").hasRole("PM")
+                        .requestMatchers(HttpMethod.DELETE,"/api/project").hasRole("PM")
                         .anyRequest().authenticated()  // 해당 경로 외의 요청은 모두 인증 필요
                 ).formLogin().disable()
 

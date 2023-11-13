@@ -18,6 +18,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -204,7 +205,10 @@ public class UserMemberController {
 
         String fileName = userMemberService.fileName(user_id);
 
-        return s3GetImage.getObject(user_id + "/" + fileName);
+        Map map= new HashMap();
+        map.put("image",s3GetImage.getObject(user_id + "/" + fileName));
+
+        return map;
 
     }
 

@@ -13,6 +13,11 @@
         values(#{peer_id}, #{role}, #{no}, COALESCE(#{status}, 'WAIT'))
     </insert>
 
+    <insert id="createAcceptTeam" parameterType="com.example.peernow360.dto.AcceptTeamDto">
+        insert into acceptteam(no, peer_id, role)
+        values(#{no}, #{user_id}, 'PM')
+    </insert>
+
     <select id="getPeer" parameterType="String" resultType="com.example.peernow360.dto.UserMemberDto">
         select name, id, mail
         from user
@@ -26,29 +31,22 @@
     </select>
 
     <select id="projectList" parameterType="String" resultType="com.example.peernow360.dto.ProjectDto">
-        select *
-        from project
-        where user_id = #{user_id}
-
+        select p.no , p.user_id , a.peer_id, p.title, p.detail, p.start_date, p.end_date, p.reg_date, p.mod_date
+        from project p left join acceptteam a on p.no = a.no
+        where p.user_id = #{user_id} or a.peer_id = #{user_id}
 
     </select>
 
-    <select id="peerlist" parameterType="HashMap" resultType="com.example.peernow360.dto.UserMemberDto">
-        select u.id, u.name, u.mail, u.phone, u.team, u.image, u.grade, p.no, a.role
+    <select id="peerlist" parameterType="Integer" resultType="com.example.peernow360.dto.UserMemberDto">
+        select  p.no, a.role, u.id, u.name, u.mail, u.phone, u.team, u.image, u.grade
         from acceptteam a
         join project p on a.no = p.no
         right outer join user u on a.peer_id = u.id
         where p.no = #{no}
-        union
-        select u.id, u.name, u.mail, u.phone, u.team, u.image, u.grade, p.no, null as role
-        from user u
-                 join project p on p.user_id = u.id
-        where p.user_id = #{owner} and p.no = #{no};
-
     </select>
 
     <update id="modifyProject" parameterType="com.example.peernow360.dto.ProjectDto">
-        update project p join acceptteam a on p.no = a.no
+        update project p
         set title = #{title}, detail = #{detail}, start_date = #{start_date}, end_date = #{end_date}, mod_date = now()
         where p.user_id = #{user_id} and p.no = #{no}
     </update>
@@ -77,7 +75,7 @@
         delete from backlog where sprint_no in (select sprint_no from sprint where project_no = #{no});
         delete from backfile where backlog_no in (select no from backlog where sprint_no in (select no from sprint where project_no = #{no}));
         delete from team where no = #{no};
-        delect from acceptteam where no = #{no};
+        delete from acceptteam where no = #{no};
     </delete>
 
     <select id="projectInvitation" parameterType="com.example.peernow360.dto.InvitationDto" resultType="com.example.peernow360.dto.InvitationDto">

@@ -33,10 +33,10 @@ public class S3GetImage {
         S3ObjectInputStream objectInputStream = o.getObjectContent();
         byte[] bytes = IOUtils.toByteArray(objectInputStream); // s3객체 내용을 바이트로 읽음
 
-        Map map= new HashMap();
-        map.put("image",bytes);
+//        Map map= new HashMap();
+//        map.put("image",bytes);
 
-        return map;
+        return bytes;
     }
 
 }
