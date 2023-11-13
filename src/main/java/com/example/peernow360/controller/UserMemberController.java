@@ -1,8 +1,6 @@
 package com.example.peernow360.controller;
 
 import com.example.peernow360.dto.UserMemberDto;
-import com.example.peernow360.response.ListResponse;
-import com.example.peernow360.response.MapResponse;
 import com.example.peernow360.response.ResponseService;
 import com.example.peernow360.response.SingleResponse;
 import com.example.peernow360.security.JWTtokenProvider;
@@ -12,19 +10,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -114,7 +108,9 @@ public class UserMemberController {
      */
     @PostMapping("/request_refreshToken")
     @Operation(summary = "refreshtoken 발급", description = "refreshtoken 발급", tags = {"create"})
-    public ResponseEntity<Map<String, Object>> reissuanceAccessToken(@RequestHeader(value = "cookie") String refreshToken, HttpServletResponse response) {
+    public ResponseEntity<Map<String, Object>> reissuanceAccessToken(@RequestHeader(value = "cookie") String refreshToken,
+                                                                     @RequestHeader(value = "project_no") int project_no,
+                                                                     HttpServletResponse response) {
         log.info("[HomeController] ReissuanceRefreshToken()");
 
         Map<String, Object> msgData = new HashMap<>();
@@ -129,7 +125,21 @@ public class UserMemberController {
         if(jwTtokenProvider.validateToken(refreshToken) && jwTtokenProvider.selectForBlacklist(refreshToken)) {
             String user_id = jwTtokenProvider.extractRefreshToken(refreshToken);
 
-            msgData = userMemberService.reCreateAccessToken(user_id);
+            msgData = userMemberService.reCreateAccessToken(user_id, project_no);
+
+            if(msgData == null) {
+                log.info("refresh Token 생성에 에러가 발생하였습니다. 로그아웃을 진행합니다.");
+
+                String msg = logOutInfo(refreshToken, response);
+                log.info("자동화 로그아웃 msg : " + msg);
+
+                msgData.put("code", 0);
+                msgData.put("status", "fail");
+                msgData.put("message",msg);
+
+                return ResponseEntity.ok(msgData);
+
+            }
 
             ResponseCookie cookie = ResponseCookie.from("refreshToken", (String) msgData.get("refreshToken"))
                     .maxAge(7 * 24 * 60 * 60) //쿠키의 수명을 설정 / 기간은 7일

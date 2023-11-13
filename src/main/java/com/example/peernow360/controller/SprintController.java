@@ -1,9 +1,7 @@
 package com.example.peernow360.controller;
 
-import com.example.peernow360.dto.BacklogDto;
 import com.example.peernow360.dto.SprintDto;
 import com.example.peernow360.response.ListResponse;
-import com.example.peernow360.response.MapResponse;
 import com.example.peernow360.response.ResponseService;
 import com.example.peernow360.response.SingleResponse;
 import com.example.peernow360.service.SprintService;
@@ -13,8 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 
 @RestController

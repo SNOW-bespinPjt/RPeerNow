@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
@@ -45,13 +46,14 @@ public class JWTtokenProvider {
     /*
      * Access Token 생성
      */
-    public String createAccessToken(Authentication authentication, String roles) {
+    public String createAccessToken(Authentication authentication, String roles, int project_no) {
         log.info("");
         log.info("=====================================");
         log.info("[JWTtokenProvider] createAccessToken()");
         log.info("Access secretKey: {}",secretKey);
         Claims claims= Jwts.claims().setSubject(authentication.getName()); // JWT payload 에 저장되는 정보단위, 보통 여기서 user를 식별하는 값을 넣는다.
         claims.put("roles",roles);
+        claims.put("project_no", project_no);
         Date now=new Date();
 
         /*
@@ -73,12 +75,10 @@ public class JWTtokenProvider {
     /*
      * Refresh Token 생성
      */
-    public String createRefreshToken(Authentication authentication, String roles) {
+    public String createRefreshToken(Authentication authentication) {
         log.info("[JWTtokenProvider] createRefreshToken()");
         log.info("Refresh secretKey: {}",secretKey);
         Claims claims= Jwts.claims().setSubject(authentication.getName()); // JWT payload 에 저장되는 정보단위, 보통 여기서 user를 식별하는 값을 넣는다.
-//        claims.put("roles",authentication.getAuthorities());
-        claims.put("roles", roles);
         Date now=new Date();
 
         /*
@@ -103,6 +103,7 @@ public class JWTtokenProvider {
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(this.checkUser(token));
         log.info("userDetails : " + userDetails);
+        log.info("userDetails.getAUth: " + userDetails.getAuthorities());
 
         return new UsernamePasswordAuthenticationToken(userDetails,"",userDetails.getAuthorities());
 
@@ -189,15 +190,16 @@ public class JWTtokenProvider {
     /*
      * 토큰 예외처리를 반환하는 메서드
      */
-    public ResponseEntity<Map<String,Object>> validateTokenAndReturnMessage(String token) {
+    public ResponseEntity<Map<String, Object>> validateTokenAndReturnMessage(String token) {
         Map<String, Object> data = new HashMap<>();
 
         try {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             log.info("Token is valid");
-
             data.put("code", 200);
             data.put("message", "Token is valid");
+
+
             return ResponseEntity.status(HttpStatus.OK).body(data);
 
         } catch (MalformedJwtException e) { //잘못된 jwt 구조
@@ -272,6 +274,15 @@ public class JWTtokenProvider {
             return false;
 
         }
+
+    }
+
+    public int getProjectNo(String accessToken) {
+        log.info("[JWTtokenProvider] getProjectNo()");
+        log.info("checkUserInfo: " + Jwts.parser().setSigningKey(secretKey).parseClaimsJws(accessToken).getBody().get("roles"));
+        log.info("checkUserInfo: " + Jwts.parser().setSigningKey(secretKey).parseClaimsJws(accessToken).getBody().get("project_no"));
+
+        return (int) Jwts.parser().setSigningKey(secretKey).parseClaimsJws(accessToken).getBody().get("project_no");
 
     }
 

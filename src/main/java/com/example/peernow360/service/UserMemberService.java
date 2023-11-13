@@ -105,9 +105,12 @@ public class UserMemberService implements IUserMemberService {
         // 해당 인증정보를 SecurityContextHolder에 저장하고 전역적으로 사용
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
+        // 최초 로그인 시 현재 입장된 프로젝트가 없기 때문에 0으로 처리.
+        int project_no = 0;
+
         // authentication 객체를 createToken 메소드를 통해서 JWT Token을 생성
-        String accessToken = jwTtokenProvider.createAccessToken(authenticationToken, "member");
-        String refreshToken = jwTtokenProvider.createRefreshToken(authenticationToken, "member");
+        String accessToken = jwTtokenProvider.createAccessToken(authenticationToken, authenticationToken.getAuthorities().toString(), project_no);
+        String refreshToken = jwTtokenProvider.createRefreshToken(authenticationToken);
         String user = (String) authenticationToken.getPrincipal(); //user 정보
 
         log.info("AccessToken : " + accessToken);
@@ -124,33 +127,37 @@ public class UserMemberService implements IUserMemberService {
 
         }
 
+        Map<String ,Object> msgData = new HashMap<>();
+
         // 초기 생성한 refresh token 저장
         int result = jwTtokenProvider.insertRefreshToken(authenticationToken.getPrincipal(), refreshToken);
 
         if (result > 0) {
             log.info("성공적으로 DB에 refresh token이 저장되었습니다,");
 
+            TokenInfo tokenInfo = TokenInfo.builder()
+                    .accessToken(accessToken)
+                    .grantType("Bearer ")
+                    .build();
+
+            msgData.put("tokenInfo", tokenInfo);
+            msgData.put("refreshToken", refreshToken);
+
+            return msgData;
+
         } else {
             log.info("DB에 refresh token 저장을 하지 못했습니다.");
 
+            msgData.put("tokenInfo", null);
+
+            return msgData;
+
         }
-
-        Map<String ,Object> msgData = new HashMap<>();
-
-        TokenInfo tokenInfo = TokenInfo.builder()
-                .accessToken(accessToken)
-                .grantType("Bearer ")
-                .build();
-
-        msgData.put("tokenInfo", tokenInfo);
-        msgData.put("refreshToken", refreshToken);
-
-        return msgData;
 
     }
 
     @Override
-    public Map<String, Object> reCreateAccessToken(String user_id) {
+    public Map<String, Object> reCreateAccessToken(String user_id, int project_no) {
         log.info("[UserMemberService] reCreateAccessToken()");
 
         Boolean isToken = jwTtokenProvider.getRefreshToken(user_id);
@@ -165,31 +172,32 @@ public class UserMemberService implements IUserMemberService {
 
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails,"",userDetails.getAuthorities());
 
-            String accessToken = jwTtokenProvider.createAccessToken(authenticationToken, "member");
-            String refreshToken = jwTtokenProvider.createRefreshToken(authenticationToken, "member");
+            String accessToken = jwTtokenProvider.createAccessToken(authenticationToken, "member", project_no);
+            String refreshToken = jwTtokenProvider.createRefreshToken(authenticationToken);
             int result = jwTtokenProvider.updateRefreshToken(user_id, refreshToken);
+
+            Map<String, Object> msgData = new HashMap<>();
 
             if (result > 0) {
                 log.info("성공적으로 DB에 재발급 refresh token이 저장되었습니다,");
+                log.info("refresh accessToken : " + accessToken);
+                log.info("refresh refreshToken : " + refreshToken);
+
+                TokenInfo tokenInfo = TokenInfo.builder()
+                        .accessToken(accessToken)
+                        .grantType("Bearer ")
+                        .build();
+
+                msgData.put("tokenInfo", tokenInfo);
+
+                return msgData;
 
             } else {
                 log.info("DB에 재발급 refresh token 저장을 하지 못했습니다.");
 
+                return null;
+
             }
-
-            log.info("refresh accessToken : " + accessToken);
-            log.info("refresh refreshToken : " + refreshToken);
-
-            Map<String, Object> msgData = new HashMap<>();
-
-            TokenInfo tokenInfo = TokenInfo.builder()
-                    .accessToken(accessToken)
-                    .grantType("Bearer ")
-                    .build();
-
-            msgData.put("tokenInfo", tokenInfo);
-
-            return msgData;
 
         }
 

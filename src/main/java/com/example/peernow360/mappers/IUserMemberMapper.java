@@ -85,4 +85,9 @@ public interface IUserMemberMapper {
      */
     public String selectUserName(String user_id);
 
+    /*
+     * project_no와 id를 이용해 acceptteam 테이블에서 role 가져오기
+     */
+    public String getRoleInPJT(Map<String, Object> data);
+
 }

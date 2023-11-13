@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -41,12 +42,18 @@ public class SecurityConfig {
         http.csrf().disable()
                 .cors().disable()
                 .httpBasic().disable()  // HTTP 기본 인증 방식을 비활성화
-                .authorizeHttpRequests(request -> request
+                .authorizeHttpRequests(authorize-> authorize
                         .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()  // HTTP 요청 인증 설정
-                        .requestMatchers("/**","/api/user/join","/api/user/login","/api/user/request_refreshToken","/api/user/gettest", "/v3/**", "/swagger-ui/**"
-                                ).permitAll()
+                        .requestMatchers("/api/user/join","/api/user/login","/api/user/request_refreshToken","/api/user/gettest", "/v3/**", "/swagger-ui/**"
+                        ).permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/project/sprint").hasAnyRole("PM", "SM")
+                        .requestMatchers("/api/project/sprint").hasRole("SM")
+                        .requestMatchers(HttpMethod.POST,"/api/project").hasAnyRole("PM", "SM", "TM")
+                        .requestMatchers("/api/project").hasRole("PM")
                         .anyRequest().authenticated()  // 해당 경로 외의 요청은 모두 인증 필요
                 ).formLogin().disable()
+
+
 
                 .headers()
                 .frameOptions()

@@ -38,8 +38,6 @@ public class JWTtokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         log.info("[JWTtokenFilter] DOFILTER NOW PROCESSING");
 
-        log.info("request project_no: " + request.getHeader("project_no"));
-
         String bearerToken = request.getHeader(HttpHeaderValue);
         log.info("Entry Bearertoken : " + bearerToken);
 
@@ -68,17 +66,51 @@ public class JWTtokenFilter extends OncePerRequestFilter {
         if(jwTtokenProvider.validateToken(accessToken)) {
             log.info("access token 검증 ------- 토큰 정보 보유 ------ 정보 유효기간 확인 -----");
 
-            Authentication authentication = jwTtokenProvider.selectAuthority(accessToken);
-            log.info("authentication: " + authentication);
+            // 프로젝트 넘버 확인( null일 경우 0처리 하기 위한 변수 초기화 과정, 만약 0일 경우 최초 로그인일 가능성이 높음)
+            int project_no = 0;
+            if(StringUtils.hasText(request.getHeader("project_no"))) {
+                project_no = Integer.parseInt(request.getHeader("project_no"));
 
-            //인증 정보를 Thread Local에 저장, 권한 부여
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+
+            log.info("project_no : " + project_no);
+
+            /*
+             * 현재 프로젝트 넘버가 0이 아니면서 현재 프로젝트와 토큰에 존재하는 프로젝트 넘버가 다르다면
+             * 엑세스 토큰을 재발급!!.
+             */
+            if(project_no != 0 && project_no != jwTtokenProvider.getProjectNo(accessToken)) {
+                log.info("프로젝트 넘버에 맞게 재발급!!.");
+
+                Authentication authentication = jwTtokenProvider.selectAuthority(accessToken);
+                log.info("authentication: " + authentication);
+
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                String newAccessToken = jwTtokenProvider.createAccessToken(authentication, authentication.getAuthorities().toString(), project_no);
+
+                /*
+                 *새로운 토큰 전달을 위해 Header 사용
+                 * 여기서 ResponseEntity를 이용해 body에 담으면 안되는 이유:
+                 * filter 단계에서는 주로 헤더를 조작하거나 리다이렉트 등의 다른 HTTP 응답 속성을 조작하는 용도로 사용
+                 */
+                response.setHeader("newAccessToken", newAccessToken);
+                response.setStatus(HttpServletResponse.SC_OK);              //응답 상태 코드를 200으로 설정
+
+            } else {
+                Authentication authentication = jwTtokenProvider.selectAuthority(accessToken);
+                log.info("authentication: " + authentication);
+
+                //인증 정보를 Thread Local에 저장, 권한 부여
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            }
 
             log.info("검증 완료");
 
         }
 
-        ResponseEntity<Map<String,Object>> validationResult = jwTtokenProvider.validateTokenAndReturnMessage(accessToken);
+//        ResponseEntity<Map<String,Object>> validationResult = jwTtokenProvider.validateTokenAndReturnMessage(accessToken);
+        ResponseEntity<Map<String, Object>> validationResult = jwTtokenProvider.validateTokenAndReturnMessage(accessToken);
 
         request.setAttribute("tokenValidationResult", validationResult);
 

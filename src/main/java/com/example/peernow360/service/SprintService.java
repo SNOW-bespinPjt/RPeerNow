@@ -170,6 +170,8 @@ public class SprintService implements ISprintService {
         if(result > 0) {
             log.info("스프린트 정보를 삭제하는데 성공하였습니다.");
 
+            iSprintMapper.removeSprintNoAtBLog(sprintDto);
+
             return "success";
 
         } else {
