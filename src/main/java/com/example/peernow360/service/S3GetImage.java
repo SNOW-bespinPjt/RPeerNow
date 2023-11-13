@@ -12,9 +12,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 @Log4j2
@@ -27,7 +24,7 @@ public class S3GetImage {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public Object getObject(String storedFileName) throws IOException {
+    public byte[] getObject(String storedFileName) throws IOException {
 
         S3Object o = amazonS3Client.getObject(new GetObjectRequest(bucket, storedFileName));
         S3ObjectInputStream objectInputStream = o.getObjectContent();

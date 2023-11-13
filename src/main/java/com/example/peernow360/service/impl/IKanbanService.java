@@ -3,6 +3,7 @@ package com.example.peernow360.service.impl;
 import com.example.peernow360.dto.BacklogDto;
 import com.example.peernow360.dto.BurnDownDto;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface IKanbanService {
@@ -10,12 +11,12 @@ public interface IKanbanService {
     /*
      * 칸반보드 백로그 불러오기
      */
-    public List<BacklogDto> searchBacklogs(int sprint_no);
+    public List<BacklogDto> searchBacklogs(int sprint_no) throws IOException;
 
     /*
      * 스프린트에 등록되지 않은 백로그 목록만 가져오기
      */
-    public List<BacklogDto> searchBacklogsOther(int project_no);
+    public List<BacklogDto> searchBacklogsOther(int project_no) throws IOException;
 
     /*
      * 스프린트에 미등록된 백로그를 등록

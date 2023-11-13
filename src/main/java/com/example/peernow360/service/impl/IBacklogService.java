@@ -19,17 +19,17 @@ public interface IBacklogService {
     /*
      * 백로그 리스트 불러오기
      */
-    public Map<String, Object> backlogListInfo(int sprint_no);
+    public Map<String, Object> backlogListInfo(int sprint_no) throws IOException;
 
     /*
      * 백로그 상세페이지 불러오기
      */
-    public Object backlogDetailInfo(int no);
+    public Map<String, Object> backlogDetailInfo(int no) throws IOException;
 
     /*
      * 스프린트에 맞는 오늘 날짜에 진행중인 백로그 값만 가져오기.
      */
-    public List<BacklogDto> backlogDayAndIngInfo(int sprintNo);
+    public List<BacklogDto> backlogDayAndIngInfo(int sprintNo) throws IOException;
 
     /*
      * 백로그 status(상태 ex. todo -> 해야할 일 , ing -> 진행중, done -> 완료) 변경
@@ -49,6 +49,11 @@ public interface IBacklogService {
     /*
      * 프로젝트안에 있는 전체 백로그 불러오기
      */
-    public Object searchALlbacklogList(int project_no);
+    public Object searchALlbacklogList(int project_no) throws IOException;
+
+    /*
+     * 백로그 상세 페이지 파일 다운로드 불러오기
+     */
+    public String backlogFileDownload(int no);
 
 }
