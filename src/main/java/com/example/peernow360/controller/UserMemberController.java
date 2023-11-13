@@ -100,7 +100,7 @@ public class UserMemberController {
                 .maxAge(7 * 24 * 60 * 60) //쿠키의 수명을 설정 / 기간은 7일
                 .path("/") //쿠키의 경로를 설정 "/" 로 설정하면 서버의 모든 경로에서 쿠키에 접근할 수 있습니다.
                 .secure(false) //쿠키를 보안 연결 (HTTPS)에서만 전송하도록 설정
-                .sameSite("None") //쿠키의 SameSite 속성을 설정합니다. "None"은 쿠키가 모든 요청에 대해 전송되도록 허용함을 의미
+                .sameSite("Lax") //쿠키의 SameSite 속성을 설정합니다. "None"은 쿠키가 모든 요청에 대해 전송되도록 허용함을 의미
                 .httpOnly(true) //쿠키를 JavaScript로 접근할 수 없도록 설정
                 .build(); //체를 빌드하고 구성된 쿠키를 생성
 //        response.setHeader("Set-Cookie", cookie.toString());
@@ -159,7 +159,7 @@ public class UserMemberController {
                     .maxAge(7 * 24 * 60 * 60) //쿠키의 수명을 설정 / 기간은 7일
                     .path("/") //쿠키의 경로를 설정 "/" 로 설정하면 서버의 모든 경로에서 쿠키에 접근할 수 있습니다.
                     .secure(false) //쿠키를 보안 연결 (HTTPS)에서만 전송하도록 설정
-                    .sameSite("None") //쿠키의 SameSite 속성을 설정합니다. "None"은 쿠키가 모든 요청에 대해 전송되도록 허용함을 의미
+                    .sameSite("Lax") //쿠키의 SameSite 속성을 설정합니다. "None"은 쿠키가 모든 요청에 대해 전송되도록 허용함을 의미
                     .httpOnly(true) //쿠키를 JavaScript로 접근할 수 없도록 설정
                     .build(); //체를 빌드하고 구성된 쿠키를 생성
 //            response.setHeader("Set-Cookie", cookie.toString());
