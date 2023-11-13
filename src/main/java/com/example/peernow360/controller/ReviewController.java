@@ -1,6 +1,5 @@
 package com.example.peernow360.controller;
 
-import com.amazonaws.services.s3.model.S3Object;
 import com.example.peernow360.dto.PeerDto;
 import com.example.peernow360.dto.PeerReviewDto;
 import com.example.peernow360.dto.ReviewDto;
@@ -11,20 +10,18 @@ import com.example.peernow360.response.ResponseService;
 import com.example.peernow360.response.SingleResponse;
 import com.example.peernow360.service.ReviewService;
 import com.example.peernow360.service.S3Download;
+import com.example.peernow360.service.S3GetImage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 
 @RestController
 @Log4j2
@@ -36,6 +33,7 @@ public class ReviewController {
     private final ResponseService responseService;
     private final ReviewService reviewService;
 
+    private final S3GetImage s3GetImage;
     private final S3Download s3Download;
 
     @PostMapping("/evaluation")
@@ -112,7 +110,7 @@ public class ReviewController {
     }
 
     @GetMapping("/download")
-    public void download() throws IOException {
+    public ResponseEntity<byte[]> download() throws IOException {
         log.info("download()");
 
         User userInfo = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -120,8 +118,9 @@ public class ReviewController {
 
         String fileName = reviewService.fileName(user_id);
 
-        s3Download.getObject(user_id + "/" + fileName) ;
+        return s3Download.getObject(user_id + "/" + fileName);
     }
+
 
     @DeleteMapping("/modify")
     public String modify(@RequestParam(value = "fileName", required = false) String fileName, @RequestPart("image") MultipartFile multipartFile) throws IOException {
