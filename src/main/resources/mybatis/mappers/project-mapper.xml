@@ -64,6 +64,35 @@
         values(#{no}, #{user_id}, #{role})
     </insert>
 
+    <select id="selectedAcceptId" parameterType="Integer"
+            resultType="String">
+
+        select
+            peer_id as user_id
+        from
+            acceptteam
+        where
+            no = #{no}
+
+    </select>
+
+    <insert id="insertReview" parameterType="hashMap">
+
+        insert into
+            review(user_id, peer_id, project_no)
+        values(#{user_id}, #{peer_id}, #{project_no})
+
+    </insert>
+
+    <insert id="insertReversReview" parameterType="hashMap">
+
+        insert into
+            review(user_id, peer_id, project_no)
+        values(#{peer_id}, #{user_id}, #{project_no})
+
+    </insert>
+
+
     <update id="declineProject" parameterType="HashMap">
         update team
         set status = 'DECLINE'

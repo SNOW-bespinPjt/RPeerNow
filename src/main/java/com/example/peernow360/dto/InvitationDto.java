@@ -9,7 +9,7 @@ import java.util.List;
 public class InvitationDto {
 
     private String user_id;
-    private String owner_image;
+    private Object owner_image;
     private String owner_id;
     private String owner_name;
     private int project_number;

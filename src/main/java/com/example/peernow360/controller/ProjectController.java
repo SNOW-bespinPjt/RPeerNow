@@ -142,7 +142,7 @@ public class ProjectController {
 
     @GetMapping("/invitation")
     @Operation(summary = "프로젝트 초대", description = "프로젝트 초대", tags = {"detail"})
-    public ListResponse<InvitationDto> projectInvitation() {
+    public ListResponse<InvitationDto> projectInvitation() throws IOException {
         log.info(("projectInvitation()"));
 
         User userInfo = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
