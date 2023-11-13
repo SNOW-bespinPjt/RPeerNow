@@ -1,10 +1,7 @@
 package com.example.peernow360.mappers;
 
 
-import com.example.peernow360.dto.InvitationDto;
-import com.example.peernow360.dto.ProjectDto;
-import com.example.peernow360.dto.TeamDto;
-import com.example.peernow360.dto.UserMemberDto;
+import com.example.peernow360.dto.*;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -27,6 +24,8 @@ public interface IProjectMapper {
 
     int acceptProject(Map<String, Object> map);
 
+    int acceptTeam(AcceptTeamDto acceptTeamDto);
+
     int declineProject(Map<String, Object> map);
 
     int deleteProject(Map<String, Object> map);
@@ -38,4 +37,7 @@ public interface IProjectMapper {
     List<UserMemberDto> peerlist(Map<String, Object> map);
 
     List<InvitationDto> projectInvitation(InvitationDto invitationDto);
+
+
+
 }

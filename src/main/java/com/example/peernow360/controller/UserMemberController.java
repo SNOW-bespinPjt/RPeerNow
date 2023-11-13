@@ -1,9 +1,14 @@
 package com.example.peernow360.controller;
 
 import com.example.peernow360.dto.UserMemberDto;
+
 import com.example.peernow360.response.ResponseService;
 import com.example.peernow360.response.SingleResponse;
+
+import com.example.peernow360.response.*;
+
 import com.example.peernow360.security.JWTtokenProvider;
+import com.example.peernow360.service.S3GetImage;
 import com.example.peernow360.service.UserMemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,6 +36,7 @@ public class UserMemberController {
     private final UserMemberService userMemberService;
     private final ResponseService responseService;
     private final JWTtokenProvider jwTtokenProvider;
+    private final S3GetImage s3GetImage;
 
     @GetMapping("/gettest")
     public String dontTouchMeNoDelete(){
@@ -45,10 +51,14 @@ public class UserMemberController {
      */
     @PostMapping("/join")
     @Operation(summary = "회원가입", description = "회원가입", tags = {"create"})
-    public String createAccountConfirm(@RequestBody UserMemberDto userMemberDto) throws IOException {
+
+    public String createAccountConfirm(@RequestPart(value = "image", required = false) MultipartFile multipartFile, @RequestPart UserMemberDto userMemberDto) throws IOException {
+
+
+
         log.info("[UserMemberController] createAccountConfirm()");
 
-        int result = userMemberService.createAccountConfirm(userMemberDto);
+        int result = userMemberService.createAccountConfirm(multipartFile, userMemberDto);
 
         if(result > 0) {
             log.info("회원가입에 성공하였습니다.");
@@ -177,13 +187,26 @@ public class UserMemberController {
      */
     @GetMapping("/detail")
     @Operation(summary = "회원정보 불러오기", description = "회원정보 불러오기", tags = {"detail"})
-    public SingleResponse<UserMemberDto> userDetail() {
+    public SingleResponse<UserMemberDto> userDetail() throws IOException {
         log.info("[HomeController] userDetail()");
 
         return responseService.getSingleResponse(userMemberService.userDetailInfo());
 
     }
 
+    @GetMapping("/userimg")
+    @Operation(summary = "회원 이미지", description = "회원 이미지", tags = {"detail"})
+    public Object userimg() throws IOException {
+        log.info("userimg()");
+
+        User userInfo = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String user_id = userInfo.getUsername();
+
+        String fileName = userMemberService.fileName(user_id);
+
+        return s3GetImage.getObject(user_id + "/" + fileName);
+
+    }
 
     @PostMapping("/logout_info")
     @Transactional
@@ -244,6 +267,18 @@ public class UserMemberController {
 
         return userMemberService.updateAccountConfirm(id, userMemberDto, image);
 
+    }
+
+    @PutMapping("/imagechange")
+    @Operation(summary = "계정 이미지 수정", description = "계정 이미지 수정", tags = {"modify"})
+    public String updateAccountImage(@RequestParam ("id") String id,
+                                     @RequestParam(value = "fileName", required = false) String fileName,
+                                     @RequestPart("image") MultipartFile multipartFile) throws IOException {
+        log.info("[HomeController] updateAccountImage()");
+
+        int result = userMemberService.updateAccountImage(id, fileName, multipartFile);
+
+        return ResponseResult.result(result);
     }
 
 }

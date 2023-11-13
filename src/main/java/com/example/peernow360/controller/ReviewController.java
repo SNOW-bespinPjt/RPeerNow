@@ -1,6 +1,7 @@
 package com.example.peernow360.controller;
 
 import com.example.peernow360.dto.PeerDto;
+import com.example.peernow360.dto.PeerReviewDto;
 import com.example.peernow360.dto.ReviewDto;
 import com.example.peernow360.dto.TestDto;
 import com.example.peernow360.response.ListResponse;
@@ -9,6 +10,7 @@ import com.example.peernow360.response.ResponseService;
 import com.example.peernow360.response.SingleResponse;
 import com.example.peernow360.service.ReviewService;
 import com.example.peernow360.service.S3Download;
+import com.example.peernow360.service.S3GetImage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +21,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 
 @RestController
@@ -32,6 +33,7 @@ public class ReviewController {
     private final ResponseService responseService;
     private final ReviewService reviewService;
 
+    private final S3GetImage s3GetImage;
     private final S3Download s3Download;
 
     @PostMapping("/evaluation")
@@ -56,7 +58,10 @@ public class ReviewController {
     public ListResponse<ReviewDto> feedback(@RequestParam("projectNumber") int no) {
         log.info("feedback()");
 
-        return responseService.getListResponse(reviewService.feedback(no));
+        User userInfo = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String user_id = userInfo.getUsername();
+
+        return responseService.getListResponse(reviewService.feedback(no, user_id));
     }
 
     @GetMapping("")
@@ -72,6 +77,22 @@ public class ReviewController {
         peerDto.setUser_id(user_id);
 
         return responseService.getSingleResponse(reviewService.evaluationInfo(peerDto));
+    }
+
+    @GetMapping("/peerlist")
+    @Operation(summary = "나의 동료", description = "나의 동료", tags = {"detail"})
+    public ListResponse<PeerReviewDto> peerlist(@RequestParam("projectNumber") int no) {
+        log.info("peerlist()");
+
+        User userInfo = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String user_id = userInfo.getUsername();
+
+        PeerReviewDto peerReviewDto = new PeerReviewDto();
+        peerReviewDto.setNo(no);
+        peerReviewDto.setUser_id(user_id);
+
+        return responseService.getListResponse(reviewService.peerlist(peerReviewDto));
+
     }
 
     @PostMapping("/test")
@@ -99,5 +120,19 @@ public class ReviewController {
 
         return s3Download.getObject(user_id + "/" + fileName);
     }
+
+
+    @DeleteMapping("/modify")
+    public String modify(@RequestParam(value = "fileName", required = false) String fileName, @RequestPart("image") MultipartFile multipartFile) throws IOException {
+        log.info("modify()");
+
+        User userInfo = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String user_id = userInfo.getUsername();
+
+        int result = reviewService.modify(user_id, fileName, multipartFile);
+
+        return ResponseResult.result(result);
+    }
+
 
 }

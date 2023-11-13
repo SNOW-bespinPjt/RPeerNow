@@ -17,8 +17,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -37,6 +35,7 @@ public class UserMemberService implements IUserMemberService {
     private final JWTtokenProvider jwTtokenProvider;
     private final S3Uploader s3Uploader;
 
+
     private final int INSERT_ACCOUNT_AT_DB_SUCCESS = 1;
     private final int INSERT_ACCOUNT_AT_DB_FAIL = 0;
     private final int DB_ERROR = -1;
@@ -45,8 +44,8 @@ public class UserMemberService implements IUserMemberService {
     @Value("${jwt.HttpHeaderValue}")
     private String HttpHeaderValue;
 
-    @Override
-    public int createAccountConfirm(UserMemberDto userMemberDto) {
+
+    public int createAccountConfirm(MultipartFile multipartFile, UserMemberDto userMemberDto) throws IOException {
         log.info("[UserMemberService] createAccountConfirm()");
         log.info("userMemberDto id : {} pw : {} " , userMemberDto.getId(), userMemberDto.getPw());
 
@@ -54,6 +53,13 @@ public class UserMemberService implements IUserMemberService {
 
         // 중복ID가 없을 시
         if(!isUserId) {
+
+            if(multipartFile!=null) {
+                String storedFileName = s3Uploader.upload(multipartFile, userMemberDto.getId());
+                userMemberDto.setImage(multipartFile.getOriginalFilename());
+
+            }
+
             userMemberDto.setPw(passwordEncoder.encode(userMemberDto.getPw()));
 
             int result = iUserMemberMapper.insertUserMember(userMemberDto);
@@ -205,8 +211,8 @@ public class UserMemberService implements IUserMemberService {
 
     }
 
-    @Override
-    public UserMemberDto userDetailInfo() {
+
+    public UserMemberDto userDetailInfo() throws IOException {
         log.info("[UserMemberService] userDetailInfo()");
 
         User user_info = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -315,4 +321,22 @@ public class UserMemberService implements IUserMemberService {
 
     }
 
+    public int updateAccountImage(String id, String fileName, MultipartFile multipartFile) throws IOException {
+        log.info("updateAccountImage()");
+
+        s3Uploader.delete(id, fileName);
+
+        String image = multipartFile.getOriginalFilename();
+
+        int result = iUserMemberMapper.updateAccountImage(id, image);
+
+        s3Uploader.upload(multipartFile, id);
+
+        return result;
+    }
+
+    public String fileName(String userId) {
+
+        return iUserMemberMapper.fileName(userId);
+    }
 }

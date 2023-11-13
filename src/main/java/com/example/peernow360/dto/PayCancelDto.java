@@ -12,7 +12,7 @@ public class PayCancelDto {
     private String partner_order_id; // 가맹점 주문 번호
     private String partner_user_id; // 가맹점 회원 ID
     private String payment_method_type; // 결제 수단
-    private Amount amount; // 결제 금액 정보, 결제 요청 구현할때 이미 구현해놓음
+    private AmountDto amountDto; // 결제 금액 정보, 결제 요청 구현할때 이미 구현해놓음
     private ApprovedCancelAmount approved_cancel_amount; // 이번 요청으로 취소된 금액
     private CanceledAmount canceled_amount; // 누계 취소 금액
     private CancelAvailableAmount cancel_available_amount; // 남은 취소 금액

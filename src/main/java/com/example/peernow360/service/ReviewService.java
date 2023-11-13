@@ -1,6 +1,7 @@
 package com.example.peernow360.service;
 
 import com.example.peernow360.dto.PeerDto;
+import com.example.peernow360.dto.PeerReviewDto;
 import com.example.peernow360.dto.ReviewDto;
 import com.example.peernow360.dto.TestDto;
 import com.example.peernow360.mappers.IReviewMapper;
@@ -35,10 +36,10 @@ public class ReviewService implements IReviewService {
         return result;
     }
 
-    public List<ReviewDto> feedback(int no) {
+    public List<ReviewDto> feedback(int no, String user_id) {
         log.info("feedback()");
 
-        return iReviewMapper.feedback(no);
+        return iReviewMapper.feedback(String.valueOf(no), user_id);
     }
 
     public PeerDto evaluationInfo(PeerDto peerDto) {
@@ -68,5 +69,22 @@ public class ReviewService implements IReviewService {
     public String fileName(String userId) {
 
         return iReviewMapper.fileName(userId);
+    }
+
+    public int modify(String userId, String fileName, MultipartFile multipartFile) throws IOException {
+        log.info("modify()");
+
+        s3Uploader.delete(userId, fileName);
+        int result = iReviewMapper.delete(userId);
+
+        s3Uploader.upload(multipartFile, userId);
+
+        return result;
+    }
+
+    public List<PeerReviewDto> peerlist(PeerReviewDto peerReviewDto) {
+        log.info("peerlist()");
+
+        return iReviewMapper.peerlist(peerReviewDto);
     }
 }

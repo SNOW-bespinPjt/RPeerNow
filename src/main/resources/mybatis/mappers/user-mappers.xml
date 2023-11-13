@@ -208,6 +208,7 @@
 
     </select>
 
+
     <select id="getRoleInPJT" parameterType="hashMap"
             resultType="String">
 
@@ -219,6 +220,24 @@
             no = #{project_no}
         AND
             peer_id = #{id}
+    </select>
+
+    <update id="updateAccountImage"
+            parameterType="String">
+
+        UPDATE
+            user
+        SET
+            image = #{image}
+        WHERE
+            id = #{id}
+
+    </update>
+
+    <select id="fileName" parameterType="String" resultType="String">
+        select image
+        from user
+        where id = #{userId}
 
     </select>
 

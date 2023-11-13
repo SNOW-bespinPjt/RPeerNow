@@ -14,14 +14,14 @@
         WHERE no = #{no}
     </update>
 
-    <select id="feedback" parameterType="Integer" resultType="com.example.peernow360.dto.ReviewDto">
+    <select id="feedback" parameterType="String" resultType="com.example.peernow360.dto.ReviewDto">
         select *
         from review
-        where project_no = #{no}
+        where project_no = #{no} and peer_id = #{user_id}
     </select>
 
-    <select id="avgScore" parameterType="com.example.peernow360.dto.PeerDto" resultType="float">
-        select avg(total) as avg
+    <select id="avgScore" parameterType="com.example.peernow360.dto.PeerDto" resultType="Integer">
+        select round(avg(total)) as avg
         from (select * from review where peer_id = #{user_id} and project_no = #{no}) a
         group by project_no
     </select>
@@ -46,12 +46,12 @@
             limit 1
     </select>
 
-    <select id="getPeer" parameterType="com.example.peernow360.dto.PeerDto" resultType="String">
-        select p.peer_id, u.name
-        from team p
-        join user u on p.peer_id = u.id
-        where p.no = #{no}
-    </select>
+<!--    <select id="getPeer" parameterType="com.example.peernow360.dto.PeerDto" resultType="String">-->
+<!--        select a.peer_id, u.name-->
+<!--        from acceptteam a-->
+<!--        join user u on a.peer_id = u.id-->
+<!--        where p.no = #{no}-->
+<!--    </select>-->
 
     <insert id="test" parameterType="com.example.peernow360.dto.TestDto">
         insert into test(user_id, test, file)
@@ -62,6 +62,15 @@
         select file
         from test
         where user_id = #{userId}
+    </select>
+
+    <delete id="delete" parameterType="String">
+        delete from test
+        where user_id = #{userId}
+    </delete>
+
+    <select id="peerlist" parameterType="com.example.peernow360.dto.PeerReviewDto" resultType="com.example.peernow360.dto.PeerReviewDto">
+
     </select>
 
 </mapper>
