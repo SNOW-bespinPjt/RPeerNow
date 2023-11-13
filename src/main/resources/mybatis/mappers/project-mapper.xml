@@ -31,9 +31,10 @@
     </select>
 
     <select id="projectList" parameterType="String" resultType="com.example.peernow360.dto.ProjectDto">
-        select p.no , p.user_id , a.peer_id, p.title, p.detail, p.start_date, p.end_date, p.reg_date, p.mod_date
-        from project p left join acceptteam a on p.no = a.no
-        where p.user_id = #{user_id} or a.peer_id = #{user_id}
+        select *
+        from project
+        where user_id = #{user_id}
+        or no in (select no from acceptteam where peer_id = #{user_id})
 
     </select>
 
