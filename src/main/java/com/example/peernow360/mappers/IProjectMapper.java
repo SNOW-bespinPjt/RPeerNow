@@ -34,10 +34,10 @@ public interface IProjectMapper {
 
     List<ProjectDto> projectList(String user_id);
 
-    List<UserMemberDto> peerlist(Map<String, Object> map);
+    List<UserMemberDto> peerlist(int no);
 
     List<InvitationDto> projectInvitation(InvitationDto invitationDto);
 
 
-
+    void createAcceptTeam(AcceptTeamDto acceptTeamDto);
 }

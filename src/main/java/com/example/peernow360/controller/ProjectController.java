@@ -1,9 +1,6 @@
 package com.example.peernow360.controller;
 
-import com.example.peernow360.dto.InvitationDto;
-import com.example.peernow360.dto.ProjectDto;
-import com.example.peernow360.dto.TeamDto;
-import com.example.peernow360.dto.UserMemberDto;
+import com.example.peernow360.dto.*;
 import com.example.peernow360.response.ListResponse;
 import com.example.peernow360.response.ResponseResult;
 import com.example.peernow360.response.ResponseService;
@@ -17,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +42,10 @@ public class ProjectController {
 
         List<TeamDto> teams = new ArrayList<>();
 
-        int result = projectService.createProject(map, project, teams);
+        AcceptTeamDto acceptTeamDto = new AcceptTeamDto();
+        acceptTeamDto.setUser_id(user_id);
+
+        int result = projectService.createProject(map, project, teams, acceptTeamDto);
 
         return ResponseResult.result(result);
     }
@@ -78,10 +79,10 @@ public class ProjectController {
 
     @GetMapping("/peerlist")
     @Operation(summary = "프로젝트 팀원", description = "프로젝트 팀원", tags = {"detail"})
-    public ListResponse<UserMemberDto> peerlist(@RequestParam("projectNumber") int no, @RequestParam("owner") String owner) {
+    public ListResponse<UserMemberDto> peerlist(@RequestParam("projectNumber") int no) throws IOException {
         log.info(("peerlist()"));
 
-        return responseService.getListResponse(projectService.peerlist(no, owner));
+        return responseService.getListResponse(projectService.peerlist(no));
     }
 
     @PutMapping("/change")
