@@ -28,7 +28,7 @@ public interface IBacklogMapper {
     /*
      * 백로그 파일 리스트 불러오기
      */
-    public FileDto searchBacklogFiles(int sprint_no);
+//    public List<FileDto> searchBacklogFiles(int sprint_no);
 
     /*
      * 백로그 상세페이지 불러오기

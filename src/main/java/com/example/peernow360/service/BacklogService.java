@@ -2,22 +2,19 @@ package com.example.peernow360.service;
 
 import com.example.peernow360.dto.BacklogDto;
 import com.example.peernow360.dto.FileDto;
-import com.example.peernow360.dto.UserMemberDto;
 import com.example.peernow360.mappers.IBacklogMapper;
-import com.example.peernow360.mappers.IUserMemberMapper;
 import com.example.peernow360.service.impl.IBacklogService;
 import lombok.RequiredArgsConstructor;
-
 import lombok.extern.log4j.Log4j2;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Log4j2
@@ -25,8 +22,8 @@ import java.util.*;
 public class BacklogService implements IBacklogService {
 
     private final IBacklogMapper iBacklogMapper;
-    private final IUserMemberMapper iUserMemberMapper;
     private final S3Uploader s3Uploader;
+    private final S3GetImage S3GetImage;
 
     @Override
     public String createNewBacklog(BacklogDto backlogDto, int project_no, String sprint_no, MultipartFile fileDto) throws IOException {
@@ -56,7 +53,9 @@ public class BacklogService implements IBacklogService {
             if(fileDto != null) {
                 log.info("이미지가 존재합니다");
 
-                String storedFileName = s3Uploader.upload(fileDto, String.valueOf(backlogDto.getNo()));
+                s3Uploader.upload(fileDto, String.valueOf(backlogDto.getNo()));
+                String storedFileName = fileDto.getOriginalFilename();
+
                 msgData.put("name", storedFileName);
                 iBacklogMapper.insertBacklogFile(msgData);
 
@@ -74,21 +73,24 @@ public class BacklogService implements IBacklogService {
     }
 
     @Override
-    public Map<String, Object> backlogListInfo(int sprint_no) {
+    public Map<String, Object> backlogListInfo(int sprint_no) throws IOException {
         log.info("[BacklogService] backlogListInfo()");
 
         Map<String, Object> data = new HashMap<>();
+        List<BacklogDto> newBacklogDtos = new ArrayList<>();
 
         List<BacklogDto> backlogDtos = iBacklogMapper.searchBacklogList(sprint_no);
 
         if(backlogDtos != null && backlogDtos.size() > 0) {
             log.info("CALL BACKLOG INFO SUCCESS!!");
 
-            FileDto fileDtos = iBacklogMapper.searchBacklogFiles(sprint_no);
+            for(BacklogDto backlogDto : backlogDtos) {
+                 backlogDto.setImage(S3GetImage.getObject(backlogDto.getUser_id() + "/" + backlogDto.getImage()));
+                 newBacklogDtos.add(backlogDto);
 
-            data.put("backlogDtos", backlogDtos);
-            data.put("fileDtos", fileDtos);
+            }
 
+            data.put("backlogDtos", newBacklogDtos);
             return data;
 
         } else {
@@ -101,7 +103,7 @@ public class BacklogService implements IBacklogService {
     }
 
     @Override
-    public Map<String, Object> backlogDetailInfo(int no) {
+    public Map<String, Object> backlogDetailInfo(int no) throws IOException {
         log.info("[BacklogService] backlogDetailInfo()");
 
         Map<String, Object> data = new HashMap<>();
@@ -112,10 +114,9 @@ public class BacklogService implements IBacklogService {
         if(backlogDto != null) {
             log.info("백로그 상세정보를 불러오는데 성공하였습니다.");
 
-            FileDto fileDtos = iBacklogMapper.searchBacklogFile(no);
+            backlogDto.setImage(S3GetImage.getObject(backlogDto.getUser_id() + "/" + backlogDto.getImage()));
 
             data.put("backlogDto", backlogDto);
-            data.put("fileDtos", fileDtos);
 
             return data;
 
@@ -129,16 +130,24 @@ public class BacklogService implements IBacklogService {
     }
 
     @Override
-    public List<BacklogDto> backlogDayAndIngInfo(int sprintNo) {
+    public List<BacklogDto> backlogDayAndIngInfo(int sprintNo) throws IOException {
         log.info("[BacklogService] backlogDayAndIngInfo()");
 
+        List<BacklogDto> newBacklogDtos = new ArrayList<>();
         List<BacklogDto> backlogDtos = iBacklogMapper.searchBacklogDayAndIng(sprintNo);
+
         log.info("backlogDtos: " + backlogDtos);
 
         if(backlogDtos != null && backlogDtos.size() >0 ) {
             log.info("오늘 날짜에 진행중인 백로그들을 불러오는데 성공하였습니다.");
 
-            return backlogDtos;
+            for(BacklogDto backlogDto : backlogDtos) {
+                backlogDto.setImage(S3GetImage.getObject(backlogDto.getUser_id() + "/" + backlogDto.getImage()));
+                newBacklogDtos.add(backlogDto);
+
+            }
+
+            return newBacklogDtos;
 
         } else {
             log.info("오늘 날짜에 진행중인 백로그들을 불러오는데 실패하였습니다.");
@@ -190,7 +199,10 @@ public class BacklogService implements IBacklogService {
                 Map<String, Object> msgData = new HashMap<>();
                 msgData.put("backlog_no", no);
 
+                FileDto fileDBName = iBacklogMapper.searchBacklogFile(no);
+                s3Uploader.delete(String.valueOf(fileDBName.getNo()), fileDBName.getName());
                 int isDel = iBacklogMapper.removeBacklogFile(no);
+
                 log.info("isDel : 1 -> True / isDel : 0 -> false : " + isDel);
 
                 String storedFileName = s3Uploader.upload(fileDto, backlogDto.getUser_id());
@@ -220,6 +232,10 @@ public class BacklogService implements IBacklogService {
         if(result > 0) {
             log.info("백로그 삭제에 성공하였습니다.");
 
+            FileDto fileDBName = iBacklogMapper.searchBacklogFile(no);
+
+            s3Uploader.delete(String.valueOf(fileDBName.getNo()), fileDBName.getName());
+
             return iBacklogMapper.removeBacklogFile(no) > 0 ? "SUCCESS" : "FAIL";
 
         } else {
@@ -231,23 +247,40 @@ public class BacklogService implements IBacklogService {
     }
 
     @Override
-    public List<BacklogDto> searchALlbacklogList(int project_no) {
+    public List<BacklogDto> searchALlbacklogList(int project_no) throws IOException {
         log.info("[BacklogService] backlogDeleteInfo()");
 
+        List<BacklogDto> newBacklogDtos = new ArrayList<>();
         List<BacklogDto> backlogDtos = iBacklogMapper.searchAllBacklogList(project_no);
         log.info("backlogDtos : " + backlogDtos);
 
         if(backlogDtos != null && backlogDtos.size() > 0) {
             log.info("프로젝트안에 존재하는 모든 백로그를 가져오는데 성공하였습니다.");
 
-            return backlogDtos;
+            for(BacklogDto backlogDto : backlogDtos) {
+                backlogDto.setImage(S3GetImage.getObject(backlogDto.getUser_id() + "/" + backlogDto.getImage()));
+                newBacklogDtos.add(backlogDto);
+
+            }
+
+            return newBacklogDtos;
 
         } else {
-            log.info("프로젝트안에 존재하는 모든 백로그를 가져오는데 성공하였습니다.");
+            log.info("프로젝트안에 존재하는 모든 백로그를 가져오는데 실패하였습니다.");
 
             return backlogDtos;
 
         }
+
+    }
+
+    @Override
+    public String backlogFileDownload(int no) {
+        log.info("[BacklogService] backlogFileDownload()");
+
+        FileDto file = iBacklogMapper.searchBacklogFile(no);
+
+        return file.getName();
 
     }
 

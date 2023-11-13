@@ -11,10 +11,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -23,17 +25,25 @@ import java.util.List;
 public class KanbanService implements IKanbanService {
 
     private final IKanbanMapper iKanbanMapper;
+    private final S3GetImage s3GetImage;
 
     @Override
-    public List<BacklogDto> searchBacklogs(int sprint_no) {
+    public List<BacklogDto> searchBacklogs(int sprint_no) throws IOException {
         log.info("[KanbanService] searchBacklogs()");
 
+        List<BacklogDto> newBacklogDtos = new ArrayList<>();
         List<BacklogDto> backlogDtos = iKanbanMapper.showKanbanInfo(sprint_no);
 
         if (backlogDtos != null && backlogDtos.size() > 0) {
             log.info("스프린트에 해당하는 백로그를 불러오는데 성공하였습니다.");
 
-            return backlogDtos;
+            for(BacklogDto backlogDto : backlogDtos) {
+                backlogDto.setImage(s3GetImage.getObject(backlogDto.getUser_id() + "/" + backlogDto.getImage()));
+                newBacklogDtos.add(backlogDto);
+
+            }
+
+            return newBacklogDtos;
 
         } else {
             log.info("스프린트에 해당하는 백로그를 불러오는데 실패하였습니다.");
@@ -45,15 +55,22 @@ public class KanbanService implements IKanbanService {
     }
 
     @Override
-    public List<BacklogDto> searchBacklogsOther(int project_no) {
+    public List<BacklogDto> searchBacklogsOther(int project_no) throws IOException {
         log.info("[KanbanService] searchBacklogsOther()");
 
+        List<BacklogDto> newBacklogDtos = new ArrayList<>();
         List<BacklogDto> backlogDtos = iKanbanMapper.showOtherInfo(project_no);
 
         if (backlogDtos != null && backlogDtos.size() > 0) {
             log.info("스프린트에 해당하는 백로그를 불러오는데 성공하였습니다.");
 
-            return backlogDtos;
+            for(BacklogDto backlogDto : backlogDtos) {
+                backlogDto.setImage(s3GetImage.getObject(backlogDto.getUser_id() + "/" + backlogDto.getImage()));
+                newBacklogDtos.add(backlogDto);
+
+            }
+
+            return newBacklogDtos;
 
         } else {
             log.info("스프린트에 해당하는 백로그를 불러오는데 실패하였습니다.");
@@ -177,8 +194,6 @@ public class KanbanService implements IKanbanService {
 
             return null;
         }
-
-
 
     }
 

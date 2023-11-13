@@ -1,23 +1,21 @@
 package com.example.peernow360.controller;
 
 import com.example.peernow360.dto.BacklogDto;
-import com.example.peernow360.dto.FileDto;
 import com.example.peernow360.response.ListResponse;
 import com.example.peernow360.response.MapResponse;
 import com.example.peernow360.response.ResponseService;
 import com.example.peernow360.service.BacklogService;
+import com.example.peernow360.service.S3Download;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 @RestController
 @Slf4j
@@ -28,6 +26,8 @@ public class BacklogController {
 
     private final BacklogService backlogService;
     private final ResponseService responseService;
+    private final S3Download s3Download;
+
 
     /*
      * 백로그 생성
@@ -51,7 +51,7 @@ public class BacklogController {
     @GetMapping("/list")
     @Transactional(readOnly = true)
     @Operation(summary = "백로그 전체 리스트 불러오기", description = "백로그 전체 리스트 불러오기", tags = {"detail"})
-    public MapResponse<String,Object> backlogList(@RequestParam (value = "sprint_no") int sprint_no) {
+    public MapResponse<String,Object> backlogList(@RequestParam (value = "sprint_no") int sprint_no) throws IOException {
         log.info("[BacklogController] backlogDetail()");
 
         return responseService.getMapResponse( backlogService.backlogListInfo(sprint_no));
@@ -64,7 +64,7 @@ public class BacklogController {
     @GetMapping("")
     @Transactional(readOnly = true)
     @Operation(summary = "백로그 상세 정보 불러오기", description = "백로그 상세 정보 불러오기", tags = {"detail"})
-    public MapResponse<String,Object> backlogDetail(@RequestParam (value = "no") int no) {
+    public MapResponse<String,Object> backlogDetail(@RequestParam (value = "no") int no) throws IOException {
         log.info("[BacklogController] backlogDetailByNo()");
 
         return responseService.getMapResponse(backlogService.backlogDetailInfo(no));
@@ -72,10 +72,25 @@ public class BacklogController {
     }
 
     /*
+     * 백로그 상세 페이지 파일 다운로드 불러오기
+     */
+    @GetMapping("/download")
+    @Transactional(readOnly = true)
+    @Operation(summary = "백로그 상세 정보 파일 다운로드 불러오기", description = "백로그 상세 정보 파일 다운로드 불러오기", tags = {"detail"})
+    public ResponseEntity<byte[]> backlogFileDownload(@RequestParam (value = "no") int no) throws IOException {
+        log.info("[BacklogController] backlogDetailByNo()");
+
+        String fileName = backlogService.backlogFileDownload(no);
+
+        return s3Download.getObject(no + "/" + fileName);
+
+    }
+
+    /*
      * 프로젝트안에 담겨있는 전체 백로그 불러오기
      */
     @GetMapping("/all")
-    public ListResponse<BacklogDto> searchAllBacklog(@RequestParam (value = "project_no") int project_no) {
+    public ListResponse<BacklogDto> searchAllBacklog(@RequestParam (value = "project_no") int project_no) throws IOException {
         log.info("[BacklogController] searchAllBacklog()");
 
         return responseService.getListResponse(backlogService.searchALlbacklogList(project_no));
@@ -87,7 +102,7 @@ public class BacklogController {
      */
     @GetMapping("/ing")
     @Operation(summary = "백로그 진쟁중인 백로그만 불러오기", description = "백로그 진쟁중인 백로그만 불러오기", tags = {"detail"})
-    public ListResponse<BacklogDto> backlogDayAndIng(@RequestParam (value = "sprint_no") int sprint_no) {
+    public ListResponse<BacklogDto> backlogDayAndIng(@RequestParam (value = "sprint_no") int sprint_no) throws IOException {
         log.info("[BacklogController] backlogDayAndIngInfo()");
 
         return responseService.getListResponse(backlogService.backlogDayAndIngInfo(sprint_no));

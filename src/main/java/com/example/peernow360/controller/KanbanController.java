@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -34,7 +35,7 @@ public class KanbanController {
      */
     @GetMapping("")
     @Operation(summary = "칸반보드 보여주기", description = "칸반보드 보여주기", tags = {"detail"})
-    public ListResponse<BacklogDto> showKanban(@RequestParam (value = "sprint_no") int sprint_no) {
+    public ListResponse<BacklogDto> showKanban(@RequestParam (value = "sprint_no") int sprint_no) throws IOException {
         log.info("[KanbanController] showKanban()");
 
         return responseService.getListResponse(kanbanService.searchBacklogs(sprint_no));
@@ -46,7 +47,7 @@ public class KanbanController {
      */
     @GetMapping("/others")
     @Operation(summary = "등록되지 않은 백로그 목록", description = "등록되지 않은 백로그 목록", tags = {"detail"})
-    public ListResponse<BacklogDto> showBacklogsOther(@RequestParam (value = "project_no") int project_no) {
+    public ListResponse<BacklogDto> showBacklogsOther(@RequestParam (value = "project_no") int project_no) throws IOException {
         log.info("[KanbanController] showKanban()");
 
         return responseService.getListResponse(kanbanService.searchBacklogsOther(project_no));

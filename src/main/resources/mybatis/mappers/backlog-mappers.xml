@@ -63,22 +63,22 @@
 
     </select>
 
-    <select id="searchBacklogFiles" parameterType="Integer"
-            resultType="com.example.peernow360.dto.FileDto">
+<!--    <select id="searchBacklogFiles" parameterType="Integer"-->
+<!--            resultType="com.example.peernow360.dto.FileDto">-->
 
-        SELECT
-            *
-        FROM
-            backfile
-        WHERE
-            backlog_no IN (SELECT
-                               no
-                           FROM
-                               backlog
-                           WHERE
-                               sprint_no = #{sprint_no});
+<!--        SELECT-->
+<!--            *-->
+<!--        FROM-->
+<!--            backfile-->
+<!--        WHERE-->
+<!--            backlog_no IN (SELECT-->
+<!--                               no-->
+<!--                           FROM-->
+<!--                               backlog-->
+<!--                           WHERE-->
+<!--                               sprint_no = #{sprint_no});-->
 
-    </select>
+<!--    </select>-->
 
     <select id="searchBacklogDetail" parameterType="Integer"
             resultType="com.example.peernow360.dto.BacklogDto">
