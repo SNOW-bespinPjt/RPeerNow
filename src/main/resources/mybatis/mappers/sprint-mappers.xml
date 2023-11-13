@@ -26,7 +26,7 @@
              NOW(),
              NOW()
         FROM
-            team
+            acceptteam
         WHERE
             role = "SM"
         AND
@@ -77,7 +77,7 @@
                 SELECT
                     *
                 FROM
-                    team
+                    acceptteam
                 WHERE
                     role IN ("PM", "SM")
                 AND
@@ -99,9 +99,9 @@
                 SELECT
                     *
                 FROM
-                    team
+                    acceptteam
                 WHERE
-                    role IN ("TM")
+                    role NOT IN ("TM")
                   AND
                     peer_id = #{user_id}
                   AND
@@ -109,5 +109,16 @@
             )
 
     </delete>
+
+    <update id="removeSprintNoAtBLog" parameterType="com.example.peernow360.dto.SprintDto">
+
+        UPDATE
+            backlog
+        SET
+            sprint_no = 0
+        WHERE
+            sprint_no = #{no}
+
+    </update>
 
 </mapper>

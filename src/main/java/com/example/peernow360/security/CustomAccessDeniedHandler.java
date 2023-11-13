@@ -25,7 +25,13 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         log.error("AccessDeniedException", accessDeniedException);
         log.info("==============================================");
 
-        response.sendRedirect("/");
+        // 사용자가 필요한 권한을 갖고 있지 않을 때 호출됩니다.
+        // 원하는 로직을 수행하고 예외에 대한 응답을 정의할 수 있습니다.
+
+        // 예제로서 403 Forbidden 상태 코드와 메시지를 반환합니다.
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        response.getWriter().write("Access Denied: " + accessDeniedException.getMessage());
+
     }
 
 }

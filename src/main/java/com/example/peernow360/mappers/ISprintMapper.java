@@ -34,4 +34,9 @@ public interface ISprintMapper {
      */
     public int removeSprintInfo(SprintDto sprintDto);
 
+    /*
+     * 스프린트 정보 삭제 시 스프린트 번호가 등록된 백로그 0으로 만들기
+     */
+    public void removeSprintNoAtBLog(SprintDto sprintDto);
+
 }

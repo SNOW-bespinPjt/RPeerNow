@@ -155,7 +155,17 @@
                 resultType="com.example.peernow360.dto.BurnDownDto">
 
         SELECT
-            no, ori_no, sprint_no, lapse, task, done_job, DATEDIFF(end_date, start_date) + 1 AS sub_day, start_date, end_date, reg_date, mod_date
+            no,
+            ori_no,
+            sprint_no,
+            lapse,
+            task,
+            done_job,
+            DATEDIFF(end_date, start_date) + 1 AS sub_day,
+            start_date,
+            end_date,
+            reg_date,
+            mod_date
         FROM
             burndown
         WHERE
@@ -193,7 +203,8 @@
             *
         FROM
             burndown
-        WHERE sprint_no IN
+        WHERE sprint_no
+                  IN
               (SELECT distinct sprint_no FROM sprint WHERE project_no = 1)
           AND end_date <![CDATA[>=]]> DATE_SUB(NOW(), INTERVAL 30 day)
           AND start_date <![CDATA[<]]> NOW()

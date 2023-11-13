@@ -22,7 +22,7 @@ public interface IUserMemberService {
     /*
      * refresh token 재발급
      */
-     public Map<String, Object> reCreateAccessToken(String name);
+     public Map<String, Object> reCreateAccessToken(String name, int project_no);
 
     /*
      * 회원 상세 정보
@@ -44,6 +44,9 @@ public interface IUserMemberService {
      */
     public String updateAccountConfirm(String id, UserMemberDto userMemberDto, MultipartFile image) throws IOException;
 
+
+
     int updateAccountImage(String id, String fileName, MultipartFile multipartFile) throws IOException;
+
 
 }
