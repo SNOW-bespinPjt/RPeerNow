@@ -1,5 +1,6 @@
 package com.example.peernow360.controller;
 
+import com.amazonaws.services.s3.model.S3Object;
 import com.example.peernow360.dto.PeerDto;
 import com.example.peernow360.dto.PeerReviewDto;
 import com.example.peernow360.dto.ReviewDto;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -22,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 @RestController
 @Log4j2
@@ -109,7 +112,7 @@ public class ReviewController {
     }
 
     @GetMapping("/download")
-    public ResponseEntity<byte[]> download() throws IOException {
+    public void download() throws IOException {
         log.info("download()");
 
         User userInfo = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -117,7 +120,7 @@ public class ReviewController {
 
         String fileName = reviewService.fileName(user_id);
 
-        return s3Download.getObject(user_id + "/" + fileName);
+        s3Download.getObject(user_id + "/" + fileName) ;
     }
 
     @DeleteMapping("/modify")
