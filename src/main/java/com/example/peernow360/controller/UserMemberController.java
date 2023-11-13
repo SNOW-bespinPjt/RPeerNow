@@ -210,7 +210,10 @@ public class UserMemberController {
 
         String fileName = userMemberService.fileName(user_id);
 
-        return s3GetImage.getObject(user_id + "/" + fileName);
+        Map map= new HashMap();
+        map.put("image",s3GetImage.getObject(user_id + "/" + fileName));
+
+        return map;
 
     }
 

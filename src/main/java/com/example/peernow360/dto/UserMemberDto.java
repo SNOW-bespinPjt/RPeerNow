@@ -11,7 +11,7 @@ public class UserMemberDto {
     private String mail;
     private String phone;
     private String team;
-    private String image;
+    private Object image;
     private String grade;
     private String reg_date;
     private String mod_date;

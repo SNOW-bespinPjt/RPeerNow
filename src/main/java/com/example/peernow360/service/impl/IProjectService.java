@@ -1,9 +1,11 @@
 package com.example.peernow360.service.impl;
 
+import com.example.peernow360.dto.AcceptTeamDto;
 import com.example.peernow360.dto.ProjectDto;
 import com.example.peernow360.dto.TeamDto;
 import com.example.peernow360.dto.UserMemberDto;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +13,7 @@ public interface IProjectService {
 
 //    int createProject(ProjectDto project, TeamDto team);
 
-    int createProject(Map<String, Object> map, ProjectDto project, List<TeamDto> teams);
+    int createProject(Map<String, Object> map, ProjectDto project, List<TeamDto> teams, AcceptTeamDto acceptTeamDto);
 
     ProjectDto projectDetail(int no);
 
@@ -27,7 +29,7 @@ public interface IProjectService {
 
     List<ProjectDto> projectList(String user_id);
 
-    List<UserMemberDto> peerlist(int no, String owner);
+    List<UserMemberDto> peerlist(int no) throws IOException;
 
 
 
