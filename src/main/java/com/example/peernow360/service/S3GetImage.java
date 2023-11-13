@@ -8,40 +8,35 @@ import com.amazonaws.util.IOUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @Log4j2
 @RequiredArgsConstructor
 @Component
-public class S3Download {
+public class S3GetImage {
 
     private final AmazonS3 amazonS3Client;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public ResponseEntity<byte[]> getObject(String storedFileName) throws IOException{
+    public Object getObject(String storedFileName) throws IOException {
+
         S3Object o = amazonS3Client.getObject(new GetObjectRequest(bucket, storedFileName));
         S3ObjectInputStream objectInputStream = o.getObjectContent();
-        byte[] bytes = IOUtils.toByteArray(objectInputStream);
+        byte[] bytes = IOUtils.toByteArray(objectInputStream); // s3객체 내용을 바이트로 읽음
 
-        String fileName = URLEncoder.encode(storedFileName, "UTF-8").replaceAll("\\+", "%20");
+        Map map= new HashMap();
+        map.put("image",bytes);
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        httpHeaders.setContentLength(bytes.length);
-        httpHeaders.setContentDispositionFormData("attachment", fileName);
-
-        return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
+        return map;
     }
 
 }

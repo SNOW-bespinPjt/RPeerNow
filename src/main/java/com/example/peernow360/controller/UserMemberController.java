@@ -1,19 +1,15 @@
 package com.example.peernow360.controller;
 
-import com.amazonaws.services.s3.model.S3Object;
 import com.example.peernow360.dto.UserMemberDto;
 import com.example.peernow360.response.*;
 import com.example.peernow360.security.JWTtokenProvider;
-import com.example.peernow360.service.S3Download;
+import com.example.peernow360.service.S3GetImage;
 import com.example.peernow360.service.UserMemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,9 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -38,7 +32,7 @@ public class UserMemberController {
     private final UserMemberService userMemberService;
     private final ResponseService responseService;
     private final JWTtokenProvider jwTtokenProvider;
-    private final S3Download s3Download;
+    private final S3GetImage s3GetImage;
 
     @GetMapping("/gettest")
     public String dontTouchMeNoDelete(){
@@ -190,8 +184,7 @@ public class UserMemberController {
 
         String fileName = userMemberService.fileName(user_id);
 
-        return s3Download.getObject(user_id + "/" + fileName);
-
+        return s3GetImage.getObject(user_id + "/" + fileName);
 
     }
 
