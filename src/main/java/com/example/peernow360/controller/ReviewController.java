@@ -81,7 +81,7 @@ public class ReviewController {
 
     @GetMapping("/peerlist")
     @Operation(summary = "나의 동료", description = "나의 동료", tags = {"detail"})
-    public ListResponse<PeerReviewDto> peerlist(@RequestParam("projectNumber") int no) {
+    public ListResponse<PeerReviewDto> peerlist(@RequestParam("projectNumber") int no) throws IOException {
         log.info("peerlist()");
 
         User userInfo = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

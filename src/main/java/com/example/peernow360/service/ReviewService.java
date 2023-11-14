@@ -1,9 +1,6 @@
 package com.example.peernow360.service;
 
-import com.example.peernow360.dto.PeerDto;
-import com.example.peernow360.dto.PeerReviewDto;
-import com.example.peernow360.dto.ReviewDto;
-import com.example.peernow360.dto.TestDto;
+import com.example.peernow360.dto.*;
 import com.example.peernow360.mappers.IReviewMapper;
 import com.example.peernow360.service.impl.IReviewService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +20,7 @@ public class ReviewService implements IReviewService {
     private final IReviewMapper iReviewMapper;
 
     private final S3Uploader s3Uploader;
+    private final S3GetImage s3GetImage;
 
     public int createScore(ReviewDto reviewDto) {
         log.info("createScore()");
@@ -52,6 +50,17 @@ public class ReviewService implements IReviewService {
         return peerDto;
     }
 
+    public List<PeerReviewDto> peerlist(PeerReviewDto peerReviewDto) throws IOException {
+        log.info("peerlist()");
+
+        List<PeerReviewDto> list = iReviewMapper.peerlist(peerReviewDto);
+        for(PeerReviewDto peerReviewDtos : list) {
+            Object image = s3GetImage.getObject(peerReviewDtos.getPeer_id() + "/" + peerReviewDtos.getPeer_image());
+            peerReviewDtos.setPeer_image(image);
+        }
+
+        return list;
+    }
 
     public int test(MultipartFile multipartFile, TestDto testDto) throws IOException {
         log.info("test()");
@@ -82,9 +91,5 @@ public class ReviewService implements IReviewService {
         return result;
     }
 
-    public List<PeerReviewDto> peerlist(PeerReviewDto peerReviewDto) {
-        log.info("peerlist()");
 
-        return iReviewMapper.peerlist(peerReviewDto);
-    }
 }

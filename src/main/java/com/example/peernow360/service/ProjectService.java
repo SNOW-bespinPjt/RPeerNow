@@ -117,9 +117,38 @@ public class ProjectService implements IProjectService {
         acceptTeamDto.setRole(role);
 
         iProjectMapper.acceptProject(map);
+
         int result = iProjectMapper.acceptTeam(acceptTeamDto);
+        log.info("result: " + result);
+
+        if(result > 0) {
+            log.info("팀 수락 완료!!");
+
+            List<String> acceptTeamDtos = iProjectMapper.selectedAcceptId(no);
+            log.info("acceptTeamDtos" + acceptTeamDtos);
+
+            Map<String, Object> data = new HashMap<>();
+            data.put("user_id", user_id);
+            data.put("project_no", no);
+
+            for(int i = 0; i<acceptTeamDtos.size()-1; i++) {
+                data.put("peer_id", String.valueOf(acceptTeamDtos.get(i)));
+
+                iProjectMapper.insertReview(data);
+
+            }
+
+            for(int i = 0; i<acceptTeamDtos.size()-1; i++) {
+                data.put("peer_id", String.valueOf(acceptTeamDtos.get(i)));
+
+                iProjectMapper.insertReversReview(data);
+
+            }
+
+        }
 
         return result;
+
     }
 
     public int declineProject(int no, String user_id) {
@@ -144,9 +173,17 @@ public class ProjectService implements IProjectService {
     }
 
 
-    public List<InvitationDto> projectInvitation(InvitationDto invitationDto) {
+    public List<InvitationDto> projectInvitation(InvitationDto invitationDto) throws IOException {
         log.info("projectInvitation()");
 
-        return  iProjectMapper.projectInvitation(invitationDto);
+        List<InvitationDto> list = iProjectMapper.projectInvitation(invitationDto);
+        for(InvitationDto invitationDtos : list) {
+            Object image = s3GetImage.getObject(invitationDtos.getOwner_id() + "/" + invitationDtos.getOwner_image());
+            invitationDtos.setOwner_image(image);
+        }
+
+        return list;
+
+//        return  iProjectMapper.projectInvitation(invitationDto);
     }
 }

@@ -70,7 +70,11 @@
     </delete>
 
     <select id="peerlist" parameterType="com.example.peernow360.dto.PeerReviewDto" resultType="com.example.peernow360.dto.PeerReviewDto">
-
+        select r.project_no as no, r.user_id, a.peer_id, u.name as peer_name, u.team as peer_team, a.role as peer_role, r.total as score, u.image as peer_image
+        from review r
+        join acceptteam a on r.peer_id = a.peer_id
+        join user u on r.peer_id = u.id
+        where r.user_id = #{user_id} and r.project_no = #{no} and a.no = #{no}
     </select>
 
 </mapper>

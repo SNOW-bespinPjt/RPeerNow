@@ -40,4 +40,10 @@ public interface IProjectMapper {
 
 
     void createAcceptTeam(AcceptTeamDto acceptTeamDto);
+
+    List<String> selectedAcceptId(int no);
+
+    void insertReview(Map<String, Object> data);
+
+    void insertReversReview(Map<String, Object> data);
 }

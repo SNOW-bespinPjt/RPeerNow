@@ -1,9 +1,6 @@
 package com.example.peernow360.service.impl;
 
-import com.example.peernow360.dto.AcceptTeamDto;
-import com.example.peernow360.dto.ProjectDto;
-import com.example.peernow360.dto.TeamDto;
-import com.example.peernow360.dto.UserMemberDto;
+import com.example.peernow360.dto.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,7 +28,7 @@ public interface IProjectService {
 
     List<UserMemberDto> peerlist(int no) throws IOException;
 
-
+    List<InvitationDto> projectInvitation(InvitationDto invitationDto) throws IOException;
 
 //    List<ProjectDto> createProject(ProjectDto projectDto);
 }
