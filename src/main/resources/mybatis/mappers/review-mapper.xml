@@ -7,13 +7,13 @@
         update review
         set comment1 = #{comment1}, comment2 = #{comment2},
             score1 = #{score1}, score2 = #{score2}, score3 = #{score3}, score4 = #{score4}, score5 = #{score5}, reg_date = now()
-        where project_no = #{no} and user_id = #{user_id} and peer_id = #{peer_id}
+        where project_no = #{project_no} and user_id = #{user_id} and peer_id = #{peer_id}
     </update>
 
     <update id="totalScore" parameterType="com.example.peernow360.dto.ReviewDto">
         update review
         SET total = #{total}
-        where project_no = #{no} and user_id = #{user_id} and peer_id = #{peer_id}
+        where project_no = #{project_no} and user_id = #{user_id} and peer_id = #{peer_id}
     </update>
 
     <select id="feedback" parameterType="String" resultType="com.example.peernow360.dto.ReviewDto">
