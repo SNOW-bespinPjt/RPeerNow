@@ -14,9 +14,9 @@ public interface IReviewService {
 
     List<ReviewDto> feedback(int no, String user_id);
 
-    PeerDto evaluationInfo(PeerDto peerDto);
+    PeerDto evaluationInfo(PeerDto peerDto) throws IOException;
 
     int modify(String userId, String fileName, MultipartFile multipartFile) throws IOException;
 
-    List<PeerReviewDto> peerlist(PeerReviewDto peerReviewDto);
+    List<PeerReviewDto> peerlist(PeerReviewDto peerReviewDto) throws IOException;
 }

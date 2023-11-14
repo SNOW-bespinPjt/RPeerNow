@@ -13,5 +13,6 @@ public class PeerDto {
     private int avg;
     private String best_id;
     private String best_name;
+    private Object best_image;
 
 }

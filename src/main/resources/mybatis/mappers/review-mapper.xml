@@ -3,15 +3,17 @@
 
 <mapper namespace="com.example.peernow360.mappers.IReviewMapper">
 
-    <insert id="createScore" parameterType="com.example.peernow360.dto.ReviewDto" useGeneratedKeys="true" keyProperty="no">
-        insert into review(user_id, peer_id, project_no, comment1, comment2, score1, score2, score3, score4, score5, reg_date)
-        values(#{user_id}, #{peer_id}, #{project_no}, #{comment1}, #{comment2}, #{score1}, #{score2}, #{score3}, #{score4}, #{score5}, now())
-    </insert>
+    <update id="createScore" parameterType="com.example.peernow360.dto.ReviewDto" useGeneratedKeys="true" keyProperty="no">
+        update review
+        set comment1 = #{comment1}, comment2 = #{comment2},
+            score1 = #{score1}, score2 = #{score2}, score3 = #{score3}, score4 = #{score4}, score5 = #{score5}, reg_date = now()
+        where project_no = #{project_no} and user_id = #{user_id} and peer_id = #{peer_id}
+    </update>
 
     <update id="totalScore" parameterType="com.example.peernow360.dto.ReviewDto">
         update review
         SET total = #{total}
-        WHERE no = #{no}
+        where project_no = #{project_no} and user_id = #{user_id} and peer_id = #{peer_id}
     </update>
 
     <select id="feedback" parameterType="String" resultType="com.example.peernow360.dto.ReviewDto">
@@ -46,6 +48,12 @@
             limit 1
     </select>
 
+    <select id="bestImg" parameterType="com.example.peernow360.dto.PeerDto">
+        select image
+        from user
+        where id = #{best_id}
+    </select>
+
 <!--    <select id="getPeer" parameterType="com.example.peernow360.dto.PeerDto" resultType="String">-->
 <!--        select a.peer_id, u.name-->
 <!--        from acceptteam a-->
@@ -70,7 +78,11 @@
     </delete>
 
     <select id="peerlist" parameterType="com.example.peernow360.dto.PeerReviewDto" resultType="com.example.peernow360.dto.PeerReviewDto">
-
+        select r.project_no as no, r.user_id, a.peer_id, u.name as peer_name, u.team as peer_team, a.role as peer_role, r.total as score, u.image as peer_image
+        from review r
+        join acceptteam a on r.peer_id = a.peer_id
+        join user u on r.peer_id = u.id
+        where r.user_id = #{user_id} and r.project_no = #{no} and a.no = #{no}
     </select>
 
 </mapper>

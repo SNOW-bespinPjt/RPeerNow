@@ -9,7 +9,7 @@ public class PeerReviewDto {
     private String user_id;
     private String peer_id;
     private String peer_name;
-    private String peer_image;
+    private Object peer_image;
     private String peer_team;
     private String peer_role;
     private int score;
