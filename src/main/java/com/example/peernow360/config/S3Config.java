@@ -28,17 +28,17 @@ public class S3Config {
     public AmazonS3 amazonS3Client() {
         AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
 //        AWSCredentials credentials = new InstanceProfileCredentialsProvider();
-        AWSCredentialsProvider credentialsProvide;
+        AWSCredentialsProvider credentialsProvider;
 
         if (env.equals("dev")) {
-            credentialsProvide =  new ProfileCredentialsProvider();
+            credentialsProvider =  new ProfileCredentialsProvider();
         } else {
-            credentialsProvide = InstanceProfileCredentialsProvider.getInstance();
+            credentialsProvider = InstanceProfileCredentialsProvider.getInstance();
         }
         return AmazonS3ClientBuilder
                 .standard()
 //                .withCredentials(new AWSStaticCredentialsProvider(credentials))
-                .withCredentials(credentialsProvide)
+                .withCredentials(credentialsProvider)
                 .withRegion(region)
                 .build();
     }
