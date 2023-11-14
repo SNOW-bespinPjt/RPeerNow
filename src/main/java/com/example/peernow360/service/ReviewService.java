@@ -55,8 +55,19 @@ public class ReviewService implements IReviewService {
 
         List<PeerReviewDto> list = iReviewMapper.peerlist(peerReviewDto);
         for(PeerReviewDto peerReviewDtos : list) {
-            Object image = s3GetImage.getObject(peerReviewDtos.getPeer_id() + "/" + peerReviewDtos.getPeer_image());
-            peerReviewDtos.setPeer_image(image);
+
+            try {
+                Object image = s3GetImage.getObject(peerReviewDtos.getPeer_id() + "/" + peerReviewDtos.getPeer_image());
+
+                if(image == null) {
+                    image = s3GetImage.getObject("defaultImg/defaultImg.jpg");
+                }
+                peerReviewDtos.setPeer_image(image);
+
+            } catch (Exception e) {
+                peerReviewDto.setPeer_image(s3GetImage.getObject("defaultImg/defaultImg.jpg"));
+            }
+
         }
 
         return list;

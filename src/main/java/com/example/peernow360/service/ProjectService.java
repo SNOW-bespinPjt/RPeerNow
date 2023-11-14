@@ -82,8 +82,18 @@ public class ProjectService implements IProjectService {
 
         List<UserMemberDto> list = iProjectMapper.peerlist(no);
         for(UserMemberDto userMemberDto : list) {
-            Object image = s3GetImage.getObject(userMemberDto.getId() + "/" + userMemberDto.getImage());
-            userMemberDto.setImage(image);
+
+            try {
+                Object image = s3GetImage.getObject(userMemberDto.getId() + "/" + userMemberDto.getImage());
+
+                if(image == null) {
+                    image = s3GetImage.getObject("defaultImg/defaultImg.jpg");
+                }
+                userMemberDto.setImage(image);
+
+            } catch (Exception e) {
+                userMemberDto.setImage(s3GetImage.getObject("defaultImg/defaultImg.jpg"));
+            }
         }
 
         return list;
