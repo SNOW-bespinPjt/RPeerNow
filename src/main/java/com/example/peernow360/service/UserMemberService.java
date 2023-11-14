@@ -307,6 +307,7 @@ public class UserMemberService implements IUserMemberService {
         }
 
         UserMemberDto oriUserInfo = iUserMemberMapper.getOriInfo(id);
+        log.info("oriUserInfo: " + oriUserInfo);
 
         if(StringUtils.hasText(userMemberDto.getName())) {
             oriUserInfo.setName(userMemberDto.getName());
