@@ -1,9 +1,6 @@
 package com.example.peernow360.service;
 
-import com.example.peernow360.dto.PeerDto;
-import com.example.peernow360.dto.PeerReviewDto;
-import com.example.peernow360.dto.ReviewDto;
-import com.example.peernow360.dto.TestDto;
+import com.example.peernow360.dto.*;
 import com.example.peernow360.mappers.IReviewMapper;
 import com.example.peernow360.service.impl.IReviewService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +20,7 @@ public class ReviewService implements IReviewService {
     private final IReviewMapper iReviewMapper;
 
     private final S3Uploader s3Uploader;
+    private final S3GetImage s3GetImage;
 
     public int createScore(ReviewDto reviewDto) {
         log.info("createScore()");
@@ -42,16 +40,55 @@ public class ReviewService implements IReviewService {
         return iReviewMapper.feedback(String.valueOf(no), user_id);
     }
 
-    public PeerDto evaluationInfo(PeerDto peerDto) {
+    public PeerDto evaluationInfo(PeerDto peerDto) throws IOException {
         log.info("evaluatinoInfo()");
 
         peerDto.setAvg(iReviewMapper.avgScore(peerDto));
         peerDto.setBest_id(iReviewMapper.bestId(peerDto));
         peerDto.setBest_name(iReviewMapper.bestName(peerDto));
+//        peerDto.setBest_image(iReviewMapper.bestImg(peerDto));
+
+        try {
+            peerDto.setBest_image(iReviewMapper.bestImg(peerDto));
+
+            Object image = s3GetImage.getObject(peerDto.getBest_id() + "/" + peerDto.getBest_image());
+
+            if(image == null) {
+                image = s3GetImage.getObject("defaultImg/defaultImg.png");
+            }
+
+            peerDto.setBest_image(image);
+
+        } catch (Exception e){
+
+            peerDto.setBest_image(s3GetImage.getObject("defaultImg/defaultImg.png"));
+        }
 
         return peerDto;
     }
 
+    public List<PeerReviewDto> peerlist(PeerReviewDto peerReviewDto) throws IOException {
+        log.info("peerlist()");
+
+        List<PeerReviewDto> list = iReviewMapper.peerlist(peerReviewDto);
+        for(PeerReviewDto peerReviewDtos : list) {
+
+            try {
+                Object image = s3GetImage.getObject(peerReviewDtos.getPeer_id() + "/" + peerReviewDtos.getPeer_image());
+
+                if(image == null) {
+                    image = s3GetImage.getObject("defaultImg/defaultImg.png");
+                }
+                peerReviewDtos.setPeer_image(image);
+
+            } catch (Exception e) {
+                peerReviewDtos.setPeer_image(s3GetImage.getObject("defaultImg/defaultImg.png"));
+            }
+
+        }
+
+        return list;
+    }
 
     public int test(MultipartFile multipartFile, TestDto testDto) throws IOException {
         log.info("test()");
@@ -82,9 +119,5 @@ public class ReviewService implements IReviewService {
         return result;
     }
 
-    public List<PeerReviewDto> peerlist(PeerReviewDto peerReviewDto) {
-        log.info("peerlist()");
 
-        return iReviewMapper.peerlist(peerReviewDto);
-    }
 }

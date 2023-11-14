@@ -22,8 +22,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+
+import org.springframework.util.StringUtils;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -334,7 +338,19 @@ public class UserMemberService implements IUserMemberService {
 
         }
 
-        return iUserMemberMapper.modifyAccountInfo(userMemberDto);
+        int result = iUserMemberMapper.modifyAccountInfo(oriUserInfo);
+
+        if(result > 0) {
+            log.info("계정 수정이 완료되었습니다!");
+
+            return "success";
+
+        } else {
+            log.info("계정 수정에 실패하였습니다!");
+
+            return "fail";
+
+        }
 
     }
 

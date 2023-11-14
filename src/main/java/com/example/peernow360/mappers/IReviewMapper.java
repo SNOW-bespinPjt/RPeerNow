@@ -38,4 +38,6 @@ public interface IReviewMapper {
     int delete(String userId);
 
     List<PeerReviewDto> peerlist(PeerReviewDto peerReviewDto);
+
+    Object bestImg(PeerDto peerDto);
 }

@@ -168,6 +168,18 @@
 
     </delete>
 
+    <select id="getOriInfo" parameterType="String"
+            resultType="com.example.peernow360.dto.UserMemberDto">
+
+        SELECT
+            *
+        FROM
+            user
+        WHERE
+            id = #{id}
+
+    </select>
+
     <update id="modifyAccountInfo" parameterType="com.example.peernow360.dto.UserMemberDto">
 
         UPDATE
