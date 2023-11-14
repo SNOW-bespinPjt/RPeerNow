@@ -46,6 +46,7 @@ public class SecurityConfig {
                         .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()  // HTTP 요청 인증 설정
                         .requestMatchers("/api/user/join","/api/user/login","/api/user/request_refreshToken","/api/user/gettest", "/v3/**", "/swagger-ui/**"
                         ).permitAll()
+
 //                        .requestMatchers(HttpMethod.PUT, "/api/project/sprint").hasAnyRole("PM", "SM")
 //                        .requestMatchers("/api/project/sprint").hasRole("SM")
 //                        .requestMatchers(HttpMethod.PUT,"/api/project").hasRole("PM")
