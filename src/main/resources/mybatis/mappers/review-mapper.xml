@@ -48,6 +48,12 @@
             limit 1
     </select>
 
+    <select id="bestImg" parameterType="com.example.peernow360.dto.PeerDto">
+        select image
+        from user
+        where id = #{best_id}
+    </select>
+
 <!--    <select id="getPeer" parameterType="com.example.peernow360.dto.PeerDto" resultType="String">-->
 <!--        select a.peer_id, u.name-->
 <!--        from acceptteam a-->

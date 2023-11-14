@@ -66,7 +66,7 @@ public class ReviewController {
 
     @GetMapping("")
     @Operation(summary = "동료평가 메인", description = "동료평가 메인", tags = {"detail"})
-    public SingleResponse<PeerDto> evaluationInfo(@RequestParam("projectNumber") int no) {
+    public SingleResponse<PeerDto> evaluationInfo(@RequestParam("projectNumber") int no) throws IOException {
         log.info("evaluationInfo()");
 
         User userInfo = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

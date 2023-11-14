@@ -40,12 +40,29 @@ public class ReviewService implements IReviewService {
         return iReviewMapper.feedback(String.valueOf(no), user_id);
     }
 
-    public PeerDto evaluationInfo(PeerDto peerDto) {
+    public PeerDto evaluationInfo(PeerDto peerDto) throws IOException {
         log.info("evaluatinoInfo()");
 
         peerDto.setAvg(iReviewMapper.avgScore(peerDto));
         peerDto.setBest_id(iReviewMapper.bestId(peerDto));
         peerDto.setBest_name(iReviewMapper.bestName(peerDto));
+//        peerDto.setBest_image(iReviewMapper.bestImg(peerDto));
+
+        try {
+            peerDto.setBest_image(iReviewMapper.bestImg(peerDto));
+
+            Object image = s3GetImage.getObject(peerDto.getBest_id() + "/" + peerDto.getBest_image());
+
+            if(image == null) {
+                image = s3GetImage.getObject("defaultImg/defaultImg.png");
+            }
+
+            peerDto.setBest_image(image);
+
+        } catch (Exception e){
+
+            peerDto.setBest_image(s3GetImage.getObject("defaultImg/defaultImg.png"));
+        }
 
         return peerDto;
     }
@@ -65,7 +82,7 @@ public class ReviewService implements IReviewService {
                 peerReviewDtos.setPeer_image(image);
 
             } catch (Exception e) {
-                peerReviewDto.setPeer_image(s3GetImage.getObject("defaultImg/defaultImg.png"));
+                peerReviewDtos.setPeer_image(s3GetImage.getObject("defaultImg/defaultImg.png"));
             }
 
         }
