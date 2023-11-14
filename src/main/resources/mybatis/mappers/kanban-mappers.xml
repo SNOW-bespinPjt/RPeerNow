@@ -212,4 +212,18 @@
 
     </select>
 
+    <select id="selectBacklogStatusTotal" parameterType="Integer"
+            resultType="com.example.peernow360.dto.BurnDownDto">
+
+        SELECT
+            count(no) as total,
+            (select count(no) from backlog where status = "done" and project_no = #{project_no}) as done_job,
+            (select count(no) from backlog where status <![CDATA[<>]]>  "done" and project_no = #{project_no}) as task
+        FROM
+            backlog
+        where
+            project_no = #{project_no}
+
+    </select>
+
 </mapper>

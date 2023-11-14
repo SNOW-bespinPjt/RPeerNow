@@ -2,6 +2,7 @@ package com.example.peernow360.service.impl;
 
 
 import com.example.peernow360.dto.UserMemberDto;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -17,12 +18,12 @@ public interface IUserMemberService {
     /*
      * 유저 로그인
      */
-    public Map<String, Object> loginMember(UserMemberDto userMemberDto);
+    public ResponseEntity<Map<String, Object>> loginMember(UserMemberDto userMemberDto);
 
     /*
      * refresh token 재발급
      */
-     public Map<String, Object> reCreateAccessToken(String name, int project_no);
+     public ResponseEntity<Map<String, Object>> reCreateAccessToken(String refreshToken);
 
     /*
      * 회원 상세 정보
@@ -32,21 +33,22 @@ public interface IUserMemberService {
      /*
       * 로그아웃
       */
-    public String logOutInfo(String refreshToken);
+    public ResponseEntity<String> logOutInfo(String refreshToken);
 
     /*
      * 유저 계정 삭제
      */
-    public String deleteAccountConfirm(String id, String refreshToken);
+    public int deleteAccountConfirm(String id, String refreshToken);
 
     /*
      * 유저 계정 수정
      */
-    public String updateAccountConfirm(String id, UserMemberDto userMemberDto, MultipartFile image) throws IOException;
+    public int updateAccountConfirm(String id, UserMemberDto userMemberDto, MultipartFile image) throws IOException;
 
 
 
     int updateAccountImage(String id, String fileName, MultipartFile multipartFile) throws IOException;
+
 
 
 }

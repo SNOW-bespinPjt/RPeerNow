@@ -86,14 +86,14 @@ public class JWTtokenFilter extends OncePerRequestFilter {
                 log.info("authentication: " + authentication);
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                String newAccessToken = jwTtokenProvider.createAccessToken(authentication, authentication.getAuthorities().toString(), project_no);
+                accessToken = jwTtokenProvider.createAccessToken(authentication, authentication.getAuthorities().toString(), project_no);
 
                 /*
                  *새로운 토큰 전달을 위해 Header 사용
                  * 여기서 ResponseEntity를 이용해 body에 담으면 안되는 이유:
                  * filter 단계에서는 주로 헤더를 조작하거나 리다이렉트 등의 다른 HTTP 응답 속성을 조작하는 용도로 사용
                  */
-                response.setHeader("newAccessToken", newAccessToken);
+                response.setHeader("newAccessToken", accessToken);
                 response.setStatus(HttpServletResponse.SC_OK);              //응답 상태 코드를 200으로 설정
 
             } else {

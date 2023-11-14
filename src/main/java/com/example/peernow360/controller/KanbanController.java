@@ -4,6 +4,7 @@ import com.example.peernow360.dto.BacklogDto;
 import com.example.peernow360.dto.BurnDownDto;
 import com.example.peernow360.response.ListResponse;
 import com.example.peernow360.response.ResponseService;
+import com.example.peernow360.response.SingleResponse;
 import com.example.peernow360.service.KanbanService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -123,4 +124,17 @@ public class KanbanController {
         return responseService.getListResponse(kanbanService.callInAllBurndown(project_no));
 
     }
+
+    /*
+     * 프로젝트 내 존재하는 스프린트 백로그 총개수, 완료 개수, 진행중인 개수
+     */
+    @GetMapping("/ptotal")
+    @Operation(summary = "프로젝트 내 존재하는 스프린트 백로그 총개수, 완료 개수, 진행중인 개수", description = "프로젝트 내 존재하는 스프린트 백로그 총개수, 완료 개수, 진행중인 개수", tags = {"detail"})
+    public SingleResponse<BurnDownDto> backlogStatusTotal(@RequestParam (value="project_no") int project_no) {
+        log.info("[KanbanController] eachBacklogAndDate()");
+
+        return responseService.getSingleResponse(kanbanService.backlogStatusTotal(project_no));
+
+    }
+
 }
