@@ -197,4 +197,15 @@ public class KanbanService implements IKanbanService {
 
     }
 
+    @Override
+    public BurnDownDto backlogStatusTotal(int project_no) {
+        log.info("[KanbanService] backlogStatusTotal()");
+
+        BurnDownDto burnDownDto = iKanbanMapper.selectBacklogStatusTotal(project_no);
+        log.info("burnDownDto: " + burnDownDto);
+
+        return burnDownDto;
+
+    }
+
 }

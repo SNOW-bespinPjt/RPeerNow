@@ -6,10 +6,15 @@ import com.example.peernow360.dto.UserMemberDto;
 import com.example.peernow360.mappers.IUserMemberMapper;
 import com.example.peernow360.security.JWTtokenProvider;
 import com.example.peernow360.service.impl.IUserMemberService;
+import com.example.peernow360.utils.Constant;
+import com.example.peernow360.utils.UserMember.UserMemberUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -17,7 +22,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
 import org.springframework.util.StringUtils;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -35,12 +45,9 @@ public class UserMemberService implements IUserMemberService {
     private final UserDetailsService userDetailsService;
     private final JWTtokenProvider jwTtokenProvider;
     private final S3Uploader s3Uploader;
+    private final UserMemberUtils userMemberUtils;
 
 
-    private final int INSERT_ACCOUNT_AT_DB_SUCCESS = 1;
-    private final int INSERT_ACCOUNT_AT_DB_FAIL = 0;
-    private final int DB_ERROR = -1;
-    private final int ID_IS_ALREADY_EXIST = -2;
 
     @Value("${jwt.HttpHeaderValue}")
     private String HttpHeaderValue;
@@ -48,15 +55,15 @@ public class UserMemberService implements IUserMemberService {
 
     public int createAccountConfirm(MultipartFile multipartFile, UserMemberDto userMemberDto) throws IOException {
         log.info("[UserMemberService] createAccountConfirm()");
-        log.info("userMemberDto id : {} pw : {} " , userMemberDto.getId(), userMemberDto.getPw());
+        log.info("userMemberDto id : {} pw : {} ", userMemberDto.getId(), userMemberDto.getPw());
 
         boolean isUserId = iUserMemberMapper.duplicateById(userMemberDto.getId());
 
         // 중복ID가 없을 시
-        if(!isUserId) {
+        if (!isUserId) {
 
-            if(multipartFile!=null) {
-                String storedFileName = s3Uploader.upload(multipartFile, userMemberDto.getId());
+            if (multipartFile != null) {
+                s3Uploader.upload(multipartFile, userMemberDto.getId());
                 userMemberDto.setImage(multipartFile.getOriginalFilename());
 
             }
@@ -66,32 +73,30 @@ public class UserMemberService implements IUserMemberService {
             int result = iUserMemberMapper.insertUserMember(userMemberDto);
 
             switch (result) {
-                case DB_ERROR:
+                case Constant.DB_ERROR:
                     log.info("DB ERROR");
 
-                case INSERT_ACCOUNT_AT_DB_FAIL:
+                case Constant.INSERT_ACCOUNT_AT_DB_FAIL:
                     log.info("INSERT ACCOUNT AT DB FAIL");
-
                     return result;
 
-                case INSERT_ACCOUNT_AT_DB_SUCCESS:
+                case Constant.INSERT_ACCOUNT_AT_DB_SUCCESS:
                     log.info("INSERT ACCOUNT AT DB SUCCESS");
-
                     return result;
-
             }
-
         }
 
         log.info("ID_IS_ALREADY_EXIST");
-        return ID_IS_ALREADY_EXIST;
+        return Constant.ID_IS_ALREADY_EXIST;
 
     }
 
     @Override
-    public Map<String, Object> loginMember(UserMemberDto userMemberDto) {
+    public ResponseEntity<Map<String, Object>> loginMember(UserMemberDto userMemberDto) {
         log.info("[UserMemberService] loginMember()");
         log.info("loginmember id " + userMemberDto.getId());
+
+        Map<String ,Object> msgData = new HashMap<>();
 
         UserMemberDto pwCheckUserMemberDto=iUserMemberMapper.selectUserForLogin(userMemberDto);
 
@@ -107,7 +112,6 @@ public class UserMemberService implements IUserMemberService {
                 new UsernamePasswordAuthenticationToken(userMemberDto.getId(), userMemberDto.getPw());
 
         log.info("authenticationToken in loginMember : " + authenticationToken);
-
 
         // 해당 인증정보를 SecurityContextHolder에 저장하고 전역적으로 사용
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
@@ -134,8 +138,6 @@ public class UserMemberService implements IUserMemberService {
 
         }
 
-        Map<String ,Object> msgData = new HashMap<>();
-
         // 초기 생성한 refresh token 저장
         int result = jwTtokenProvider.insertRefreshToken(authenticationToken.getPrincipal(), refreshToken);
 
@@ -147,71 +149,103 @@ public class UserMemberService implements IUserMemberService {
                     .grantType("Bearer ")
                     .build();
 
-            msgData.put("tokenInfo", tokenInfo);
-            msgData.put("refreshToken", refreshToken);
+            log.info("TokenINfo: " + tokenInfo);
 
-            return msgData;
+            msgData.put("tokenInfo", tokenInfo);
+            msgData.put("code",1);
+            msgData.put("status","success");
+            msgData.put("message","로그인에 성공하였습니다.");
+
+            /*
+             * ResponseEntity.ok로 (200code)를 보내며 header와 body를 보냄.
+             * ResponseEntity는 HttpStatus 와 HttpHeader , HttpBody 를 설정하여 HTTP 응답을 보낼 수 있다
+             * 아래의 getCokkieToken을 통해서 쿠키 정보를 가져올 수 있다.
+             */
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.SET_COOKIE, userMemberUtils.getCookieToken(refreshToken).toString())
+                    .body(msgData);
 
         } else {
             log.info("DB에 refresh token 저장을 하지 못했습니다.");
 
-            msgData.put("tokenInfo", null);
+            msgData.put("code",0);
+            msgData.put("status","fail");
+            msgData.put("message","로그인에 실패하였습니다.");
 
-            return msgData;
+            return ResponseEntity.ok(msgData);
 
         }
 
     }
 
     @Override
-    public Map<String, Object> reCreateAccessToken(String user_id, int project_no) {
+    public ResponseEntity<Map<String, Object>> reCreateAccessToken(String refreshToken) {
         log.info("[UserMemberService] reCreateAccessToken()");
 
-        Boolean isToken = jwTtokenProvider.getRefreshToken(user_id);
+        Map<String, Object> msgData = new HashMap<>();
+
+        // 쿠키에 담긴 값들 중 refreshtoken만 추출
+        refreshToken = userMemberUtils.separateRefToken(refreshToken);
 
         /*
-         * 일치하는 refresh 토큰이 존재할 떄
+         * jwt token 유효성 검증 및 blacklist 확인
          */
-        if(isToken) {
-            log.info("refresh 토큰이 존재");
-            UserDetails userDetails = userDetailsService.loadUserByUsername(user_id);
-            log.info("userDetails : " + userDetails);
+        if(jwTtokenProvider.validateToken(refreshToken) && jwTtokenProvider.selectForBlacklist(refreshToken)) {
+            log.info("refresh token 유효성 검사 완료 및 블랙리스트에 존재하지 않은 refresh token");
 
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails,"",userDetails.getAuthorities());
+            // 요청 헤더에 담긴 project_no 추출
+            HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+            int project_no = Integer.parseInt(request.getHeader("project_no"));
 
-            String accessToken = jwTtokenProvider.createAccessToken(authenticationToken, "member", project_no);
-            String refreshToken = jwTtokenProvider.createRefreshToken(authenticationToken);
-            int result = jwTtokenProvider.updateRefreshToken(user_id, refreshToken);
+            String user_id = jwTtokenProvider.checkUser(refreshToken);
+            Boolean isToken = jwTtokenProvider.getRefreshToken(user_id);
 
-            Map<String, Object> msgData = new HashMap<>();
+            /*
+             * 일치하는 refresh 토큰이 존재할 떄
+             */
+            if(isToken) {
+                log.info("DB에 refresh 토큰이 존재");
+                UserDetails userDetails = userDetailsService.loadUserByUsername(user_id);
+                log.info("userDetails : " + userDetails);
 
-            if (result > 0) {
-                log.info("성공적으로 DB에 재발급 refresh token이 저장되었습니다,");
-                log.info("refresh accessToken : " + accessToken);
-                log.info("refresh refreshToken : " + refreshToken);
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails,"",userDetails.getAuthorities());
 
-                TokenInfo tokenInfo = TokenInfo.builder()
-                        .accessToken(accessToken)
-                        .grantType("Bearer ")
-                        .build();
+                String accessToken = jwTtokenProvider.createAccessToken(authenticationToken, authenticationToken.getAuthorities().toString(), project_no);
+                refreshToken = jwTtokenProvider.createRefreshToken(authenticationToken);
+                int result = jwTtokenProvider.updateRefreshToken(user_id, refreshToken);
 
-                msgData.put("tokenInfo", tokenInfo);
+                if (result > 0) {
+                    log.info("성공적으로 DB에 재발급 refresh token이 저장되었습니다,");
+                    log.info("refresh accessToken : " + accessToken);
+                    log.info("refresh refreshToken : " + refreshToken);
 
-                return msgData;
+                    TokenInfo tokenInfo = TokenInfo.builder()
+                            .accessToken(accessToken)
+                            .grantType("Bearer ")
+                            .build();
 
-            } else {
-                log.info("DB에 재발급 refresh token 저장을 하지 못했습니다.");
+                    msgData.put("tokenInfo", tokenInfo);
+                    msgData.put("code", 1);
+                    msgData.put("status", true);
+                    msgData.put("message", "access Token 및 refresh Token을 재발급에 성공하였습니다.");
+                    log.info("msgData" + msgData);
 
-                return null;
+                    return ResponseEntity.ok()
+                            .header(HttpHeaders.SET_COOKIE, userMemberUtils.getCookieToken(refreshToken).toString())
+                            .body(msgData);
+
+                }
 
             }
 
         }
 
-        return null;
+        log.info("DB에 재발급 refresh token 저장을 하지 못했습니다.");
+        log.info("refresh Token에 대한 유효성이 실패하였거나, 허용되지 않은 refresh Token을 이용하여 접속해 로그아웃을 진행합니다 loading....");
+
+        return logOutInfo(refreshToken);
 
     }
-
 
     public UserMemberDto userDetailInfo() throws IOException {
         log.info("[UserMemberService] userDetailInfo()");
@@ -240,8 +274,13 @@ public class UserMemberService implements IUserMemberService {
      * 트랜잭션이 시작되고, 메서드가 성공적으로 실행되면 트랜잭션이 커밋됩니다. 만약 예외가 발생하면 트랜잭션이 롤백됩니다.
      */
     @Override
-    public String logOutInfo(String refreshToken) {
+    public ResponseEntity logOutInfo(String refreshToken) {
         log.info("[UserMemberService] logOut()");
+
+        refreshToken = userMemberUtils.separateRefToken(refreshToken);
+
+        //본인 Thread Local에 저장되어 있는 authorization 정보를 초기화 하는 작업
+        SecurityContextHolder.clearContext();
 
         //Token에서 로그인한 사용자 정보 get해 로그아웃 처리
         boolean isToken = iUserMemberMapper.compareRefreshToken(refreshToken);
@@ -254,27 +293,22 @@ public class UserMemberService implements IUserMemberService {
             if(result > 0) {
                 result = iUserMemberMapper.removeRefreshToken(refreshToken);
 
-
-                return result > 0 ? "success" :"fail";
+                return result > 0 ? ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, userMemberUtils.clearCookieToken().toString()).body("success") : ResponseEntity.ok("fail");
 
             }
-
-            log.info("DB에 refreshToken을 블랙리스트화 화였지만, DB 최신화는 실패하였습니다.");
-            return "fail";
 
         }
 
         log.info("토큰이 유효하지 않습니다.");
-        return "fail";
+        return ResponseEntity.ok("fail");
 
     }
 
     @Override
-    public String deleteAccountConfirm(String id, String refreshToken) {
+    public int deleteAccountConfirm(String id, String refreshToken) {
         log.info("[UserMemberService] deleteAccountConfirm()");
 
-        refreshToken = refreshToken.substring(refreshToken.indexOf("=", 1)+1);
-        log.info("deleteAccountConfirm() refreshToken: " + refreshToken);
+        refreshToken = userMemberUtils.separateRefToken(refreshToken);
 
         //Token에서 로그인한 사용자 정보 get해 로그아웃 처리
         boolean isToken = iUserMemberMapper.compareRefreshToken(refreshToken);
@@ -282,19 +316,17 @@ public class UserMemberService implements IUserMemberService {
         // 토큰이 존재 시
         if(isToken) {
             iUserMemberMapper.removeRefreshToken(refreshToken);
-            int result = iUserMemberMapper.removeAccountInfo(id);
 
-            return result > 0 ? "success" :"fail";
+            return iUserMemberMapper.removeAccountInfo(id);
 
         }
 
-        log.info("refresh Token이 존재하지 않습니다 다시 로그인 하시거나, 없는 회원입니다.");
-        return "fail";
+        return 0;
 
     }
 
     @Override
-    public String updateAccountConfirm(String id, UserMemberDto userMemberDto, MultipartFile image) throws IOException {
+    public int updateAccountConfirm(String id, UserMemberDto userMemberDto, MultipartFile image) throws IOException {
         log.info("[UserMemberService] updateAccountConfirm()");
 
         userMemberDto.setId(id);
@@ -303,26 +335,6 @@ public class UserMemberService implements IUserMemberService {
             log.info("이미지가 존재합니다");
             s3Uploader.upload(image, userMemberDto.getId());
             userMemberDto.setImage(image.getOriginalFilename());
-
-        }
-
-        UserMemberDto oriUserInfo = iUserMemberMapper.getOriInfo(id);
-        log.info("oriUserInfo: " + oriUserInfo);
-
-        if(StringUtils.hasText(userMemberDto.getName())) {
-            oriUserInfo.setName(userMemberDto.getName());
-
-        }
-        if(StringUtils.hasText(userMemberDto.getMail())) {
-            oriUserInfo.setMail(userMemberDto.getMail());
-
-        }
-        if(StringUtils.hasText(userMemberDto.getPhone())) {
-            oriUserInfo.setPhone(userMemberDto.getPhone());
-
-        }
-        if(StringUtils.hasText(userMemberDto.getTeam())) {
-            oriUserInfo.setTeam(userMemberDto.getTeam());
 
         }
 
@@ -360,4 +372,5 @@ public class UserMemberService implements IUserMemberService {
 
         return iUserMemberMapper.fileName(userId);
     }
+
 }

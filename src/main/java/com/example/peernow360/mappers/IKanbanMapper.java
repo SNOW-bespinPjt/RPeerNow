@@ -65,4 +65,10 @@ public interface IKanbanMapper {
      * 프로젝트에 포함된 모든 번다운 차트 불러오기(30일치)
      */
     public List<BurnDownDto> searchAllBurndown(int project_No);
+
+    /*
+     * 프로젝트 내 존재하는 스프린트 백로그 총개수, 완료 개수, 진행중인 개수
+     */
+    public BurnDownDto selectBacklogStatusTotal(int project_no);
+
 }

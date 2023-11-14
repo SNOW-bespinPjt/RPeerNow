@@ -127,6 +127,7 @@ public class JWTtokenProvider {
 
         if(!StringUtils.hasText(refreshToken)) {
             log.info("회원가입이 되지 않았거나, 로그아웃을 한 유저입니다.");
+
             return false;
 
         }
@@ -235,13 +236,7 @@ public class JWTtokenProvider {
 
     }
 
-    public String extractRefreshToken(String refreshToken) {
-        log.info("[JWTtokenProvider] extractRefreshToken()");
-        log.info("extractRefreshToken: " + Jwts.parser().setSigningKey(secretKey).parseClaimsJws(refreshToken).getBody().getSubject());
 
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(refreshToken).getBody().getSubject();
-
-    }
 
     public boolean selectForBlacklist(String refreshToken) {
         log.info("[JWTtokenProvider] selectForBlacklist()");

@@ -43,4 +43,9 @@ public interface IKanbanService {
      */
     public List<BurnDownDto> callInAllBurndown(int project_No);
 
+    /*
+     * 프로젝트 내 존재하는 스프린트 백로그 총개수, 완료 개수, 진행중인 개수
+     */
+    public BurnDownDto backlogStatusTotal(int project_no);
+
 }
