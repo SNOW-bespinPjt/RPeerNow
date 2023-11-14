@@ -96,4 +96,5 @@ public interface IUserMemberMapper {
 
     String fileName(String userId);
 
+    UserMemberDto getOriInfo(String id);
 }

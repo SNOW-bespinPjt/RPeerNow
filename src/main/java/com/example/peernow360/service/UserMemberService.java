@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -305,7 +306,26 @@ public class UserMemberService implements IUserMemberService {
 
         }
 
-        int result = iUserMemberMapper.modifyAccountInfo(userMemberDto);
+        UserMemberDto oriUserInfo = iUserMemberMapper.getOriInfo(id);
+
+        if(StringUtils.hasText(userMemberDto.getName())) {
+            oriUserInfo.setName(userMemberDto.getName());
+
+        }
+        if(StringUtils.hasText(userMemberDto.getMail())) {
+            oriUserInfo.setMail(userMemberDto.getMail());
+
+        }
+        if(StringUtils.hasText(userMemberDto.getPhone())) {
+            oriUserInfo.setPhone(userMemberDto.getPhone());
+
+        }
+        if(StringUtils.hasText(userMemberDto.getTeam())) {
+            oriUserInfo.setTeam(userMemberDto.getTeam());
+
+        }
+
+        int result = iUserMemberMapper.modifyAccountInfo(oriUserInfo);
 
         if(result > 0) {
             log.info("계정 수정이 완료되었습니다!");
