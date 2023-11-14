@@ -338,19 +338,9 @@ public class UserMemberService implements IUserMemberService {
 
         }
 
-        int result = iUserMemberMapper.modifyAccountInfo(oriUserInfo);
+        int result = iUserMemberMapper.modifyAccountInfo(userMemberDto);
 
-        if(result > 0) {
-            log.info("계정 수정이 완료되었습니다!");
-
-            return "success";
-
-        } else {
-            log.info("계정 수정에 실패하였습니다!");
-
-            return "fail";
-
-        }
+        return result;
 
     }
 
