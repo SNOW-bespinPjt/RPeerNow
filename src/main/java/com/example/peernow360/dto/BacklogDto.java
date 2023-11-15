@@ -16,6 +16,7 @@ public class BacklogDto {
     private String mod_date;
 
     private Object image;
+    private String backfile;
 
 
 }

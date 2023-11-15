@@ -23,7 +23,7 @@ public class BacklogService implements IBacklogService {
 
     private final IBacklogMapper iBacklogMapper;
     private final S3Uploader s3Uploader;
-    private final S3GetImage S3GetImage;
+    private final S3GetImage s3GetImage;
 
     @Override
     public String createNewBacklog(BacklogDto backlogDto, int project_no, String sprint_no, MultipartFile fileDto) throws IOException {
@@ -85,9 +85,21 @@ public class BacklogService implements IBacklogService {
             log.info("CALL BACKLOG INFO SUCCESS!!");
 
             for(BacklogDto backlogDto : backlogDtos) {
-                 backlogDto.setImage(S3GetImage.getObject(backlogDto.getUser_id() + "/" + backlogDto.getImage()));
-                 newBacklogDtos.add(backlogDto);
 
+                try {
+                    Object image =s3GetImage.getObject(backlogDto.getUser_id() + "/" + backlogDto.getImage());
+
+                    if(image == null) {
+                        image = s3GetImage.getObject("defaultImg/defaultImg.png");
+                    }
+
+                    backlogDto.setImage(image);
+                    newBacklogDtos.add(backlogDto);
+
+                } catch (Exception e) {
+
+                    backlogDto.setImage(s3GetImage.getObject("defaultImg/defaultImg.png"));
+                }
             }
 
             data.put("backlogDtos", newBacklogDtos);
@@ -114,7 +126,19 @@ public class BacklogService implements IBacklogService {
         if(backlogDto != null) {
             log.info("백로그 상세정보를 불러오는데 성공하였습니다.");
 
-            backlogDto.setImage(S3GetImage.getObject(backlogDto.getUser_id() + "/" + backlogDto.getImage()));
+            try {
+                Object image = s3GetImage.getObject(backlogDto.getUser_id() + "/" + backlogDto.getImage());
+
+                if (image == null) {
+                    image = s3GetImage.getObject("defaultImg/defaultImg.png");
+                }
+
+                backlogDto.setImage(image);
+
+            } catch(Exception e) {
+
+                backlogDto.setImage(s3GetImage.getObject("defaultImg/defaultImg.png"));
+            }
 
             data.put("backlogDto", backlogDto);
 
@@ -142,8 +166,21 @@ public class BacklogService implements IBacklogService {
             log.info("오늘 날짜에 진행중인 백로그들을 불러오는데 성공하였습니다.");
 
             for(BacklogDto backlogDto : backlogDtos) {
-                backlogDto.setImage(S3GetImage.getObject(backlogDto.getUser_id() + "/" + backlogDto.getImage()));
-                newBacklogDtos.add(backlogDto);
+
+                try {
+                    Object image =s3GetImage.getObject(backlogDto.getUser_id() + "/" + backlogDto.getImage());
+
+                    if(image == null) {
+                        image = s3GetImage.getObject("defaultImg/defaultImg.png");
+                    }
+
+                    backlogDto.setImage(image);
+                    newBacklogDtos.add(backlogDto);
+
+                } catch (Exception e) {
+
+                    backlogDto.setImage(s3GetImage.getObject("defaultImg/defaultImg.png"));
+                }
 
             }
 
@@ -200,13 +237,16 @@ public class BacklogService implements IBacklogService {
                 msgData.put("backlog_no", no);
 
                 FileDto fileDBName = iBacklogMapper.searchBacklogFile(no);
-                s3Uploader.delete(String.valueOf(fileDBName.getNo()), fileDBName.getName());
-                int isDel = iBacklogMapper.removeBacklogFile(no);
+                if(fileDBName != null) {
+                    s3Uploader.delete(String.valueOf(fileDBName.getNo()), fileDBName.getName());
+                    int isDel = iBacklogMapper.removeBacklogFile(no);
 
-                log.info("isDel : 1 -> True / isDel : 0 -> false : " + isDel);
+                    log.info("isDel : 1 -> True / isDel : 0 -> false : " + isDel);
 
-                String storedFileName = s3Uploader.upload(fileDto, backlogDto.getUser_id());
-                msgData.put("name", storedFileName);
+                }
+
+                s3Uploader.upload(fileDto, String.valueOf(backlogDto.getNo()));
+                msgData.put("name", fileDto.getOriginalFilename());
                 iBacklogMapper.insertBacklogFile(msgData);
 
             }
@@ -258,9 +298,22 @@ public class BacklogService implements IBacklogService {
             log.info("프로젝트안에 존재하는 모든 백로그를 가져오는데 성공하였습니다.");
 
             for(BacklogDto backlogDto : backlogDtos) {
-                backlogDto.setImage(S3GetImage.getObject(backlogDto.getUser_id() + "/" + backlogDto.getImage()));
-                newBacklogDtos.add(backlogDto);
 
+                try {
+
+                    Object image = s3GetImage.getObject(backlogDto.getUser_id() + "/" + backlogDto.getImage());
+
+                    if(image == null) {
+                        image = s3GetImage.getObject("defaultImg/defaultImg.png");
+                    }
+                    backlogDto.setImage(image);
+
+                } catch(Exception e) {
+                    backlogDto.setImage(s3GetImage.getObject("defaultImg/defaultImg.png"));
+
+                }
+
+                newBacklogDtos.add(backlogDto);
             }
 
             return newBacklogDtos;
@@ -278,9 +331,10 @@ public class BacklogService implements IBacklogService {
     public String backlogFileDownload(int no) {
         log.info("[BacklogService] backlogFileDownload()");
 
-        FileDto file = iBacklogMapper.searchBacklogFile(no);
+        FileDto fileDto = iBacklogMapper.searchBacklogFile(no);
+        String fileName = fileDto.getName();
 
-        return file.getName();
+        return fileName;
 
     }
 

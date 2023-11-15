@@ -3,6 +3,12 @@
 
 <mapper namespace="com.example.peernow360.mappers.IReviewMapper">
 
+    <select id="getReviewInfo" parameterType="com.example.peernow360.dto.ReviewDto" resultType="Integer">
+        select count(*)
+        from review
+        where user_id = #{user_id} and peer_id = #{peer_id} and project_no = #{project_no} and total = 0
+    </select>
+
     <update id="createScore" parameterType="com.example.peernow360.dto.ReviewDto" useGeneratedKeys="true" keyProperty="no">
         update review
         set comment1 = #{comment1}, comment2 = #{comment2},

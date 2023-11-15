@@ -340,6 +340,7 @@ public class UserMemberService implements IUserMemberService {
 
         return iUserMemberMapper.modifyAccountInfo(userMemberDto);
 
+
     }
 
     public int updateAccountImage(String id, String fileName, MultipartFile multipartFile) throws IOException {
