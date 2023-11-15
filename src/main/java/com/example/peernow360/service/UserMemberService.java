@@ -338,9 +338,8 @@ public class UserMemberService implements IUserMemberService {
 
         }
 
-        int result = iUserMemberMapper.modifyAccountInfo(userMemberDto);
+        return iUserMemberMapper.modifyAccountInfo(userMemberDto);
 
-        return result;
 
     }
 

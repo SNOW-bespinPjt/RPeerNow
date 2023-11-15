@@ -184,8 +184,21 @@ public class KanbanService implements IKanbanService {
 
         List<BurnDownDto> burnDownDtos = iKanbanMapper.searchAllBurndown(project_No);
 
+        String sprintName = "스프린트";
+        int cnt = 1;
+
         if(burnDownDtos != null && burnDownDtos.size() > 0) {
             log.info("번다운 차트 기록을 불러오는데 성공하였습니다.");
+
+            for(BurnDownDto burnDownDto : burnDownDtos) {
+                if(!burnDownDto.getTitle().equals(sprintName + cnt)) {
+                    cnt = cnt + 1;
+
+                }
+
+
+
+            }
 
             return burnDownDtos;
 
@@ -193,6 +206,7 @@ public class KanbanService implements IKanbanService {
             log.info("번다운 차트 기록을 불러오는데 실패하였습니다.");
 
             return null;
+
         }
 
     }
@@ -204,7 +218,37 @@ public class KanbanService implements IKanbanService {
         BurnDownDto burnDownDto = iKanbanMapper.selectBacklogStatusTotal(project_no);
         log.info("burnDownDto: " + burnDownDto);
 
-        return burnDownDto;
+        if(burnDownDto != null) {
+            log.info("프로젝트 내 존재하는 스프린트 백로그 총개수, 완료 개수, 진행중인 개수를 불러오는데 성공하였습니다.");
+
+            return burnDownDto;
+
+        } else {
+            log.info("프로젝트 내 존재하는 스프린트 백로그 총개수, 완료 개수, 진행중인 개수를 불러오는데 실패하였습니다.");
+
+            return burnDownDto;
+
+        }
+
+    }
+
+    @Override
+    public List<BurnDownDto> selectBarBurndown(int project_no) {
+        log.info("[KanbanService] selectBarBurndown()");
+
+        List<BurnDownDto> burnDownDtos = iKanbanMapper.selectBarBurndown(project_no);
+
+        if(burnDownDtos != null && burnDownDtos.size() > 0) {
+            log.info("데이터를 가져오는데 성공하였습니다.");
+
+            return burnDownDtos;
+
+        } else {
+            log.info("데이터를 가져오는데 성공하였습니다.");
+
+            return null;
+
+        }
 
     }
 

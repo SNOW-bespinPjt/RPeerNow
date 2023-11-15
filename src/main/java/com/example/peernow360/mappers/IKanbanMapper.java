@@ -64,11 +64,16 @@ public interface IKanbanMapper {
     /*
      * 프로젝트에 포함된 모든 번다운 차트 불러오기(30일치)
      */
-    public List<BurnDownDto> searchAllBurndown(int project_No);
+    public List<BurnDownDto> searchAllBurndown(int project_no);
 
     /*
      * 프로젝트 내 존재하는 스프린트 백로그 총개수, 완료 개수, 진행중인 개수
      */
     public BurnDownDto selectBacklogStatusTotal(int project_no);
+
+    /*
+     * 프로젝트 내 존재하는 각 스프린트들의 총 개수 및 완료 백로그 개수
+     */
+    public List<BurnDownDto> selectBarBurndown(int project_no);
 
 }
