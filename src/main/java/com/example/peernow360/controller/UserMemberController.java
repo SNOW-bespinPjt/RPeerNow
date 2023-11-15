@@ -36,7 +36,6 @@ public class UserMemberController {
 
     private final UserMemberService userMemberService;
     private final ResponseService responseService;
-    private final JWTtokenProvider jwTtokenProvider;
     private final S3GetImage s3GetImage;
 
     @GetMapping("/gettest")
@@ -157,9 +156,8 @@ public class UserMemberController {
                                      @RequestPart("image") MultipartFile multipartFile) throws IOException {
         log.info("[HomeController] updateAccountImage()");
 
-        int result = userMemberService.updateAccountImage(id, fileName, multipartFile);
+        return ResponseResult.result(userMemberService.updateAccountImage(id, fileName, multipartFile));
 
-        return ResponseResult.result(result);
     }
 
 }

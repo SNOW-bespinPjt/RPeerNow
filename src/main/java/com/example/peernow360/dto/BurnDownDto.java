@@ -18,5 +18,7 @@ public class BurnDownDto {
     private String mod_date;
 
     private int total;
+    private String today;
+    private String title;
 
 }

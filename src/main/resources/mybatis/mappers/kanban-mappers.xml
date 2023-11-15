@@ -156,22 +156,18 @@
 
         SELECT
             no,
-            ori_no,
             sprint_no,
-            lapse,
             task,
             done_job,
-            DATEDIFF(end_date, start_date) + 1 AS sub_day,
-            start_date,
-            end_date,
-            reg_date,
-            mod_date
+            task + done_job AS total,
+            DATE_FORMAT(reg_date,'%y-%m-%d') today,
+            (select title from backlog where no = #{sprint_no}),
+            DATE_FORMAT(start_date,'%y-%m-%d') start_date,
+            DATE_FORMAT(end_date,'%y-%m-%d') end_date
         FROM
             burndown
         WHERE
             sprint_no = #{sprint_no}
-        ORDER BY
-            ori_no
 
     </select>
 
@@ -200,15 +196,26 @@
             resultType="com.example.peernow360.dto.BurnDownDto">
 
         SELECT
-            *
+            b.no,
+            s.project_no,
+            sprint_no,
+            task,
+            done_job,
+            task + done_job as total,
+            DATE_FORMAT(b.reg_date,'%y-%m-%d') today,
+            s.title,
+            DATE_FORMAT(b.start_date,'%y-%m-%d') start_date,
+            DATE_FORMAT(b.end_date,'%y-%m-%d') end_date
         FROM
-            burndown
-        WHERE sprint_no
-                  IN
-              (SELECT distinct sprint_no FROM sprint WHERE project_no = 1)
-          AND end_date <![CDATA[>=]]> DATE_SUB(NOW(), INTERVAL 30 day)
-          AND start_date <![CDATA[<]]> NOW()
-        ORDER BY sprint_no;
+            burndown b
+                JOIN
+            sprint s
+            ON b.sprint_no = s.no
+        WHERE
+            s.project_no = #{project_no}
+          AND b.end_date <![CDATA[>=]]> DATE_SUB(NOW(), INTERVAL 30 day)
+          AND b.start_date <![CDATA[<]]> NOW()
+        ORDER BY b.sprint_no, today
 
     </select>
 
@@ -217,12 +224,35 @@
 
         SELECT
             count(no) as total,
-            (select count(no) from backlog where status = "done" and project_no = #{project_no}) as done_job,
-            (select count(no) from backlog where status <![CDATA[<>]]>  "done" and project_no = #{project_no}) as task
+            (SELECT COUNT(no) FROM backlog WHERE status = "done" AND project_no = #{project_no}) AS done_job,
+            (SELECT COUNT(no) FROM backlog WHERE status <![CDATA[<>]]>  "done" AND project_no = #{project_no}) AS task
         FROM
             backlog
-        where
+        WHERE
             project_no = #{project_no}
+
+    </select>
+
+    <select id="selectBarBurndown" parameterType="Integer"
+            resultType="com.example.peernow360.dto.BurnDownDto">
+
+        select
+            s.no,
+            s.title,
+            COUNT(s.no) AS total,
+            (SELECT COUNT(*) FROM backlog WHERE sprint_no = s.no AND status = "done") AS done_job
+        FROM
+            backlog b
+        JOIN
+            sprint s
+        ON
+            b.sprint_no = s.no
+        WHERE
+            s.project_no = #{project_no}
+        GROUP BY
+            s.no
+        ORDER BY
+            s.no;
 
     </select>
 

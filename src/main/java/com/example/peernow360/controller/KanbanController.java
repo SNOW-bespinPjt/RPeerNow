@@ -131,9 +131,21 @@ public class KanbanController {
     @GetMapping("/ptotal")
     @Operation(summary = "프로젝트 내 존재하는 스프린트 백로그 총개수, 완료 개수, 진행중인 개수", description = "프로젝트 내 존재하는 스프린트 백로그 총개수, 완료 개수, 진행중인 개수", tags = {"detail"})
     public SingleResponse<BurnDownDto> backlogStatusTotal(@RequestParam (value="project_no") int project_no) {
-        log.info("[KanbanController] eachBacklogAndDate()");
+        log.info("[KanbanController] backlogStatusTotal()");
 
         return responseService.getSingleResponse(kanbanService.backlogStatusTotal(project_no));
+
+    }
+
+    /*
+     * 프로젝트 내 존재하는 각 스프린트들의 총 개수 및 완료 백로그 개수
+     */
+    @GetMapping("/barburndown")
+    @Operation(summary = "프로젝트 내 존재하는 각 스프린트들의 총 개수 및 완료 백로그 개수", description = "프로젝트 내 존재하는 각 스프린트들의 총 개수 및 완료 백로그 개수", tags = {"detail"})
+    public ListResponse<BurnDownDto> backlogBarBurndown(@RequestParam (value="project_no") int project_no) {
+        log.info("[KanbanController] backlog()");
+
+        return responseService.getListResponse(kanbanService.selectBarBurndown(project_no));
 
     }
 
