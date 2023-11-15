@@ -15,8 +15,9 @@ import java.util.List;
 @Builder
 public class ErrorResponse {
 
-    private final String code;
+    private final Object code;
     private final String message;
+
 
     /*
      *  만약 errors가 없다면 응답으로 내려가지 않도록 @JsonInclude 어노테이션을 추가

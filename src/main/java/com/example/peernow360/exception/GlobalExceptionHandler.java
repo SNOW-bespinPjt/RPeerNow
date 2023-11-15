@@ -104,7 +104,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
     private Object makeErrorResponse(ReviewErrorCode reviewErrorCode) {
 
         return ErrorResponse.builder()
-                .code(reviewErrorCode.name())
+                .code(reviewErrorCode.getStatus())
                 .message(reviewErrorCode.getMessage())
                 .build();
 
