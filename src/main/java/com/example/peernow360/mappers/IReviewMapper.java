@@ -40,4 +40,6 @@ public interface IReviewMapper {
     List<PeerReviewDto> peerlist(PeerReviewDto peerReviewDto);
 
     Object bestImg(PeerDto peerDto);
+
+    int getReviewInfo(ReviewDto reviewDto);
 }

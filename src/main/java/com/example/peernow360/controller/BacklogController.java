@@ -76,7 +76,7 @@ public class BacklogController {
      */
     @GetMapping("/download")
     @Transactional(readOnly = true)
-    @Operation(summary = "백로그 상세 정보 파일 다운로드 불러오기", description = "백로그 상세 정보 파일 다운로드 불러오기", tags = {"detail"})
+    @Operation(summary = "백로그 파일 다운로드", description = "백로그 파일 다운로드 ", tags = {"detail"})
     public ResponseEntity<byte[]> backlogFileDownload(@RequestParam (value = "no") int no) throws IOException {
         log.info("[BacklogController] backlogDetailByNo()");
 

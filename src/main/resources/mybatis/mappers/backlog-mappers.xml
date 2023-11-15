@@ -109,7 +109,7 @@
             resultType="com.example.peernow360.dto.FileDto">
 
         select
-            *
+            name
         from
             backfile
         where
@@ -203,28 +203,15 @@
 
     </update>
 
-    <select id="searchAllBacklogList" parameterType="Integer"
-            resultType="com.example.peernow360.dto.BacklogDto">
+    <select id="searchAllBacklogList" parameterType="Integer" resultType="com.example.peernow360.dto.BacklogDto">
 
-        select
-            b.no,
-            b.sprint_no,
-            b.user_id,
-            b.title,
-            b.detail,
-            b.status,
-            b.reg_date,
-            b.mod_date,
-            b.project_no,
-            u.image
-        FROM
-            backlog b
-                JOIN
-            user u
-            ON
-                b.user_id = u.id
-        where
-            project_no = #{project_no}
+        select b.no, b.sprint_no, b.user_id, b.title, b.detail, b.status, b.reg_date, b.mod_date, b.project_no, u.image, f.name as backfile
+        from backlog b
+        join user u
+        on b.user_id = u.id
+        left join backfile f
+        on b.no = f.backlog_no
+        where project_no = #{project_no}
 
     </select>
 

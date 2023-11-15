@@ -237,13 +237,16 @@ public class BacklogService implements IBacklogService {
                 msgData.put("backlog_no", no);
 
                 FileDto fileDBName = iBacklogMapper.searchBacklogFile(no);
-                s3Uploader.delete(String.valueOf(fileDBName.getNo()), fileDBName.getName());
-                int isDel = iBacklogMapper.removeBacklogFile(no);
+                if(fileDBName != null) {
+                    s3Uploader.delete(String.valueOf(fileDBName.getNo()), fileDBName.getName());
+                    int isDel = iBacklogMapper.removeBacklogFile(no);
 
-                log.info("isDel : 1 -> True / isDel : 0 -> false : " + isDel);
+                    log.info("isDel : 1 -> True / isDel : 0 -> false : " + isDel);
 
-                String storedFileName = s3Uploader.upload(fileDto, backlogDto.getUser_id());
-                msgData.put("name", storedFileName);
+                }
+
+                s3Uploader.upload(fileDto, String.valueOf(backlogDto.getNo()));
+                msgData.put("name", fileDto.getOriginalFilename());
                 iBacklogMapper.insertBacklogFile(msgData);
 
             }
@@ -328,9 +331,10 @@ public class BacklogService implements IBacklogService {
     public String backlogFileDownload(int no) {
         log.info("[BacklogService] backlogFileDownload()");
 
-        FileDto file = iBacklogMapper.searchBacklogFile(no);
+        FileDto fileDto = iBacklogMapper.searchBacklogFile(no);
+        String fileName = fileDto.getName();
 
-        return file.getName();
+        return fileName;
 
     }
 
