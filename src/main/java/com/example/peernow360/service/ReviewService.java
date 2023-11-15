@@ -1,6 +1,10 @@
 package com.example.peernow360.service;
 
 import com.example.peernow360.dto.*;
+import com.example.peernow360.exception.CustomException;
+import com.example.peernow360.exception.RestApiException;
+import com.example.peernow360.exception.ReviewErrorCode;
+import com.example.peernow360.exception.UserErrorCode;
 import com.example.peernow360.mappers.IReviewMapper;
 import com.example.peernow360.service.impl.IReviewService;
 import lombok.RequiredArgsConstructor;
@@ -25,13 +29,29 @@ public class ReviewService implements IReviewService {
     public int createScore(ReviewDto reviewDto) {
         log.info("createScore()");
 
-        int result = iReviewMapper.createScore(reviewDto);
+        int searchResult = iReviewMapper.getReviewInfo(reviewDto);
 
-        int total = reviewDto.getScore1() + reviewDto.getScore2() + reviewDto.getScore3() + reviewDto.getScore4() + reviewDto.getScore5();
-        reviewDto.setTotal(total);
-        iReviewMapper.totalScore(reviewDto);
+        if (searchResult > 0) {
 
-        return result;
+            int result = iReviewMapper.createScore(reviewDto);
+
+            int total = reviewDto.getScore1() + reviewDto.getScore2() + reviewDto.getScore3() + reviewDto.getScore4() + reviewDto.getScore5();
+            reviewDto.setTotal(total);
+            iReviewMapper.totalScore(reviewDto);
+
+            return result;
+
+        } else {
+            throw new CustomException(ReviewErrorCode.ALREADY_EVALUATE);
+        }
+
+//        int result = iReviewMapper.createScore(reviewDto);
+//
+//        int total = reviewDto.getScore1() + reviewDto.getScore2() + reviewDto.getScore3() + reviewDto.getScore4() + reviewDto.getScore5();
+//        reviewDto.setTotal(total);
+//        iReviewMapper.totalScore(reviewDto);
+
+//        return result;
     }
 
     public List<ReviewDto> feedback(int no, String user_id) {

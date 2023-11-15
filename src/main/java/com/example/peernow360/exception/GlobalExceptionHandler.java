@@ -44,6 +44,25 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
 
     }
 
+
+
+    @ExceptionHandler({Exception.class})
+    public ResponseEntity<Object> handleAllException(Exception ex) {
+        log.warn("handleAllException", ex);
+
+        ErrorCode errorCode = CommonErrorCode.INTERNAL_SERVER_ERROR;
+        return handleExceptionInternal(errorCode);
+        
+    }
+
+    @ExceptionHandler({CustomException.class})
+    protected ResponseEntity<Object> handleCustomException(CustomException ex) {
+
+        ReviewErrorCode reviewErrorCode = ReviewErrorCode.ALREADY_EVALUATE;
+
+        return handleExceptionInternal(reviewErrorCode);
+    }
+
     public ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException e,
             HttpHeaders headers,
@@ -58,15 +77,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
 
     }
 
-    @ExceptionHandler({Exception.class})
-    public ResponseEntity<Object> handleAllException(Exception ex) {
-        log.warn("handleAllException", ex);
-
-        ErrorCode errorCode = CommonErrorCode.INTERNAL_SERVER_ERROR;
-        return handleExceptionInternal(errorCode);
-        
-    }
-
     private ResponseEntity<Object> handleExceptionInternal(ErrorCode errorCode) {
 
         return ResponseEntity.status(errorCode.getHttpStatus())
@@ -74,11 +84,28 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
         
     }
 
+    private ResponseEntity<Object> handleExceptionInternal(ReviewErrorCode reviewErrorCode) {
+
+        return ResponseEntity.status(reviewErrorCode.getStatus())
+                .body(makeErrorResponse(reviewErrorCode));
+
+    }
+
+
     private Object makeErrorResponse(ErrorCode errorCode) {
 
         return ErrorResponse.builder()
                 .code(errorCode.name())
                 .message(errorCode.getMessage())
+                .build();
+
+    }
+
+    private Object makeErrorResponse(ReviewErrorCode reviewErrorCode) {
+
+        return ErrorResponse.builder()
+                .code(reviewErrorCode.name())
+                .message(reviewErrorCode.getMessage())
                 .build();
 
     }
