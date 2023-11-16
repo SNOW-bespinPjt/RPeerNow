@@ -205,13 +205,30 @@
 
     <select id="searchAllBacklogList" parameterType="Integer" resultType="com.example.peernow360.dto.BacklogDto">
 
-        select b.no, b.sprint_no, b.user_id, b.title, b.detail, b.status, b.reg_date, b.mod_date, b.project_no, u.image, f.name as backfile
-        from backlog b
-        join user u
-        on b.user_id = u.id
-        left join backfile f
-        on b.no = f.backlog_no
-        where project_no = #{project_no}
+        SELECT
+            b.no,
+            b.sprint_no,
+            b.user_id,
+            b.title,
+            b.detail,
+            b.status,
+            b.reg_date,
+            b.mod_date,
+            b.project_no,
+            u.image,
+            f.name AS backfile
+        FROM
+            backlog b
+        JOIN
+            user u
+        ON
+            b.user_id = u.id
+        LEFT JOIN
+                backfile f
+        ON
+            b.no = f.backlog_no
+        WHERE
+            project_no = #{project_no}
 
     </select>
 

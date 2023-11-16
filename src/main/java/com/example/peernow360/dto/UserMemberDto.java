@@ -18,4 +18,5 @@ public class UserMemberDto {
     private String role;
     private String status;
 
+
 }

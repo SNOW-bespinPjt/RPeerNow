@@ -112,7 +112,6 @@ public class UserMemberController {
     }
 
     @PostMapping("/logout_info")
-    @Transactional
     @Operation(summary = "로그아웃", description = "로그아웃", tags = {"create"})
     public ResponseEntity<String> logOutInfo(@RequestHeader(value = "cookie") String refreshToken) {
         log.info("[HomeController] logOut()");
@@ -125,7 +124,6 @@ public class UserMemberController {
      * 유저 계정 삭제
      */
     @DeleteMapping("/leave")
-    @Transactional
     @Operation(summary = "계정 삭제", description = "계정 삭제", tags = {"delete"})
     public String deleteAccountConfirm(@RequestParam ("id") String id, @RequestHeader(value = "cookie") String refreshToken) {
         log.info("[HomeController] deleteAccountConfirm()");
@@ -157,6 +155,18 @@ public class UserMemberController {
         log.info("[HomeController] updateAccountImage()");
 
         return ResponseResult.result(userMemberService.updateAccountImage(id, fileName, multipartFile));
+
+    }
+
+    /*
+     * 프로젝트 변경 시 권한 재발급
+     */
+    @GetMapping("/authority")
+    @Operation(summary = "계정 이미지 수정", description = "계정 이미지 수정", tags = {"modify"})
+    public SingleResponse<UserMemberDto> changeAuthority(@RequestParam (value = "project_no") int project_no) {
+        log.info("[HomeController] changeAuthority()");
+
+        return responseService.getSingleResponse(userMemberService.changeAuthority(project_no));
 
     }
 

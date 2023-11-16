@@ -6,7 +6,8 @@ import com.example.peernow360.dto.UserMemberDto;
 import com.example.peernow360.mappers.IUserMemberMapper;
 import com.example.peernow360.security.JWTtokenProvider;
 import com.example.peernow360.service.impl.IUserMemberService;
-import com.example.peernow360.utils.Constant;
+import com.example.peernow360.utils.UserEnum;
+import com.example.peernow360.utils.UserEnumCode;
 import com.example.peernow360.utils.UserMember.UserMemberUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -23,14 +24,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
-import org.springframework.util.StringUtils;
 
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,11 +48,8 @@ public class UserMemberService implements IUserMemberService {
     private final S3Uploader s3Uploader;
     private final UserMemberUtils userMemberUtils;
 
-
-
     @Value("${jwt.HttpHeaderValue}")
     private String HttpHeaderValue;
-
 
     public int createAccountConfirm(MultipartFile multipartFile, UserMemberDto userMemberDto) throws IOException {
         log.info("[UserMemberService] createAccountConfirm()");
@@ -72,22 +70,30 @@ public class UserMemberService implements IUserMemberService {
 
             int result = iUserMemberMapper.insertUserMember(userMemberDto);
 
-            switch (result) {
-                case Constant.DB_ERROR:
-                    log.info("DB ERROR");
+            UserEnum resultEnum = Arrays.stream(UserEnum.values()) // UserEnum 열거형의 모든 상수를 스트림으로 변환
+                    .filter(enumValue -> enumValue.getUserEnum() == result) // 스트림에서 getUserEnum() 메소드를 이용하여 각 상수의 userEnum 필드 값이 result 값과 일치하는지 필터링
+                    .findFirst() // 필터링된 결과 중 첫 번째 값을 반환합니다. 즉, result 값과 일치하는 첫 번째 열거형 상수
+                    .orElse(null);
 
-                case Constant.INSERT_ACCOUNT_AT_DB_FAIL:
-                    log.info("INSERT ACCOUNT AT DB FAIL");
-                    return result;
+            if (resultEnum != null)
+                switch (resultEnum) {
+                    case DB_ERROR:
+                        log.info("DB ERROR");
 
-                case Constant.INSERT_ACCOUNT_AT_DB_SUCCESS:
-                    log.info("INSERT ACCOUNT AT DB SUCCESS");
-                    return result;
-            }
+                    case INSERT_ACCOUNT_AT_DB_FAIL:
+                        log.info("INSERT ACCOUNT AT DB FAIL");
+                        return UserEnum.INSERT_ACCOUNT_AT_DB_FAIL.getUserEnum();
+
+                    case INSERT_ACCOUNT_AT_DB_SUCCESS:
+                        log.info("INSERT ACCOUNT AT DB SUCCESS");
+                        return UserEnum.INSERT_ACCOUNT_AT_DB_SUCCESS.getUserEnum();
+
+                }
+
         }
 
         log.info("ID_IS_ALREADY_EXIST");
-        return Constant.ID_IS_ALREADY_EXIST;
+        return UserEnum.ID_IS_ALREADY_EXIST.getUserEnum();
 
     }
 
@@ -274,6 +280,7 @@ public class UserMemberService implements IUserMemberService {
      * 트랜잭션이 시작되고, 메서드가 성공적으로 실행되면 트랜잭션이 커밋됩니다. 만약 예외가 발생하면 트랜잭션이 롤백됩니다.
      */
     @Override
+    @Transactional
     public ResponseEntity logOutInfo(String refreshToken) {
         log.info("[UserMemberService] logOut()");
 
@@ -291,9 +298,9 @@ public class UserMemberService implements IUserMemberService {
 
             //blacklist 삽입 성공
             if(result > 0) {
-                result = iUserMemberMapper.removeRefreshToken(refreshToken);
+                iUserMemberMapper.removeRefreshToken(refreshToken);
 
-                return result > 0 ? ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, userMemberUtils.clearCookieToken().toString()).body("success") : ResponseEntity.ok("fail");
+                return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, userMemberUtils.clearCookieToken().toString()).body("success");
 
             }
 
@@ -305,6 +312,7 @@ public class UserMemberService implements IUserMemberService {
     }
 
     @Override
+    @Transactional
     public int deleteAccountConfirm(String id, String refreshToken) {
         log.info("[UserMemberService] deleteAccountConfirm()");
 
@@ -340,7 +348,6 @@ public class UserMemberService implements IUserMemberService {
 
         return iUserMemberMapper.modifyAccountInfo(userMemberDto);
 
-
     }
 
     public int updateAccountImage(String id, String fileName, MultipartFile multipartFile) throws IOException {
@@ -355,11 +362,41 @@ public class UserMemberService implements IUserMemberService {
         s3Uploader.upload(multipartFile, id);
 
         return result;
+
+    }
+
+    @Override
+    public UserMemberDto changeAuthority(int project_no) {
+        log.info("[UserMemberService] changeAuthority()");
+
+        Map<String, Object> data = new HashMap<>();
+
+        User user_info = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String user_id = user_info.getUsername();
+
+        data.put("user_id", user_id);
+        data.put("project_no", project_no);
+
+        UserMemberDto userMemberDto = iUserMemberMapper.selectAuthority(data);
+
+        if(userMemberDto != null) {
+            log.info(" 프로젝트 별 권한을 재발급하는데 성공하였습니다.");
+
+            return userMemberDto;
+
+        } else {
+            log.info(" 프로젝트 별 권한을 재발급하는데 실패하였습니다.");
+
+            return null;
+
+        }
+
     }
 
     public String fileName(String userId) {
 
         return iUserMemberMapper.fileName(userId);
+
     }
 
 }

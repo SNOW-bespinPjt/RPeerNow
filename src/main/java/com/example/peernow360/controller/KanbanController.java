@@ -88,16 +88,7 @@ public class KanbanController {
     public synchronized void modifyBurnDown() {
         log.info("[KanbanController] updateBurnDown()");
 
-        lock.lock();
-
-        try{
-            kanbanService.updateBurnDown();
-
-        } finally {
-            //작업이 끝나면 unlock으로 Lock 해제
-            lock.unlock();
-
-        }
+        kanbanService.updateBurnDown();
 
     }
 
