@@ -253,4 +253,19 @@
 
     </select>
 
+    <select id="selectAuthority" parameterType="hashMap"
+            resultType="com.example.peernow360.dto.UserMemberDto">
+
+        SELECT
+            peer_id AS id,
+            role
+        FROM
+            acceptteam
+        WHERE
+            no = #{project_no}
+        AND
+            peer_id = #{user_id}
+
+    </select>
+
 </mapper>

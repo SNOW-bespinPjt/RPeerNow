@@ -33,7 +33,6 @@ public class BacklogController {
      * 백로그 생성
      */
     @PostMapping("")
-    @Transactional
     @Operation(summary = "백로그 생성", description = "백로그 생성", tags = {"create"})
     public String createBacklog(@RequestParam (value = "project_no") int project_no,
                                 @RequestParam (value = "sprint_no", required = false) String sprint_no, //백로그만 생성할 시 -> sprintnumber을 받지 않는다.
@@ -49,7 +48,6 @@ public class BacklogController {
      * 스프린트에 포함된 백로그 전체 리스트 불러오기
      */
     @GetMapping("/list")
-    @Transactional(readOnly = true)
     @Operation(summary = "백로그 전체 리스트 불러오기", description = "백로그 전체 리스트 불러오기", tags = {"detail"})
     public MapResponse<String,Object> backlogList(@RequestParam (value = "sprint_no") int sprint_no) throws IOException {
         log.info("[BacklogController] backlogDetail()");
@@ -62,7 +60,6 @@ public class BacklogController {
      * 백로그 상세 페이지 불러오기 ( title을 클릭시 이동하는)
      */
     @GetMapping("")
-    @Transactional(readOnly = true)
     @Operation(summary = "백로그 상세 정보 불러오기", description = "백로그 상세 정보 불러오기", tags = {"detail"})
     public MapResponse<String,Object> backlogDetail(@RequestParam (value = "no") int no) throws IOException {
         log.info("[BacklogController] backlogDetailByNo()");
@@ -75,7 +72,6 @@ public class BacklogController {
      * 백로그 상세 페이지 파일 다운로드 불러오기
      */
     @GetMapping("/download")
-    @Transactional(readOnly = true)
     @Operation(summary = "백로그 파일 다운로드", description = "백로그 파일 다운로드 ", tags = {"detail"})
     public ResponseEntity<byte[]> backlogFileDownload(@RequestParam (value = "no") int no) throws IOException {
         log.info("[BacklogController] backlogDetailByNo()");
