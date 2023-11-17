@@ -188,8 +188,21 @@ public class ProjectService implements IProjectService {
 
         List<InvitationDto> list = iProjectMapper.projectInvitation(invitationDto);
         for(InvitationDto invitationDtos : list) {
-            Object image = s3GetImage.getObject(invitationDtos.getOwner_id() + "/" + invitationDtos.getOwner_image());
-            invitationDtos.setOwner_image(image);
+
+            try {
+
+                Object image = s3GetImage.getObject(invitationDtos.getOwner_id() + "/" + invitationDtos.getOwner_image());
+
+
+                if (image == null) {
+                    image = s3GetImage.getObject("defaultImg/defaultImg.png");
+                }
+                invitationDtos.setOwner_image(image);
+
+            } catch (Exception e) {
+                invitationDtos.setOwner_image(s3GetImage.getObject("defaultImg/defaultImg.png"));
+            }
+
         }
 
         return list;
@@ -197,3 +210,4 @@ public class ProjectService implements IProjectService {
 //        return  iProjectMapper.projectInvitation(invitationDto);
     }
 }
+
