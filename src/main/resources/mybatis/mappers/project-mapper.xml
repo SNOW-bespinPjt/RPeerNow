@@ -78,17 +78,15 @@
 
     <insert id="insertReview" parameterType="hashMap">
 
-        insert into
-            review(user_id, peer_id, project_no, comment1, comment2, score1, score2, score3, score4, score5, total, reg_date)
+        insert into review(user_id, peer_id, project_no, comment1, comment2, score1, score2, score3, score4, score5, total, reg_date)
         values(#{user_id}, #{peer_id}, #{project_no}, '없음', '없음', 0, 0, 0, 0, 0, 0, now())
 
     </insert>
 
     <insert id="insertReversReview" parameterType="hashMap">
 
-        insert into
-            review(user_id, peer_id, project_no)
-        values(#{peer_id}, #{user_id}, #{project_no})
+        insert into review(user_id, peer_id, project_no, comment1, comment2, score1, score2, score3, score4, score5, total, reg_date)
+        values(#{peer_id}, #{user_id}, #{project_no}, '없음', '없음', 0, 0, 0, 0, 0, 0, now())
 
     </insert>
 
