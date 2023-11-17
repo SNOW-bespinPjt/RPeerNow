@@ -61,7 +61,9 @@
         WHERE
             sprint_no = #{sprint_no}
         ORDER BY
-            b.reg_date DESC;
+            b.reg_date DESC
+        LIMIT
+            10;
 
     </select>
 
@@ -232,7 +234,9 @@
         WHERE
             project_no = #{project_no}
         ORDER BY
-            b.reg_date DESC;
+            b.reg_date DESC
+        LIMIT
+            10;
 
     </select>
 

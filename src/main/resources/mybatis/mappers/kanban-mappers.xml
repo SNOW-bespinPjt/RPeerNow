@@ -26,6 +26,10 @@
                 b.user_id = u.id
         WHERE
             sprint_no = #{sprint_no}
+        ORDER BY
+            b.reg_date DESC
+        LIMIT
+            10;
 
     </select>
 
@@ -53,6 +57,10 @@
             sprint_no = 0
         and
             project_no = #{project_no}
+        ORDER BY
+            b.reg_date DESC
+        LIMIT
+            10;
 
     </select>
 
