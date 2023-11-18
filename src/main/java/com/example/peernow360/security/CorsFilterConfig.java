@@ -21,8 +21,8 @@ public class CorsFilterConfig {
         config.addAllowedOriginPattern("*"); //
         config.addAllowedHeader("*"); //클라이언트가 전송할 수 있는 헤더 값을 설정
         config.addAllowedMethod("*");
-        config.addExposedHeader("Content-Disposition");
 
+        config.addExposedHeader("Content-Disposition");
 
 
 
