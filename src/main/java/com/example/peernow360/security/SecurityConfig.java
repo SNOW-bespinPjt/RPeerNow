@@ -57,7 +57,8 @@ public class SecurityConfig {
 
                 .headers()
                 .frameOptions()
-                .sameOrigin()
+                .disable()
+//                .sameOrigin()
                 .and()
                 .addFilter(corsFilter)
 
