@@ -20,6 +20,7 @@ import java.io.IOException;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
+@CrossOrigin(exposedHeaders = "*")
 @RequestMapping("/api/project/backlog")
 @Tag(name = "backlog", description = "백로그")
 public class BacklogController {
