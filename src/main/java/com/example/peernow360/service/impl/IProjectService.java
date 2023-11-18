@@ -22,7 +22,7 @@ public interface IProjectService {
 
     int deleteProject(int no, String user_id);
 
-    List<UserMemberDto> getPeer(String peerName);
+    List<UserMemberDto> getPeer(String peerName) throws IOException;
 
     List<ProjectDto> projectList(String user_id);
 

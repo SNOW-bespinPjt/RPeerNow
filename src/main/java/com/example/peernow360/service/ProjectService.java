@@ -59,10 +59,26 @@ public class ProjectService implements IProjectService {
         return result;
     }
 
-    public List<UserMemberDto> getPeer(String peerName) {
+    public List<UserMemberDto> getPeer(String peerName) throws IOException {
         log.info("getPeer()");
 
-        return iProjectMapper.getPeer(peerName);
+        List<UserMemberDto> list = iProjectMapper.getPeer(peerName);
+        for(UserMemberDto userMemberDto : list) {
+
+            try {
+                Object image = s3GetImage.getObject(userMemberDto.getId() + "/" + userMemberDto.getImage());
+
+                if(image == null) {
+                    image = s3GetImage.getObject("defaultImg/defaultImg.png");
+                }
+                userMemberDto.setImage(image);
+
+            } catch (Exception e) {
+                userMemberDto.setImage(s3GetImage.getObject("defaultImg/defaultImg.png"));
+            }
+        }
+
+        return list;
     }
 
     public ProjectDto projectDetail(int no) {
