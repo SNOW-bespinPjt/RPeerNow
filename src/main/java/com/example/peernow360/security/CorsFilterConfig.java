@@ -7,6 +7,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import java.util.Arrays;
+
 //스프링이 돌아가는데 있어서 설정을 관리하는 객체
 @Configuration
 public class CorsFilterConfig {
@@ -20,6 +22,11 @@ public class CorsFilterConfig {
         config.addAllowedHeader("*"); //클라이언트가 전송할 수 있는 헤더 값을 설정
         config.addAllowedMethod("*");
         config.addExposedHeader("*");
+        config.setAllowedHeaders(Arrays.asList("Content-Disposition"));
+        config.setExposedHeaders(Arrays.asList("Content-Disposition"));
+
+
+
 
         config.setAllowCredentials(true);
 
