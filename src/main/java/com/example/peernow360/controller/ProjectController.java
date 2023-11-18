@@ -52,7 +52,7 @@ public class ProjectController {
 
     @GetMapping("/peer")
     @Operation(summary = "팀원 조회", description = "팀원 조회", tags = {"detail"})
-    public ListResponse<UserMemberDto> getPeer(@RequestParam("peerName") String peerName) {
+    public ListResponse<UserMemberDto> getPeer(@RequestParam("peerName") String peerName) throws IOException {
         log.info("getPeer()");
 
         return responseService.getListResponse(projectService.getPeer(peerName));

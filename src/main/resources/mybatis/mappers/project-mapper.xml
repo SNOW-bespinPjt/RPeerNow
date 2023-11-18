@@ -19,7 +19,7 @@
     </insert>
 
     <select id="getPeer" parameterType="String" resultType="com.example.peernow360.dto.UserMemberDto">
-        select name, id, mail
+        select name, id, mail, image
         from user
         where name like concat('%', #{peerName}, '%')
     </select>
