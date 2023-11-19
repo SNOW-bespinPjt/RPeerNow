@@ -106,6 +106,7 @@ public class JWTtokenFilter extends OncePerRequestFilter {
             }
 
             log.info("검증 완료");
+
         }
 
 //        ResponseEntity<Map<String,Object>> validationResult = jwTtokenProvider.validateTokenAndReturnMessage(accessToken);

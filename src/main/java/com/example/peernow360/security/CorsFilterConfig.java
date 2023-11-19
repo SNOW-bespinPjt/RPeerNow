@@ -25,9 +25,6 @@ public class CorsFilterConfig {
         config.addExposedHeader("Content-Disposition");
         config.addExposedHeader("Newaccesstoken");
 
-
-
-
         config.setAllowCredentials(true);
 
         source.registerCorsConfiguration("/**", config); // CORS 구성을 등록, “/**” 는 모든 경로에서 CORS가 적용되도록 설정한다.
