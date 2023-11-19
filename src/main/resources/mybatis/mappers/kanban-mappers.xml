@@ -128,7 +128,7 @@
             NOW(),
         (SELECT count(*) FROM backlog WHERE sprint_no = #{no} AND status NOT IN ("done")),
         (SELECT count(*) FROM backlog WHERE sprint_no = #{no} AND status IN ("done"))
-        from
+        
 
     </insert>
 
