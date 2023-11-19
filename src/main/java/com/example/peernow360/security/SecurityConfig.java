@@ -46,10 +46,13 @@ public class SecurityConfig {
                         .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()  // HTTP 요청 인증 설정
                         .requestMatchers("/api/user/join","/api/user/login","/api/user/request_refreshToken","/api/user/gettest", "/v3/**", "/swagger-ui/**"
                         ).permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/api/project/sprint").hasAnyRole("PM", "SM")
-                        .requestMatchers("/api/project/sprint").hasRole("SM")
-                        .requestMatchers(HttpMethod.PUT,"/api/project").hasRole("PM")
-                        .requestMatchers(HttpMethod.DELETE,"/api/project").hasRole("PM")
+
+
+                        //.requestMatchers(HttpMethod.PUT, "/api/project/sprint").hasAnyRole("PM", "SM")
+                        //.requestMatchers("/api/project/sprint").hasRole("SM")
+                        //.requestMatchers(HttpMethod.PUT,"/api/project").hasRole("PM")
+                        //.requestMatchers(HttpMethod.DELETE,"/api/project").hasRole("PM")
+
                         .anyRequest().authenticated()  // 해당 경로 외의 요청은 모두 인증 필요
                 ).formLogin().disable()
 
@@ -57,7 +60,8 @@ public class SecurityConfig {
 
                 .headers()
                 .frameOptions()
-                .sameOrigin()
+                .disable()
+//                .sameOrigin()
                 .and()
                 .addFilter(corsFilter)
 

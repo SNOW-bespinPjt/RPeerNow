@@ -32,8 +32,6 @@ public class ReviewController {
 
     private final ResponseService responseService;
     private final ReviewService reviewService;
-
-    private final S3GetImage s3GetImage;
     private final S3Download s3Download;
 
     @PostMapping("/evaluation")

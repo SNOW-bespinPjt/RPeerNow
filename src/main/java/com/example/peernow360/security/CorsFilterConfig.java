@@ -7,6 +7,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import java.util.Arrays;
+
 //스프링이 돌아가는데 있어서 설정을 관리하는 객체
 @Configuration
 public class CorsFilterConfig {

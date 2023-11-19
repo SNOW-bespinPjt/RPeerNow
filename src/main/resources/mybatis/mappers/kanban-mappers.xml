@@ -130,8 +130,6 @@
         (SELECT count(*) FROM backlog WHERE sprint_no = #{no} AND status IN ("done"))
 
 
-
-
     </insert>
 
     <insert id="updateBurndown" parameterType="com.example.peernow360.dto.BurnDownDto">
