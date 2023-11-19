@@ -122,7 +122,7 @@ public class BacklogController {
     /*
      * 백로그 수정
      */
-    @PutMapping("")
+    @PutMapping("/modify")
     @Operation(summary = "백로그 수정", description = "백로그 수정", tags = {"modify"})
     public String backlogModify(@RequestParam (value = "no") int no,
                                 @RequestPart BacklogDto backlogDto,
