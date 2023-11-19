@@ -220,6 +220,7 @@ public class BacklogService implements IBacklogService {
     }
 
     @Override
+    @Transactional
     public String backlogUpdateInfo(BacklogDto backlogDto, int no, MultipartFile fileDto) throws IOException {
         log.info("[BacklogService] backlogUpdateInfo()");
 

@@ -122,7 +122,6 @@ public class BacklogController {
      * 백로그 수정
      */
     @PutMapping("")
-    @Transactional
     @Operation(summary = "백로그 수정", description = "백로그 수정", tags = {"modify"})
     public String backlogModify(@RequestParam (value = "no") int no,
                                 @RequestPart BacklogDto backlogDto,
@@ -137,7 +136,6 @@ public class BacklogController {
      * 백로그 삭제
      */
     @DeleteMapping("")
-    @Transactional
     @Operation(summary = "백로그 삭제", description = "백로그 삭제", tags = {"delete"})
     public String backlogDelete(@RequestParam (value = "no") int no) {
         log.info("[BacklogController] backlogDelete()");
