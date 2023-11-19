@@ -136,7 +136,7 @@ public class BacklogController {
     /*
      * 백로그 삭제
      */
-    @DeleteMapping("")
+    @DeleteMapping("/delete")
     @Operation(summary = "백로그 삭제", description = "백로그 삭제", tags = {"delete"})
     public String backlogDelete(@RequestParam (value = "no") int no) {
         log.info("[BacklogController] backlogDelete()");
