@@ -84,5 +84,7 @@ https://github-production-user-asset-6210df.s3.amazonaws.com/134909932/284762909
 ### ⚙️ AWS S3
 ![image](https://github.com/SNOW-bespinPjt/RPeerNow/assets/134913262/68905490-d820-4bee-a3a6-48cc9764da96)
 > s3의 객체를 public하게 열어두면 인가되지 않는 사용자들이 해당 객체를 다운로드 할 수 있는 문제 존재
-- 이를 해결하고자 백엔드 인스턴스에 IAM Role을 부여 및 s3 객체에 접근하는 로직을 구현하여 인가된 사용자만 백엔드를 통해서 해당 객체에 접근
+- 백엔드 인스턴스에 IAM Role을 부여 및 s3 객체에 접근하는 로직을 구현하여 인가된 사용자만 백엔드를 통해서 해당 객체에 접근
+
+
 
