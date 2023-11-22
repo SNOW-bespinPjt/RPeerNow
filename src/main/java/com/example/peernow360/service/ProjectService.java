@@ -187,7 +187,7 @@ public class ProjectService implements IProjectService {
         return iProjectMapper.declineProject(map);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int deleteProject(int no, String user_id) {
         log.info("deleteProject()");
 
