@@ -13,6 +13,17 @@ java {
 	sourceCompatibility = '17'
 }
 
+bootJar {
+   jar.enabled = true // 빌드시 jar 을 실행
+}
+
+jar {    
+   manifest { // 빌드시 Main-Class 설정
+       attributes 'Main-Class': 'com.example.peernow360.PeerNow360Application'
+    }    
+}
+
+
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
