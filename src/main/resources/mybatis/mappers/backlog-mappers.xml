@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.peernow360.mappers.IBacklogMapper">
+
+    <insert id="createBacklogInfo"
+            parameterType="com.example.peernow360.dto.BacklogDto" useGeneratedKeys="true" keyProperty="no">
+
+        INSERT INTO
+            backlog(
+                    project_no,
+                   sprint_no,
+                   user_id,
+                   title,
+                   detail,
+                   status,
+                   reg_date,
+                   mod_date)
+        VALUES
+            (#{project_no},
+             #{sprint_no},
+             #{user_id},
+             #{title},
+             #{detail},
+             #{status},
+             NOW(),
+             NOW())
+
+    </insert>
+    
+    <insert id="insertBacklogFile" parameterType="hashMap">
+
+        INSERT INTO
+            backfile(backlog_no,name )
+        VALUES
+            ( #{backlog_no},#{name})
+
+    </insert>
+
+    <select id="searchBacklogList" parameterType="Integer"
+            resultType="com.example.peernow360.dto.BacklogDto">
+
+        SELECT
+            b.no,
+            b.sprint_no,
+            b.user_id,
+            b.title,
+            b.detail,
+            b.status,
+            b.reg_date,
+            b.mod_date,
+            b.project_no,
+            u.image
+        FROM
+            backlog b
+        JOIN
+            user u
+        ON
+            b.user_id = u.id
+        WHERE
+            sprint_no = #{sprint_no}
+        ORDER BY
+            b.reg_date DESC
+        LIMIT
+            10;
+
+    </select>
+
+<!--    <select id="searchBacklogFiles" parameterType="Integer"-->
+<!--            resultType="com.example.peernow360.dto.FileDto">-->
+
+<!--        SELECT-->
+<!--            *-->
+<!--        FROM-->
+<!--            backfile-->
+<!--        WHERE-->
+<!--            backlog_no IN (SELECT-->
+<!--                               no-->
+<!--                           FROM-->
+<!--                               backlog-->
+<!--                           WHERE-->
+<!--                               sprint_no = #{sprint_no});-->
+
+<!--    </select>-->
+
+    <select id="searchBacklogDetail" parameterType="Integer"
+            resultType="com.example.peernow360.dto.BacklogDto">
+
+        SELECT
+            b.no,
+            b.sprint_no,
+            b.user_id,
+            b.title,
+            b.detail,
+            b.status,
+            b.reg_date,
+            b.mod_date,
+            b.project_no,
+            u.image
+        FROM
+            backlog b
+        JOIN
+            user u
+        ON
+            b.user_id = u.id
+        WHERE
+            no = #{no}
+
+    </select>
+
+    <select id="searchBacklogFile" parameterType="Integer"
+            resultType="com.example.peernow360.dto.FileDto">
+
+        SELECT
+            name
+        FROM
+            backfile
+        WHERE
+            backlog_no = #{no}
+
+    </select>
+
+    <select id="searchBacklogDayAndIng" parameterType="Integer"
+            resultType="com.example.peernow360.dto.BacklogDto">
+
+        SELECT
+            b.no,
+            b.sprint_no,
+            b.user_id,
+            b.title,
+            b.detail,
+            b.status,
+            b.reg_date,
+            b.mod_date,
+            b.project_no,
+            u.image
+        FROM
+            backlog b
+                JOIN
+            user u
+            ON
+                b.user_id = u.id
+        WHERE
+            sprint_no = #{sprintNo}
+        AND
+            status = "ing"
+
+    </select>
+
+    <update id="updateBacklogStatus" parameterType="com.example.peernow360.dto.BacklogDto">
+
+        UPDATE
+            backlog
+        SET
+            status = #{status},
+            mod_date = NOW()
+        WHERE
+            no = #{no}
+
+    </update>
+
+    <update id="updateBacklogInfo" parameterType="com.example.peernow360.dto.BacklogDto">
+
+        UPDATE
+            backlog
+        SET
+            sprint_no = #{sprint_no},
+            user_id = #{user_id},
+            title = #{title},
+            detail = #{detail},
+            status = #{status},
+            mod_date = NOW()
+
+        WHERE
+            no = #{no}
+
+    </update>
+
+
+    <delete id="removeBacklogInfo" parameterType="Integer">
+
+        DELETE FROM
+            backlog
+        WHERE
+            no = #{no}
+
+    </delete>
+
+    <delete id="removeBacklogFile" parameterType="Integer">
+
+        DELETE FROM
+            backfile
+        WHERE
+            backlog_no = #{no}
+
+    </delete>
+
+    <update id="updateBacklogSprint" parameterType="Integer">
+
+        UPDATE
+            backlog
+        set
+            sprint_no = #{sprint_no}
+        where
+            no = #{backlog_no}
+
+    </update>
+
+    <select id="searchAllBacklogList" parameterType="Integer" resultType="com.example.peernow360.dto.BacklogDto">
+
+        SELECT
+            b.no,
+            b.sprint_no,
+            b.user_id,
+            b.title,
+            b.detail,
+            b.status,
+            b.reg_date,
+            b.mod_date,
+            b.project_no,
+            u.image,
+            f.name AS backfile
+        FROM
+            backlog b
+        JOIN
+            user u
+        ON
+            b.user_id = u.id
+        LEFT JOIN
+                backfile f
+        ON
+            b.no = f.backlog_no
+        WHERE
+            project_no = #{project_no}
+        ORDER BY
+            b.reg_date DESC
+        LIMIT
+            10;
+
+    </select>
+
+</mapper>

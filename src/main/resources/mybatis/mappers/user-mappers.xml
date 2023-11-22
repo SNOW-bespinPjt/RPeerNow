@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.peernow360.mappers.IUserMemberMapper">
+
+    <select id="duplicateById"
+            parameterType="String"
+            resultType="Boolean">
+
+        SELECT
+            COUNT(*)
+        FROM
+            user
+        WHERE
+            id = #{id}
+
+    </select>
+    
+    <select id="selectUserForLogin" parameterType="com.example.peernow360.dto.UserMemberDto" resultType="com.example.peernow360.dto.UserMemberDto">
+
+        SELECT
+            *
+        FROM
+            user
+        WHERE
+            id=#{id}
+
+    </select>
+
+    <delete id="checkRefreshAndDel" parameterType="String">
+
+        DELETE FROM
+                   tokens
+        WHERE
+            user_id = #{id}
+
+    </delete>
+
+
+    <insert id="insertUserMember"
+            parameterType="com.example.peernow360.dto.UserMemberDto">
+
+        INSERT INTO user(id,
+                         pw,
+                         name,
+                         mail,
+                         phone,
+                         team,
+                         image,
+                         grade,
+                         reg_date,
+                         mod_date)
+        VALUES (#{id},
+                #{pw},
+                #{name},
+                #{mail},
+                #{phone},
+                #{team},
+                #{image},
+                #{grade},
+                NOW(), NOW())
+
+    </insert>
+
+    <update id="updateUserPW"
+            parameterType="com.example.peernow360.dto.UserMemberDto">
+
+        UPDATE
+            user
+        SET
+            pw = #{pw}
+        WHERE
+            id = #{id}
+
+    </update>
+
+    <insert id="insertRefreshToken" parameterType="map">
+
+        INSERT INTO
+            tokens(user_id, refreshToken)
+        VALUES
+            (#{user_id}, #{refreshToken})
+
+    </insert>
+
+    <select id="findByToken" parameterType="String" resultType="String">
+
+        SELECT
+            refreshToken
+        FROM
+            tokens
+        WHERE
+            user_id = #{user_id}
+
+    </select>
+
+    <update id="modifyRefreshToken" parameterType="map">
+
+        UPDATE
+            tokens
+        SET
+            refreshToken = #{refreshToken}
+        WHERE
+            user_id = #{user_id}
+
+    </update>
+
+    <select id="compareRefreshToken" parameterType="String" resultType="boolean">
+
+        SELECT
+            count(*)
+        FROM
+            tokens
+        WHERE
+            refreshToken = #{refreshToken}
+
+    </select>
+
+    <insert id="insertBlacklist" parameterType="String">
+
+        INSERT INTO
+            blacklist_tokens(user_id, blacklist)
+        SELECT
+            t.user_id, t.refreshToken
+        FROM
+            tokens t
+        WHERE
+            refreshToken = #{refreshToken}
+
+    </insert>
+
+    <delete id="removeRefreshToken" parameterType="String">
+
+        DELETE FROM
+            tokens
+        WHERE refreshToken = #{refreshToken}
+
+    </delete>
+
+    <select id="searchUserDetail" parameterType="String"
+            resultType="com.example.peernow360.dto.UserMemberDto">
+
+        select
+            id,
+            name,
+            mail,
+            phone,
+            team,
+            image,
+            grade,
+            reg_date,
+            mod_date
+        from
+            user
+        where
+            id = #{id}
+
+
+    </select>
+
+    <delete id="removeAccountInfo" parameterType="String">
+
+        DELETE FROM
+                user
+        WHERE
+            id = #{id}
+
+    </delete>
+
+    <select id="getOriInfo" parameterType="String"
+            resultType="com.example.peernow360.dto.UserMemberDto">
+
+        SELECT
+            *
+        FROM
+            user
+        WHERE
+            id = #{id}
+
+    </select>
+
+    <update id="modifyAccountInfo" parameterType="com.example.peernow360.dto.UserMemberDto">
+
+        UPDATE
+            user
+        SET
+            name = #{name} ,
+            mail = #{mail} ,
+            phone = #{phone} ,
+            team = #{team} ,
+            image = #{image},
+            mod_date = NOW()
+
+        WHERE
+            id = #{id}
+
+    </update>
+
+    <select id="selectBlackListToken" parameterType="String" resultType="boolean">
+
+        SELECT
+            count(*)
+        FROM
+            blacklist_tokens
+        WHERE
+            blacklist = #{refreshToken}
+
+    </select>
+
+    <select id="selectUserName" parameterType="String" resultType="String">
+
+        SELECT
+            name
+        FROM
+            user
+        WHERE
+            id = #{user_id}
+
+
+    </select>
+
+
+    <select id="getRoleInPJT" parameterType="hashMap"
+            resultType="String">
+
+        SELECT
+            role
+        FROM
+            acceptteam
+        WHERE
+            no = #{project_no}
+        AND
+            peer_id = #{id}
+    </select>
+
+    <update id="updateAccountImage"
+            parameterType="String">
+
+        UPDATE
+            user
+        SET
+            image = #{image}
+        WHERE
+            id = #{id}
+
+    </update>
+
+    <select id="fileName" parameterType="String" resultType="String">
+        select image
+        from user
+        where id = #{userId}
+
+    </select>
+
+    <select id="selectAuthority" parameterType="hashMap"
+            resultType="com.example.peernow360.dto.UserMemberDto">
+
+        SELECT
+            peer_id AS id,
+            role
+        FROM
+            acceptteam
+        WHERE
+            no = #{project_no}
+        AND
+            peer_id = #{user_id}
+
+    </select>
+
+</mapper>

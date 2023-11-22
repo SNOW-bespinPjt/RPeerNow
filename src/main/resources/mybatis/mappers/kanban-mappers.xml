@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.peernow360.mappers.IKanbanMapper">
+
+    <select id="showKanbanInfo" parameterType="Integer"
+            resultType="com.example.peernow360.dto.BacklogDto">
+
+        SELECT
+            b.no,
+            b.sprint_no,
+            b.user_id,
+            b.title,
+            b.detail,
+            b.status,
+            b.reg_date,
+            b.mod_date,
+            b.project_no,
+            u.image
+        FROM
+            backlog b
+                JOIN
+            user u
+            ON
+                b.user_id = u.id
+        WHERE
+            sprint_no = #{sprint_no}
+        ORDER BY
+            b.reg_date DESC
+        LIMIT
+            10;
+
+    </select>
+
+    <select id="showOtherInfo" parameterType="Integer"
+            resultType="com.example.peernow360.dto.BacklogDto">
+
+        SELECT
+            b.no,
+            b.sprint_no,
+            b.user_id,
+            b.title,
+            b.detail,
+            b.status,
+            b.reg_date,
+            b.mod_date,
+            b.project_no,
+            u.image
+        FROM
+            backlog b
+                JOIN
+            user u
+            ON
+                b.user_id = u.id
+        WHERE
+            sprint_no = 0
+        and
+            project_no = #{project_no}
+        ORDER BY
+            b.reg_date DESC
+        LIMIT
+            10;
+
+    </select>
+
+    <update id="updateSprint" parameterType="com.example.peernow360.dto.BacklogDto">
+
+        UPDATE
+            backlog
+        SET
+            sprint_no = #{sprint_no}
+        WHERE
+            sprint_no = 0
+        AND
+            no = #{no}
+
+    </update>
+
+    <update id="updateNone" parameterType="com.example.peernow360.dto.BacklogDto">
+
+        UPDATE
+            backlog
+        SET
+            sprint_no = 0
+        WHERE
+            no = #{no}
+        AND
+            sprint_no = #{sprint_no}
+
+    </update>
+
+    <select id="compareEndTime" parameterType="String"
+            resultType="com.example.peernow360.dto.BurnDownDto">
+
+        select
+            *
+        from
+            burndown
+        where
+            #{nowTime} <![CDATA[<=]]> end_date
+        AND
+            #{nowTime} <![CDATA[>=]]> start_date
+        AND
+            no = ori_no
+
+    </select>
+
+    <!-- Sprint Service -->
+    <insert id="createBurndown" parameterType="com.example.peernow360.dto.SprintDto">
+
+        INSERT INTO
+            burndown
+            (sprint_no,
+             lapse,
+             start_date,
+             end_date,
+             reg_date,
+             mod_date,
+             task,
+             done_job)
+        SELECT
+            #{no},
+            1,
+            #{start_date},
+            #{end_date},
+            NOW(),
+            NOW(),
+        (SELECT count(*) FROM backlog WHERE sprint_no = #{no} AND status NOT IN ("done")),
+        (SELECT count(*) FROM backlog WHERE sprint_no = #{no} AND status IN ("done"))
+        from
+
+    </insert>
+
+    <insert id="updateBurndown" parameterType="com.example.peernow360.dto.BurnDownDto">
+
+        INSERT INTO
+            burndown(ori_no,
+                     reg_date,
+                     mod_date,
+                     sprint_no,
+                     lapse,
+                     start_date,
+                     end_date,
+                     task,
+                     done_job)
+        SELECT #{no},
+               DATE_ADD(NOW(), INTERVAL 9 HOUR),
+               DATE_ADD(NOW(), INTERVAL 9 HOUR),
+               sprint_no,
+               (select count(*) from burndown where ori_no = #{no}) + 1,
+               start_date,
+               end_date,
+               (SELECT COUNT(*) FROM backlog WHERE sprint_no = #{sprint_no} AND status NOT IN ("done")),
+                (SELECT COUNT(*) FROM backlog WHERE sprint_no = #{sprint_no} AND status IN ("done"))
+        FROM
+            burndown
+        WHERE
+            no = #{no}
+
+    </insert>
+
+    <select id="searchBurndown" parameterType="Integer"
+                resultType="com.example.peernow360.dto.BurnDownDto">
+
+        SELECT
+            no,
+            sprint_no,
+            task,
+            done_job,
+            task + done_job AS total,
+            DATE_FORMAT(reg_date,'%y-%m-%d') today,
+            (select title from sprint where no = #{sprint_no}) title,
+            DATE_FORMAT(start_date,'%y-%m-%d') start_date,
+            DATE_FORMAT(end_date,'%y-%m-%d') end_date
+        FROM
+            burndown
+        WHERE
+            sprint_no = #{sprint_no}
+
+    </select>
+
+    <select id="getMaxNo" resultType="Integer">
+
+        SELECT
+            Max(no)
+        FROM
+            burndown
+
+    </select>
+
+    <update id="updateNo" parameterType="Integer">
+
+        UPDATE
+            burndown
+        SET
+            ori_no = #{maxNo}
+        WHERE
+            no = #{maxNo}
+
+
+    </update>
+
+    <select id="searchAllBurndown" parameterType="Integer"
+            resultType="com.example.peernow360.dto.BurnDownDto">
+
+        SELECT
+            b.no,
+            s.project_no,
+            sprint_no,
+            task,
+            done_job,
+            task + done_job as total,
+            DATE_FORMAT(b.reg_date,'%y-%m-%d') today,
+            s.title,
+            DATE_FORMAT(b.start_date,'%y-%m-%d') start_date,
+            DATE_FORMAT(b.end_date,'%y-%m-%d') end_date
+        FROM
+            burndown b
+                JOIN
+            sprint s
+            ON b.sprint_no = s.no
+        WHERE
+            s.project_no = #{project_no}
+          AND b.end_date <![CDATA[>=]]> DATE_SUB(NOW(), INTERVAL 30 day)
+          AND b.start_date <![CDATA[<]]> NOW()
+        ORDER BY b.sprint_no, today
+
+    </select>
+
+    <select id="selectBacklogStatusTotal" parameterType="Integer"
+            resultType="com.example.peernow360.dto.BurnDownDto">
+
+        SELECT
+            count(no) as total,
+            (SELECT COUNT(no) FROM backlog WHERE status = "done" AND project_no = #{project_no}) AS done_job,
+            (SELECT COUNT(no) FROM backlog WHERE status <![CDATA[<>]]>  "done" AND project_no = #{project_no}) AS task
+        FROM
+            backlog
+        WHERE
+            project_no = #{project_no}
+
+    </select>
+
+    <select id="selectBarBurndown" parameterType="Integer"
+            resultType="com.example.peernow360.dto.BurnDownDto">
+
+        select
+            s.no,
+            s.title,
+            COUNT(s.no) AS total,
+            (SELECT COUNT(*) FROM backlog WHERE sprint_no = s.no AND status = "done") AS done_job
+        FROM
+            backlog b
+        JOIN
+            sprint s
+        ON
+            b.sprint_no = s.no
+        WHERE
+            s.project_no = #{project_no}
+        GROUP BY
+            s.no
+        ORDER BY
+            s.no;
+
+    </select>
+
+</mapper>

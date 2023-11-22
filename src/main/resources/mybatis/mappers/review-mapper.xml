@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.peernow360.mappers.IReviewMapper">
+
+    <select id="getReviewInfo" parameterType="com.example.peernow360.dto.ReviewDto" resultType="Integer">
+        select count(*)
+        from review
+        where user_id = #{user_id} and peer_id = #{peer_id} and project_no = #{project_no} and total = 0
+    </select>
+
+    <update id="createScore" parameterType="com.example.peernow360.dto.ReviewDto" useGeneratedKeys="true" keyProperty="no">
+        update review
+        set comment1 = #{comment1}, comment2 = #{comment2},
+            score1 = #{score1}, score2 = #{score2}, score3 = #{score3}, score4 = #{score4}, score5 = #{score5}, reg_date = now()
+        where project_no = #{project_no} and user_id = #{user_id} and peer_id = #{peer_id}
+    </update>
+
+    <update id="totalScore" parameterType="com.example.peernow360.dto.ReviewDto">
+        update review
+        SET total = #{total}
+        where project_no = #{project_no} and user_id = #{user_id} and peer_id = #{peer_id}
+    </update>
+
+    <select id="feedback" parameterType="String" resultType="com.example.peernow360.dto.ReviewDto">
+        select *
+        from review
+        where project_no = #{no} and peer_id = #{user_id}
+    </select>
+
+    <select id="avgScore" parameterType="com.example.peernow360.dto.PeerDto" resultType="Integer">
+        select round(avg(total)) as avg
+        from (select * from review where peer_id = #{user_id} and project_no = #{no}) a
+        group by project_no
+    </select>
+
+    <select id="bestId" parameterType="com.example.peernow360.dto.PeerDto" resultType="String">
+        select peer_id
+        from review
+        where project_no = #{no}
+        and user_id = #{user_id}
+        and total = (select MAX(total) from review where project_no = #{no} and user_id = #{user_id})
+        order by reg_date desc
+        limit 1
+    </select>
+
+    <select id="bestName" parameterType="com.example.peernow360.dto.PeerDto" resultType="String">
+        select u.name
+        from review r join user u on r.peer_id = u.id
+        where project_no = #{no}
+          and user_id = #{user_id}
+          and total = (select MAX(total) from review where project_no = #{no} and user_id = #{user_id})
+        order by r.reg_date desc
+            limit 1
+    </select>
+
+    <select id="bestImg" parameterType="com.example.peernow360.dto.PeerDto">
+        select image
+        from user
+        where id = #{best_id}
+    </select>
+
+<!--    <select id="getPeer" parameterType="com.example.peernow360.dto.PeerDto" resultType="String">-->
+<!--        select a.peer_id, u.name-->
+<!--        from acceptteam a-->
+<!--        join user u on a.peer_id = u.id-->
+<!--        where p.no = #{no}-->
+<!--    </select>-->
+
+    <insert id="test" parameterType="com.example.peernow360.dto.TestDto">
+        insert into test(user_id, test, file)
+        values(#{user_id}, #{test}, #{file})
+    </insert>
+
+    <select id="fileName" parameterType="String" resultType="String">
+        select file
+        from test
+        where user_id = #{userId}
+    </select>
+
+    <delete id="delete" parameterType="String">
+        delete from test
+        where user_id = #{userId}
+    </delete>
+
+    <select id="peerlist" parameterType="com.example.peernow360.dto.PeerReviewDto" resultType="com.example.peernow360.dto.PeerReviewDto">
+        select r.project_no as no, r.user_id, a.peer_id, u.name as peer_name, u.team as peer_team, a.role as peer_role, r.total as score, u.image as peer_image
+        from review r
+        join acceptteam a on r.peer_id = a.peer_id
+        join user u on r.peer_id = u.id
+        where r.user_id = #{user_id} and r.project_no = #{no} and a.no = #{no}
+    </select>
+
+</mapper>

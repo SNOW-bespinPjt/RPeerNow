@@ -1,8 +1,134 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.btc.snow.admin.assignment.IAdminAssignmentMB">
+<mapper namespace="com.example.peernow360.mappers.IProjectMapper">
+
+    <insert id="createProject" parameterType="com.example.peernow360.dto.ProjectDto" useGeneratedKeys="true" keyProperty="no">
+        insert into project(user_id, title, detail, start_date, end_date, reg_date, mod_date)
+        values(#{user_id}, #{title}, #{detail}, #{start_date}, #{end_date}, now(), now())
+    </insert>
+
+    <insert id="createTeam" parameterType="com.example.peernow360.dto.TeamDto">
+        insert into team(peer_id, role, no, status)
+        values(#{peer_id}, #{role}, #{no}, COALESCE(#{status}, 'WAIT'))
+    </insert>
+
+    <insert id="createAcceptTeam" parameterType="com.example.peernow360.dto.AcceptTeamDto">
+        insert into acceptteam(no, peer_id, role)
+        values(#{no}, #{user_id}, 'PM')
+    </insert>
+
+    <select id="getPeer" parameterType="String" resultType="com.example.peernow360.dto.UserMemberDto">
+        select name, id, mail, image
+        from user
+        where name like concat('%', #{peerName}, '%')
+    </select>
+
+    <select id="projectDetail" parameterType="Integer" resultType="com.example.peernow360.dto.ProjectDto">
+        select *
+        from project
+        where no = #{no}
+    </select>
+
+    <select id="projectList" parameterType="String" resultType="com.example.peernow360.dto.ProjectDto">
+        select *
+        from project
+        where user_id = #{user_id}
+        or no in (select no from acceptteam where peer_id = #{user_id})
+
+    </select>
+
+    <select id="peerlist" parameterType="Integer" resultType="com.example.peernow360.dto.UserMemberDto">
+        select  p.no, a.role, u.id, u.name, u.mail, u.phone, u.team, u.image, u.grade
+        from acceptteam a
+        join project p on a.no = p.no
+        right outer join user u on a.peer_id = u.id
+        where p.no = #{no}
+    </select>
+
+    <update id="modifyProject" parameterType="com.example.peernow360.dto.ProjectDto">
+        update project p
+        set title = #{title}, detail = #{detail}, start_date = #{start_date}, end_date = #{end_date}, mod_date = now()
+        where p.user_id = #{user_id} and p.no = #{no}
+    </update>
+
+    <update id="acceptProject" parameterType="HashMap">
+        update team
+        set status = 'ACCEPT'
+        where no = #{no}
+          and peer_id = #{user_id}
+    </update>
+
+    <insert id="acceptTeam" parameterType="com.example.peernow360.dto.AcceptTeamDto">
+        insert into acceptteam(no, peer_id, role)
+        values(#{no}, #{user_id}, #{role})
+    </insert>
+
+    <select id="selectedAcceptId" parameterType="Integer"
+            resultType="String">
+
+        select
+            peer_id as user_id
+        from
+            acceptteam
+        where
+            no = #{no}
+
+    </select>
+
+    <insert id="insertReview" parameterType="hashMap">
+
+        insert into review(user_id, peer_id, project_no, comment1, comment2, score1, score2, score3, score4, score5, total, reg_date)
+        values(#{user_id}, #{peer_id}, #{project_no}, '없음', '없음', 0, 0, 0, 0, 0, 0, now())
+
+    </insert>
+
+    <insert id="insertReversReview" parameterType="hashMap">
+
+        insert into review(user_id, peer_id, project_no, comment1, comment2, score1, score2, score3, score4, score5, total, reg_date)
+        values(#{peer_id}, #{user_id}, #{project_no}, '없음', '없음', 0, 0, 0, 0, 0, 0, now())
+
+    </insert>
+
+
+    <update id="declineProject" parameterType="HashMap">
+        update team
+        set status = 'DECLINE'
+        where no = #{no} and peer_id = #{user_id}
+    </update>
+
+    <delete id="deleteProject" parameterType="HashMap">
+        delete from project where no = #{no} and user_id = #{user_id};
+        delete from sprint where project_no = #{no};
+        delete from backlog where sprint_no in (select sprint_no from sprint where project_no = #{no});
+        delete from backfile where backlog_no in (select no from backlog where sprint_no in (select no from sprint where project_no = #{no}));
+        delete from team where no = #{no};
+        delete from acceptteam where no = #{no};
+    </delete>
+
+    <select id="projectInvitation" parameterType="com.example.peernow360.dto.InvitationDto" resultType="com.example.peernow360.dto.InvitationDto">
+        select
+            u.name as owner_name,
+            u.id as owner_id,
+            u.image owner_image,
+            t.role role,
+            t.status as status,
+            p.no as project_number,
+            p.title as project_title,
+            p.start_date as start_date,
+            p.end_date as end_date,
+            t.peer_id as user_id
+        from
+            team t
+                left join
+            project p on t.no = p.no
+                left join
+            user u on p.user_id = u.id
+        where
+            t.peer_id = #{user_id};
+    </select>
+
+
+
 
 </mapper>

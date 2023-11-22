@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.peernow360.mappers.ISprintMapper">
+
+    <insert id="createSprintInfo"
+            parameterType="com.example.peernow360.dto.SprintDto" useGeneratedKeys="true" keyProperty="no">
+
+        INSERT INTO
+            sprint(project_no,
+                   user_id,
+                   title,
+                   detail,
+                   start_date,
+                   end_date,
+                   reg_date,
+                   mod_date)
+        select
+            #{project_no},
+             #{user_id},
+             #{title},
+             #{detail},
+             #{start_date},
+            date_sub(date_add(#{end_date}, INTERVAL 1 DAY), INTERVAL 1 second),
+             NOW(),
+             NOW()
+        FROM
+            acceptteam
+        WHERE
+            role = "SM"
+        AND
+            peer_id = #{user_id}
+        AND
+            no = #{project_no}
+
+    </insert>
+    
+    <select id="searchSprintListDetail" parameterType="Integer"
+            resultType="com.example.peernow360.dto.SprintDto">
+
+        SELECT
+            *
+        FROM
+            sprint
+        WHERE
+            project_no = #{project_no}
+
+    </select>
+
+    <select id="searchSprintDetail" parameterType="Integer"
+            resultType="com.example.peernow360.dto.SprintDto">
+
+        SELECT
+            *
+        FROM
+            sprint
+        WHERE
+            no = #{no}
+
+    </select>
+
+    <update id="updateSprintInfo" parameterType="com.example.peernow360.dto.SprintDto">
+
+        UPDATE
+            sprint
+        SET
+            title = #{title},
+            detail = #{detail},
+            start_date = #{start_date},
+            end_date = #{end_date},
+            mod_date = NOW()
+        WHERE
+            no = #{no}
+        AND
+            EXISTS(
+                SELECT
+                    *
+                FROM
+                    acceptteam
+                WHERE
+                    role IN ("PM", "SM")
+                AND
+                    peer_id = #{user_id}
+                AND
+                    no = #{project_no}
+            )
+
+    </update>
+
+    <delete id="removeSprintInfo" parameterType="com.example.peernow360.dto.SprintDto">
+
+        DELETE FROM
+                sprint
+        WHERE
+            no = #{no}
+        AND
+            EXISTS(
+                SELECT
+                    *
+                FROM
+                    acceptteam
+                WHERE
+                    role NOT IN ("TM")
+                  AND
+                    peer_id = #{user_id}
+                  AND
+                    no = #{project_no}
+            )
+
+    </delete>
+
+    <update id="removeSprintNoAtBLog" parameterType="com.example.peernow360.dto.SprintDto">
+
+        UPDATE
+            backlog
+        SET
+            sprint_no = 0
+        WHERE
+            sprint_no = #{no}
+
+    </update>
+
+</mapper>
