@@ -14,7 +14,8 @@
 <table>
   <tbody>
     <tr>
-      <td align="center">![양성수](https://github.com/ystgd07/testReact2/assets/134909932/1e63d620-482f-4003-b7d7-253d1c5c95fe)<br /><sub><b>FE & INFRA : 양성수</b></sub><br /></td>
+      <td align="center">
+https://github-production-user-asset-6210df.s3.amazonaws.com/134909932/284762909-1e63d620-482f-4003-b7d7-253d1c5c95fe.png)<br /><sub><b>FE & INFRA : 양성수</b></sub><br /></td>
       <td align="center">![이슬비](https://github.com/ystgd07/testReact2/assets/134909932/85e99ef7-4891-4808-8474-25e6b4017091)"><br /><sub><b>FE & INFRA : 이슬비</b></sub><br /></td>
       <td align="center">![정현욱](https://github.com/ystgd07/testReact2/assets/134909932/85e99ef7-4891-4808-8474-25e6b4017091)"><br /><sub><b>FE & INFRA : 정현욱</b></sub><br /></td>
       <td align="center">![최현희](https://github.com/ystgd07/testReact2/assets/134909932/85e99ef7-4891-4808-8474-25e6b4017091)"><br /><sub><b>FE & INFRA : 최현희</b></sub><br /></td>      
@@ -27,7 +28,7 @@
 </img>
 
 ## 🔧기술스택
-### 🎨Frond-end
+### 🎨Back-End
  ![image](https://github.com/ystgd07/testReact2/assets/112933943/d19322cf-abc0-43ce-b222-40fa3a424fb2)
 
 ### 🌐INFRA
@@ -50,20 +51,38 @@
 
 ![image](https://github.com/ystgd07/testReact2/assets/112933943/5d022c8b-c397-476c-8954-71919abedfcf)
 
-## 트러블 슈팅 & 기술적 도전
+## 📜Back-End 주요 기술
 
-![image](https://github.com/ystgd07/testReact2/assets/112933943/7aa3a789-06eb-483a-8a70-8188ff0e68fa)
+### ⚙️ Spring Security + JWT 
+![JWT](https://github.com/SNOW-bespinPjt/RPeerNow/assets/134913262/e12bf9f7-7a46-4090-ae80-7dbbcd4ca005)
 
+> 리엑트를 이용한 CSR방식으로 웹 애플리케이션을 제작을 진행해보며,
+> 페이지 갱신이나 성호 작용마다 서버에 잦은 요청을 하는데, 이때 세션 상태를 지속적으로 전달하는 것은 비효율적
+> 그래서 서버에 상태를 저장하지 않는 Stateless한 특성을 가진 JWT를 인증방법으로 채택
+- Spring Security를 통해 Request 요청 permit 설정, 권한별 제어를 진행 및 예외 처리 설정
+- OncePerRequestFilter를 상속받아 Dispatcher Servlet 이전 Filter를 통해 JWT 토큰 인증 및 SecurityContextHolder를 이용해 유저 정보 저장
 
+ ### ⚙️ Exception Handler 
+![exception](https://github.com/SNOW-bespinPjt/RPeerNow/assets/134913262/35659345-711a-42f0-a2eb-5185d03f770c)
 
-<h3>redux의 복잡한 보일러플레이트를 해결하기 위한 zustand 라이브러리 사용</h3>
-<p>기존에 사용하던 redux 라이브러리는 사용시 팀과의 협업에 불편함이 있었음.</p>
-<p>동일한 전역상태관리 동작방식을 갖고있는 zustand 라이브러리를 사용하여 보다 편한 상태구성을 하여 프론트엔드에서 생산성을 높일 수 있었음.</p>
+> 예외 메시지를 공통되고 일관된 메시지로 전달해 쉽게 문제를 파악하며, 예외발생 시 예상치 못한 동작들을 처리하도록 예외 처리를 진행해봄
+- @RestControllerAdvice를 이용해 전역적으로 예외처리를 진행, ExceptionHandler를 통해 Exception 클래스들을 속성으로 받아 예외를 지정
+- Logback-xml에 롤링 정책을 세워 디렉터리에 로그 저장, 삭제 등 생명주기 관리
+  
+### ⚙️ Transaction
+![image](https://github.com/SNOW-bespinPjt/RPeerNow/assets/134913262/a8ee74fc-aa57-4e4a-95c1-173cb22de297)
 
-![image](https://github.com/ystgd07/testReact2/assets/112933943/15ecee3c-f336-4bb8-b538-065ff066a31d)
+> 프로젝트 시나리오 상 프로젝트 서비스를 삭제하게 되면, 하위 스프린트, 백로그 등의 기능들이 동시에 삭제되어야 하는 구조
+- 원자성 보장을 위해 하나의 연산이라도 오류 발생시 전체 롤백 시키는 트랜잭션 어노테이션을 사용
 
+### ⚙️ 공통 모듈
+![image](https://github.com/SNOW-bespinPjt/RPeerNow/assets/134913262/0ef82dac-20a9-4f62-9311-2c76bd73541e)
+> API 명세서를 작성하면서 클라이언트에 체계적이고 일관된 메시지 전달할 필요성을 느낌
+- Request에 대한 Response를 공통응답 객체를 만들어서 사용
+- 이러한 response 객체로 프론트와의 소통이 한층 편해지며 생산성이 높아짐
 
-<h3>클라이언트 상태와 서버상태를 분리하기 위한 react-query 도입</h3>
-<p> useEffect 와 zustand 만으로 클라이언트 상태와 서버상태를 분리하기 힘들었고, 트러블 슈팅시 매우 힘들것이라 예상함.</p>
-<p> react-query 도입으로 서버상태와 클라이언트 상태를 효율적으로 분리하고 관리하였습니다.</p>
+### ⚙️ AWS S3
+![image](https://github.com/SNOW-bespinPjt/RPeerNow/assets/134913262/68905490-d820-4bee-a3a6-48cc9764da96)
+> s3의 객체를 public하게 열어두면 인가되지 않는 사용자들이 해당 객체를 다운로드 할 수 있는 문제 존재
+- 이를 해결하고자 백엔드 인스턴스에 IAM Role을 부여 및 s3 객체에 접근하는 로직을 구현하여 인가된 사용자만 백엔드를 통해서 해당 객체에 접근
 
