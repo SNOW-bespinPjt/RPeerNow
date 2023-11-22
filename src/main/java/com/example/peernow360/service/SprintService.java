@@ -11,6 +11,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
@@ -27,6 +28,7 @@ public class SprintService implements ISprintService {
     private final IKanbanMapper iKanbanMapper;
 
     @Override
+    @Transactional
     public String createNewSprint(SprintDto sprintDto, int project_no, int[] backlogDto) {
         log.info("[SprintService] createNewSprint()");
 
@@ -157,6 +159,7 @@ public class SprintService implements ISprintService {
     }
 
     @Override
+    @Transactional
     public String removeSprint(SprintDto sprintDto) {
         log.info("[SprintService] removeSprint()");
 
@@ -182,6 +185,5 @@ public class SprintService implements ISprintService {
         }
 
     }
-
 
 }

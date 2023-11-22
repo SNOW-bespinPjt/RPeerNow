@@ -26,6 +26,10 @@
                 b.user_id = u.id
         WHERE
             sprint_no = #{sprint_no}
+        ORDER BY
+            b.reg_date DESC
+        LIMIT
+            10;
 
     </select>
 
@@ -53,6 +57,10 @@
             sprint_no = 0
         and
             project_no = #{project_no}
+        ORDER BY
+            b.reg_date DESC
+        LIMIT
+            10;
 
     </select>
 
@@ -120,6 +128,7 @@
             NOW(),
         (SELECT count(*) FROM backlog WHERE sprint_no = #{no} AND status NOT IN ("done")),
         (SELECT count(*) FROM backlog WHERE sprint_no = #{no} AND status IN ("done"))
+        from
 
     </insert>
 
@@ -161,7 +170,7 @@
             done_job,
             task + done_job AS total,
             DATE_FORMAT(reg_date,'%y-%m-%d') today,
-            (select title from backlog where no = #{sprint_no}),
+            (select title from sprint where no = #{sprint_no}) title,
             DATE_FORMAT(start_date,'%y-%m-%d') start_date,
             DATE_FORMAT(end_date,'%y-%m-%d') end_date
         FROM

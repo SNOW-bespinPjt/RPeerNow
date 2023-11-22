@@ -49,6 +49,9 @@ public interface IUserMemberService {
 
     int updateAccountImage(String id, String fileName, MultipartFile multipartFile) throws IOException;
 
-
+    /*
+     * 프로젝트 변경 시 권한 변경
+     */
+    public UserMemberDto changeAuthority(int project_no);
 
 }

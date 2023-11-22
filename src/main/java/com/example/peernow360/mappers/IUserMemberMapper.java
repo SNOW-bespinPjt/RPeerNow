@@ -2,6 +2,7 @@ package com.example.peernow360.mappers;
 
 
 import com.example.peernow360.dto.UserMemberDto;
+import com.example.peernow360.utils.UserEnum;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -97,4 +98,10 @@ public interface IUserMemberMapper {
     String fileName(String userId);
 
     UserMemberDto getOriInfo(String id);
+
+    /*
+     * 프로젝트 변경 시 권한 재발급
+     */
+    public UserMemberDto selectAuthority(Map<String, Object> data);
+
 }
